@@ -1,0 +1,1670 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}</style></head><body><title>บันไดธุรกิจ พิชิตสังคม</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Prompt:wght@400;600;700&display=swap"><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script src="config.js"></script>
+<style>
+/* เลย์เอาต์: จอโชว์เป็นเวที 1920x1080 ย่อขยายทั้งก้อน กระดานซ้าย แผงทีมขวา / จอควบคุมเป็นหน้าเว็บธรรมดาคอลัมน์เดียว
+   ธีม: Impact District CI พื้นดำสนิท ส้มเป็นสีหลัก พิกเซลยุค 16 บิต (ตั้งใจเป็นธีมมืดธีมเดียว) */
+:root {
+  color-scheme: dark;
+  --void: #0A0A0A;
+  --panel: #17120C;
+  --panel-2: #221a11;
+  --ember: #EA8B25;
+  --clay: #CC7021;
+  --rust: #853F1A;
+  --gold: #F5D96B;
+  --cream: #EFD3A6;
+  --bone: #F6F5F1;
+  --olive: #6D912E;
+  --poppy: #C1331D;
+  --muted: #9a8a74;
+  --f-th: "Prompt", "Noto Sans Thai", "Leelawadee UI", sans-serif;
+  --f-en: "Poppins", "Prompt", sans-serif;
+  --f-px: "Press Start 2P", "Courier New", monospace;
+}
+html, body { height: 100%; }
+body { background: var(--void); color: var(--bone); font-family: var(--f-th); margin: 0; }
+button { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- หน้าเลือกบทบาท ---------- */
+.chooser { min-height: 100%; display: grid; place-items: center; padding-block: 32px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+.chooser-inner { width: min(820px, 100%); display: grid; gap: 28px; }
+.eyebrow { font-family: var(--f-px); font-size: 12px; letter-spacing: .08em; color: var(--gold); line-height: 1.8; }
+.chooser h1 { margin: 0; font-size: clamp(40px, 7vw, 72px); line-height: 1.1; font-weight: 700; text-wrap: balance; }
+.chooser h1 span { color: var(--ember); display: block; }
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.role { text-align: left; background: var(--panel); color: var(--bone); border: 4px solid var(--ember); box-shadow: 6px 6px 0 var(--rust); padding: 20px 22px; cursor: pointer; display: grid; gap: 8px; min-width: 0; }
+.role:hover { background: var(--panel-2); transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--rust); }
+.role b { font-size: 26px; font-weight: 700; }
+.role small { font-size: 15px; color: var(--cream); line-height: 1.5; }
+.role .px { font-family: var(--f-px); font-size: 11px; color: var(--gold); }
+.mode-note { font-size: 15px; color: var(--muted); line-height: 1.6; border-top: 2px dashed var(--rust); padding-top: 16px; }
+.mode-note b { color: var(--cream); font-weight: 600; }
+.roomrow { display: grid; gap: 8px; }
+.roomrow label { font-size: 16px; color: var(--cream); }
+.roomrow input { font-family: var(--f-px); font-size: 22px; letter-spacing: .12em; padding: 12px 14px; background: var(--void); color: var(--gold); border: 3px solid var(--ember); width: 220px; max-width: 100%; text-transform: uppercase; }
+.mode-note.blocked { border: 3px solid var(--poppy); background: #2a0f0a; padding: 16px; color: var(--bone); display: grid; gap: 10px; }
+.mode-note.blocked b { color: #ff8a73; font-size: 18px; }
+.mode-note.blocked ol { margin: 0; padding-left: 22px; display: grid; gap: 4px; }
+
+/* ---------- จอโชว์ ---------- */
+.screen-wrap { position: fixed; inset: 0; overflow: hidden; background: var(--void); }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: var(--void); }
+#board-svg { position: absolute; left: 0; top: 0; }
+#board-svg text { font-family: var(--f-th); }
+.pieces { position: absolute; inset: 0; pointer-events: none; }
+.piece { position: absolute; left: 0; top: 0; width: 72px; height: 96px; margin: -60px 0 0 -36px; transition: transform .28s steps(6); will-change: transform; }
+.piece.moving { transition: none; z-index: 5; }
+.piece svg { display: block; filter: drop-shadow(3px 0 0 var(--bone)) drop-shadow(-3px 0 0 var(--bone)) drop-shadow(0 3px 0 var(--bone)) drop-shadow(0 -3px 0 var(--bone)) drop-shadow(0 6px 0 rgba(0,0,0,.6)); }
+.piece .no { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); font-family: var(--f-px); font-size: 16px; padding: 5px 6px 4px; border: 3px solid var(--void); color: var(--void); line-height: 1; }
+
+.side { position: absolute; left: 1196px; top: 60px; width: 676px; height: 960px; display: flex; flex-direction: column; gap: 22px; }
+.brand { display: grid; gap: 6px; }
+.brand .eyebrow { font-size: 15px; }
+.brand h2 { margin: 0; font-size: 70px; line-height: 1.08; font-weight: 700; }
+.brand h2 span { color: var(--ember); display: block; }
+.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.tcard { position: relative; background: var(--panel); border: 5px solid var(--rust); padding: 14px 16px 14px 122px; height: 166px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.tcard .avatar { position: absolute; left: 18px; top: 28px; width: 84px; height: 98px; }
+.tcard .avatar svg { filter: drop-shadow(3px 0 0 var(--bone)) drop-shadow(-3px 0 0 var(--bone)) drop-shadow(0 3px 0 var(--bone)) drop-shadow(0 -3px 0 var(--bone)); }
+.tcard .nm { font-size: 36px; font-weight: 600; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tcard .sq { font-family: var(--f-px); font-size: 24px; color: var(--gold); line-height: 1.4; }
+.tcard .sq small { font-family: var(--f-th); font-size: 28px; color: var(--cream); margin-right: 8px; }
+.tcard.turn { border-color: var(--ember); background: #2a1a0b; animation: blink 0.9s steps(2) infinite; }
+.tcard.turn::after { content: "ถึงตา"; position: absolute; right: -5px; top: -5px; background: var(--ember); color: var(--void); font-size: 20px; font-weight: 700; padding: 2px 12px; }
+.tcard.dim { opacity: .35; }
+@keyframes blink { 50% { border-color: var(--gold); } }
+.statusbox { margin-top: auto; background: var(--panel); border: 5px solid var(--ember); box-shadow: 8px 8px 0 var(--rust); display: grid; grid-template-columns: 170px 1fr; gap: 24px; align-items: center; padding: 22px; height: 262px; box-sizing: border-box; }
+.dice { width: 170px; height: 170px; position: relative; }
+.dice svg { width: 100%; height: 100%; display: block; }
+.dice.spin { animation: spin .22s steps(4) infinite; }
+@keyframes spin { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(14deg) translateY(-14px); } 50% { transform: rotate(0) translateY(0); } 75% { transform: rotate(-14deg) translateY(-8px); } }
+.dice.land { animation: land .35s steps(5); }
+@keyframes land { 0% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.status-txt { display: grid; gap: 8px; min-width: 0; }
+.status-txt .big { font-size: 50px; font-weight: 700; line-height: 1.15; color: var(--bone); }
+.status-txt .big .tn { color: var(--ember); }
+.status-txt .sub { font-size: 34px; color: var(--cream); line-height: 1.3; }
+.legend { display: flex; gap: 26px; font-size: 30px; color: var(--cream); }
+.legend span { display: flex; align-items: center; gap: 10px; }
+.legend i { width: 30px; height: 30px; display: inline-block; box-sizing: border-box; }
+
+.toast { position: absolute; left: 600px; top: 540px; transform: translate(-50%, -50%) scale(.6); background: var(--ember); color: var(--void); font-size: 56px; font-weight: 700; padding: 18px 44px; border: 6px solid var(--void); box-shadow: 10px 10px 0 var(--rust); opacity: 0; transition: opacity .15s, transform .25s steps(4); white-space: nowrap; z-index: 20; }
+.toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.toast.bad { background: var(--poppy); color: var(--bone); }
+.toast.good { background: var(--olive); color: var(--bone); }
+
+.overlay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(10,10,10,.82); z-index: 30; opacity: 0; pointer-events: none; transition: opacity .25s; }
+.overlay.on { opacity: 1; }
+.overlay.board-only { right: 744px; }
+
+.card { width: 1360px; background: var(--panel); border: 8px solid var(--ember); box-shadow: 14px 14px 0 var(--rust); transform: perspective(1400px) rotateY(80deg); transition: transform .45s steps(6); }
+.overlay.on .card { transform: perspective(1400px) rotateY(0); }
+.card-head { display: flex; align-items: center; gap: 24px; padding: 18px 30px; background: var(--gold); color: var(--void); }
+.card.shoot .card-head { background: var(--clay); color: var(--void); }
+.card-head .kind { display: grid; gap: 6px; }
+.card-head .kind span { font-family: var(--f-px); font-size: 16px; line-height: 1.4; }
+.card-head .kind b { font-size: 34px; line-height: 1.1; }
+.card-head .who { font-size: 40px; font-weight: 700; margin-left: auto; text-align: right; line-height: 1.15; display: flex; align-items: center; gap: 18px; }
+.card-head .who small { display: block; font-size: 26px; font-weight: 600; }
+.card-head .who .av svg { display: block; filter: drop-shadow(3px 0 0 var(--bone)) drop-shadow(-3px 0 0 var(--bone)) drop-shadow(0 3px 0 var(--bone)) drop-shadow(0 -3px 0 var(--bone)); }
+#pill-time { font-variant-numeric: tabular-nums; }
+.card-body { display: grid; grid-template-columns: 1fr 190px; gap: 30px; padding: 32px 36px 20px; }
+.card-q { font-size: 50px; line-height: 1.3; font-weight: 600; text-wrap: balance; margin: 0; }
+.card-rule { font-size: 32px; font-weight: 600; color: var(--cream); margin-top: 10px; }
+.timer { width: 190px; height: 190px; position: relative; }
+.timer svg { width: 100%; height: 100%; }
+.timer .num { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-px); font-size: 44px; color: var(--gold); }
+.timer.warn .num { color: var(--poppy); animation: pulse .5s steps(2) infinite; }
+.timer.out .num { font-family: var(--f-th); font-size: 30px; font-weight: 700; color: var(--poppy); text-align: center; line-height: 1.1; }
+@keyframes pulse { 50% { transform: scale(1.15); } }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 0 36px 26px; }
+.opt { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 18px; background: var(--void); border: 4px solid var(--rust); padding: 14px 18px; min-height: 110px; box-sizing: border-box; transition: opacity .3s, background .3s; }
+.opt .l { width: 64px; height: 64px; display: grid; place-items: center; background: var(--ember); color: var(--void); font-family: var(--f-px); font-size: 26px; }
+.opt .t { font-size: 36px; line-height: 1.25; min-width: 0; }
+.card.revealed .opt { opacity: .32; }
+.card.revealed .opt.ok { opacity: 1; background: var(--olive); border-color: var(--bone); }
+.card.revealed .opt.ok .l { background: var(--bone); }
+.verdict { display: none; margin: 0 36px 30px; padding: 18px 24px; gap: 8px; border: 4px solid var(--bone); }
+.card.revealed .verdict { display: grid; }
+.verdict b { font-size: 40px; line-height: 1.2; }
+.verdict p { margin: 0; font-size: 30px; line-height: 1.4; color: var(--bone); }
+.verdict.right { background: #24310f; }
+.verdict.wrong { background: #3a120b; }
+
+.order-box { width: 1000px; display: grid; gap: 26px; }
+.order-box h3 { margin: 0; font-size: 60px; text-align: center; }
+.order-box .sub { text-align: center; font-size: 34px; color: var(--cream); margin-top: -12px; }
+.order-list { display: grid; gap: 14px; }
+.order-row { display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 24px; background: var(--panel); border: 5px solid var(--rust); padding: 10px 22px; height: 104px; box-sizing: border-box; }
+.order-row.next { border-color: var(--ember); }
+.order-row .rank { font-family: var(--f-px); font-size: 30px; color: var(--gold); }
+.order-row .nm { font-size: 40px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.order-row .rolls { font-family: var(--f-px); font-size: 30px; color: var(--bone); display: flex; gap: 14px; }
+.order-row .rolls i { font-style: normal; opacity: .4; }
+.order-row .rolls i:last-child { opacity: 1; }
+
+.splash { text-align: center; display: grid; gap: 18px; }
+.splash .eyebrow { font-size: 20px; }
+.splash h1 { margin: 0; font-size: 130px; line-height: 1.05; font-weight: 700; }
+.splash h1 span { color: var(--ember); display: block; }
+.splash p { margin: 0; font-size: 36px; color: var(--cream); }
+
+.win { text-align: center; display: grid; gap: 10px; justify-items: center; z-index: 2; }
+.win .eyebrow { font-size: 26px; }
+.win h1 { margin: 0; font-size: 150px; line-height: 1; color: var(--gold); font-weight: 700; }
+.win .nm { font-size: 80px; font-weight: 700; }
+.win p { margin: 0; font-size: 32px; color: var(--cream); }
+.win .big-avatar { width: 216px; height: 288px; animation: hop .6s steps(3) infinite alternate; }
+@keyframes hop { to { transform: translateY(-26px); } }
+#confetti { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+
+.corner { position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 8px; z-index: 50; transition: opacity .4s; }
+.corner.hide { opacity: 0; pointer-events: none; }
+.corner button, .netnote { background: var(--panel); color: var(--cream); border: 2px solid var(--rust); font-size: 14px; padding: 8px 12px; cursor: pointer; }
+.card.timeout { border-color: var(--poppy); animation: tflash .5s steps(2) 6; }
+@keyframes tflash { 50% { border-color: var(--bone); box-shadow: 14px 14px 0 var(--poppy); } }
+.fshint { position: fixed; left: 50%; top: calc(16px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); background: var(--ember); color: var(--void); font-size: 18px; font-weight: 600; padding: 12px 18px; border: 3px solid var(--void); z-index: 60; max-width: calc(100% - 32px); box-sizing: border-box; text-align: center; }
+.netnote { position: fixed; left: max(14px, env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); cursor: default; z-index: 50; }
+.screen-wrap.nocursor { cursor: none; }
+
+/* ---------- จอควบคุม ---------- */
+.ctl { max-width: 1080px; margin: 0 auto; padding-block: 18px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 18px; }
+.ctl-top { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.ctl-top h1 { margin: 0; font-size: 22px; font-weight: 700; margin-right: auto; }
+.ctl-top h1 span { color: var(--ember); }
+.pill { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; padding: 6px 12px; background: var(--panel); border: 2px solid var(--rust); white-space: nowrap; }
+.pill i { width: 12px; height: 12px; background: var(--muted); display: inline-block; }
+.pill.ok i { background: #8fc23f; }
+.pill.bad i { background: var(--poppy); animation: blink2 .8s steps(2) infinite; }
+@keyframes blink2 { 50% { opacity: .2; } }
+.chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.chip { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; background: var(--panel); border: 3px solid var(--rust); padding: 10px 12px; min-width: 0; }
+.chip .sw { width: 22px; height: 22px; border: 2px solid var(--bone); box-sizing: border-box; }
+.chip .nm { font-weight: 600; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip .sq { font-family: var(--f-px); font-size: 13px; color: var(--gold); }
+.chip.turn { border-color: var(--ember); background: #2a1a0b; }
+.main { background: var(--panel); border: 4px solid var(--ember); box-shadow: 8px 8px 0 var(--rust); padding: 22px; display: grid; gap: 18px; }
+.phase-label { font-size: 15px; font-weight: 600; letter-spacing: .04em; color: var(--gold); line-height: 1.6; }
+.headline { font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0; text-wrap: balance; }
+.headline .tn { color: var(--ember); }
+.hint { font-size: 16px; color: var(--cream); line-height: 1.6; margin: 0; }
+.bigbtn { width: 100%; min-height: 92px; font-size: 30px; font-weight: 700; background: var(--ember); color: var(--void); border: 4px solid var(--void); box-shadow: 0 8px 0 var(--rust); cursor: pointer; position: relative; overflow: hidden; }
+.bigbtn:hover:not(:disabled) { background: #f29a3a; }
+.bigbtn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 4px 0 var(--rust); }
+.bigbtn:disabled { background: #4a3a28; color: var(--muted); cursor: not-allowed; box-shadow: 0 8px 0 #2a2017; }
+.bigbtn .key { position: absolute; right: 14px; bottom: 8px; font-size: 13px; font-weight: 500; opacity: .7; }
+.bigbtn .bar { position: absolute; left: 0; bottom: 0; height: 6px; background: var(--gold); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.btn { min-height: 64px; font-size: 22px; font-weight: 700; border: 4px solid var(--void); cursor: pointer; background: var(--cream); color: var(--void); box-shadow: 0 6px 0 var(--rust); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.good { background: #7fa83a; color: var(--void); }
+.btn.bad { background: var(--poppy); color: var(--bone); }
+.btn small { display: block; font-size: 13px; font-weight: 500; opacity: .8; }
+.targets { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.prev-card { border: 3px solid var(--rust); background: var(--void); padding: 16px; display: grid; gap: 12px; }
+.prev-card .q { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 0; }
+.prev-card ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.prev-card li { font-size: 18px; padding: 8px 10px; border: 2px solid #3a2c1d; line-height: 1.4; }
+.prev-card li.ok { border-color: #8fc23f; background: #24310f; }
+.prev-card li.ok::after { content: "  ข้อนี้ถูก"; color: #b8e07a; font-weight: 700; }
+.prev-card .why { font-size: 16px; color: var(--cream); margin: 0; }
+.tbox { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.tbox .tnum { font-family: var(--f-px); font-size: 34px; color: var(--gold); min-width: 120px; }
+.tbox .tnum.warn { color: var(--poppy); }
+.form { display: grid; gap: 14px; }
+.form label { font-size: 15px; color: var(--cream); display: grid; gap: 6px; }
+.form input, .help input, .help select { font: inherit; font-size: 18px; padding: 10px 12px; background: var(--void); color: var(--bone); border: 3px solid var(--rust); min-width: 0; }
+.seg { display: flex; gap: 8px; flex-wrap: wrap; }
+.seg button { font-size: 18px; padding: 10px 18px; background: var(--void); color: var(--bone); border: 3px solid var(--rust); cursor: pointer; }
+.seg button.on { background: var(--ember); color: var(--void); border-color: var(--ember); font-weight: 700; }
+.names { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.help { border: 3px dashed var(--rust); padding: 16px; display: grid; gap: 14px; }
+.help h2 { margin: 0; font-size: 17px; color: var(--cream); font-weight: 600; }
+.help-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.sbtn { font-size: 16px; padding: 10px 14px; background: var(--panel); color: var(--bone); border: 2px solid var(--rust); cursor: pointer; }
+.sbtn:hover:not(:disabled) { border-color: var(--ember); }
+.sbtn:disabled { opacity: .4; cursor: not-allowed; }
+.sbtn.arm { background: var(--poppy); border-color: var(--poppy); }
+.prev-card.hide-ans li.ok { border-color: #3a2c1d; background: none; }
+.prev-card.hide-ans li.ok::after { content: none; }
+.prev-card.hide-ans .why { display: none; }
+.err.warn { background: var(--gold); color: var(--void); }
+.err { background: var(--poppy); color: var(--bone); padding: 12px 16px; font-size: 17px; font-weight: 600; }
+.ok-note { color: #b8e07a; }
+@media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } .headline { font-size: 26px; } .bigbtn { font-size: 24px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+</style>
+<div id="app"></div>
+<script>
+const CARDS = {"q": [{"q": "เป้าหมายหลักของธุรกิจเพื่อสังคม (SE) คืออะไร", "o": ["ทำกำไรให้ผู้ถือหุ้นมากที่สุด", "แก้ปัญหาสังคมหรือสิ่งแวดล้อม และมีรายได้เลี้ยงตัวเองได้", "รับเงินบริจาคอย่างเดียว", "ทำงานแทนหน่วยงานรัฐ"], "a": 1, "w": "SE ใช้วิธีทำธุรกิจเพื่อแก้ปัญหาสังคม และหารายได้เองเพื่อให้อยู่ได้ยาว"}, {"q": "สาขาวิชาธุรกิจเพื่อสังคม มศว อยู่ในคณะอะไร", "o": ["คณะเศรษฐศาสตร์", "คณะสังคมศาสตร์", "คณะบริหารธุรกิจเพื่อสังคม", "คณะมนุษยศาสตร์"], "a": 2, "w": "สาขา SE อยู่ในคณะบริหารธุรกิจเพื่อสังคม มศว"}, {"q": "SE ต่างจากมูลนิธิทั่วไปตรงไหนมากที่สุด", "o": ["SE ไม่สนใจเรื่องสังคม", "SE หารายได้จากการขายสินค้าหรือบริการ ไม่พึ่งเงินบริจาคเป็นหลัก", "มูลนิธิต้องจ่ายภาษีมากกว่า", "ไม่ต่างกันเลย"], "a": 1, "w": "มูลนิธิส่วนใหญ่อยู่ได้ด้วยเงินบริจาค ส่วน SE หารายได้เองจากสินค้าหรือบริการ"}, {"q": "แนวคิด Triple Bottom Line วัดความสำเร็จของธุรกิจ 3 ด้าน คือด้านใด", "o": ["คน โลก กำไร (People, Planet, Profit)", "ราคา สินค้า โปรโมชัน", "เงิน เวลา แรงงาน", "ลูกค้า คู่แข่ง พนักงาน"], "a": 0, "w": "ธุรกิจที่ดีต้องดูแลทั้งผู้คน สิ่งแวดล้อม และผลกำไรไปพร้อมกัน"}, {"q": "เป้าหมายการพัฒนาที่ยั่งยืน (SDGs) ของสหประชาชาติ มีทั้งหมดกี่ข้อ", "o": ["10 ข้อ", "12 ข้อ", "17 ข้อ", "20 ข้อ"], "a": 2, "w": "SDGs มี 17 เป้าหมาย เช่น ขจัดความยากจน การศึกษาที่มีคุณภาพ"}, {"q": "SDGs ตั้งเป้าให้สำเร็จภายในปี ค.ศ. ใด", "o": ["ค.ศ. 2025", "ค.ศ. 2030", "ค.ศ. 2040", "ค.ศ. 2050"], "a": 1, "w": "SDGs เริ่มปี ค.ศ. 2015 และตั้งเป้าไว้ที่ปี ค.ศ. 2030"}, {"q": "ผู้ก่อตั้งธนาคารกรามีน ที่ปล่อยกู้รายย่อยให้คนจนจนได้รางวัลโนเบลสาขาสันติภาพ คือใคร", "o": ["บิล เกตส์", "มูฮัมหมัด ยูนุส", "อีลอน มัสก์", "แจ็ค หม่า"], "a": 1, "w": "มูฮัมหมัด ยูนุส ได้รับรางวัลโนเบลสาขาสันติภาพร่วมกับธนาคารกรามีน"}, {"q": "โครงการพัฒนาดอยตุงฯ ช่วยให้ชาวบ้านเลิกปลูกพืชเสพติด แล้วหันมาทำอาชีพอะไรแทน", "o": ["ปลูกกาแฟ แมคคาเดเมีย และทำงานหัตถกรรม", "ทำเหมืองแร่", "เลี้ยงวัวนม", "ตัดไม้ขาย"], "a": 0, "w": "ดอยตุงเปลี่ยนพื้นที่ปลูกฝิ่นเป็นกาแฟ แมคคาเดเมีย งานผ้าทอ และการท่องเที่ยว"}, {"q": "ข้อใดเป็นตัวอย่างของการค้าที่เป็นธรรม (Fair Trade)", "o": ["กดราคาซื้อจากเกษตรกรให้ต่ำที่สุด", "รับซื้อผลผลิตในราคาที่เป็นธรรม และจ่ายเงินตรงเวลา", "ลดราคาสินค้าทั้งปี", "นำเข้าสินค้าราคาถูกจากต่างประเทศ"], "a": 1, "w": "Fair Trade ให้ผู้ผลิตรายเล็กได้ราคาที่เป็นธรรมและมีรายได้มั่นคง"}, {"q": "เศรษฐกิจหมุนเวียน (Circular Economy) เน้นเรื่องอะไร", "o": ["ผลิตให้มาก ใช้แล้วทิ้ง", "ใช้ทรัพยากรให้คุ้มที่สุด นำกลับมาใช้ซ้ำ และลดขยะ", "ขึ้นราคาสินค้าทุกปี", "ส่งออกให้มากที่สุด"], "a": 1, "w": "ของที่ใช้แล้วถูกนำกลับเข้าระบบอีกครั้ง แทนที่จะกลายเป็นขยะ"}, {"q": "Business Model Canvas มีทั้งหมดกี่ช่อง", "o": ["6 ช่อง", "8 ช่อง", "9 ช่อง", "12 ช่อง"], "a": 2, "w": "BMC มี 9 ช่อง เช่น กลุ่มลูกค้า คุณค่าที่ส่งมอบ ช่องทาง โครงสร้างต้นทุน"}, {"q": "ก่อนเริ่มทำ SE สิ่งแรกที่ควรเข้าใจให้ลึกที่สุดคืออะไร", "o": ["โลโก้ของแบรนด์", "ปัญหา และกลุ่มคนที่ได้รับผลกระทบ", "ราคาหุ้น", "ออฟฟิศที่สวยงาม"], "a": 1, "w": "ถ้าเข้าใจปัญหาไม่ลึก ทางแก้ที่คิดมาก็อาจไม่ตรงกับที่คนต้องการจริง"}, {"q": "CSR ที่บริษัทใหญ่ทำ ต่างจาก SE อย่างไร", "o": ["CSR เป็นกิจกรรมเสริมของบริษัท ส่วน SE ตั้งขึ้นมาเพื่อแก้ปัญหาสังคมตั้งแต่แรก", "เหมือนกันทุกอย่าง", "CSR ทำได้เฉพาะหน่วยงานรัฐ", "SE ห้ามมีกำไร"], "a": 0, "w": "สำหรับ SE การแก้ปัญหาสังคมคือหัวใจของธุรกิจ ไม่ใช่กิจกรรมเสริม"}, {"q": "การท่องเที่ยวแบบไหนที่ชุมชนเป็นเจ้าของและได้รายได้โดยตรง", "o": ["การท่องเที่ยวโดยชุมชน", "ทัวร์ช้อปปิ้งในห้าง", "ล่องเรือสำราญ", "ทัวร์ศูนย์เหรียญ"], "a": 0, "w": "ชุมชนเป็นคนออกแบบและจัดการเอง รายได้จึงกลับไปที่คนในพื้นที่"}, {"q": "SE มีกำไรได้หรือไม่", "o": ["ไม่ได้เลย", "ได้ แต่นำกำไรส่วนใหญ่กลับไปแก้ปัญหาสังคมหรือพัฒนากิจการ", "ได้ และต้องแบ่งให้เจ้าของทั้งหมด", "ได้เฉพาะปีแรก"], "a": 1, "w": "SE มีกำไรได้ แต่กำไรส่วนใหญ่ต้องย้อนกลับไปสร้างผลดีต่อสังคม"}, {"q": "ประเทศไทยออกกฎหมายส่งเสริมวิสาหกิจเพื่อสังคมในปีใด", "o": ["พ.ศ. 2550", "พ.ศ. 2555", "พ.ศ. 2562", "พ.ศ. 2567"], "a": 2, "w": "พระราชบัญญัติส่งเสริมวิสาหกิจเพื่อสังคม พ.ศ. 2562"}], "shoot": [{"q": "มูฮัมหมัด ยูนุส ได้รับรางวัลโนเบลสาขาสันติภาพในปี ค.ศ. ใด", "o": ["ค.ศ. 1996", "ค.ศ. 2001", "ค.ศ. 2006", "ค.ศ. 2016"], "a": 2, "w": "ได้รับรางวัลปี ค.ศ. 2006 ร่วมกับธนาคารกรามีน"}, {"q": "ธนาคารกรามีนตั้งอยู่ในประเทศใด", "o": ["อินเดีย", "บังกลาเทศ", "เนปาล", "ปากีสถาน"], "a": 1, "w": "ธนาคารกรามีนเริ่มต้นที่บังกลาเทศ"}, {"q": "ใครเป็นคนคิดคำว่า Triple Bottom Line", "o": ["จอห์น เอลคิงตัน", "ฟิลิป คอตเลอร์", "ปีเตอร์ ดรักเกอร์", "สตีฟ จ็อบส์"], "a": 0, "w": "จอห์น เอลคิงตัน เสนอแนวคิดนี้ในปี ค.ศ. 1994"}, {"q": "SDGs ข้อที่ 1 คือเรื่องอะไร", "o": ["ขจัดความยากจน", "ความเท่าเทียมทางเพศ", "พลังงานสะอาด", "น้ำสะอาดและสุขาภิบาล"], "a": 0, "w": "SDG 1 คือ No Poverty ขจัดความยากจนทุกรูปแบบ"}, {"q": "SDGs ข้อที่ 13 คือเรื่องอะไร", "o": ["การศึกษาที่มีคุณภาพ", "การรับมือการเปลี่ยนแปลงสภาพภูมิอากาศ", "ทรัพยากรทางทะเล", "สันติภาพและความยุติธรรม"], "a": 1, "w": "SDG 13 คือ Climate Action"}, {"q": "ใน Business Model Canvas ช่อง Value Proposition หมายถึงอะไร", "o": ["ต้นทุนของธุรกิจ", "คุณค่าที่ธุรกิจส่งมอบให้ลูกค้า", "ช่องทางการขาย", "พาร์ทเนอร์หลัก"], "a": 1, "w": "คือเหตุผลที่ลูกค้าเลือกเรา แทนที่จะเลือกเจ้าอื่น"}, {"q": "โครงการพัฒนาดอยตุงฯ อยู่ในจังหวัดอะไร", "o": ["เชียงใหม่", "เชียงราย", "น่าน", "แม่ฮ่องสอน"], "a": 1, "w": "ดอยตุงอยู่ที่อำเภอแม่ฟ้าหลวง จังหวัดเชียงราย"}, {"q": "SROI ที่ใช้วัดผลกระทบทางสังคม ย่อมาจากอะไร", "o": ["Social Return on Investment", "Sales Return on Income", "Social Risk of Investment", "Service Rate of Interest"], "a": 0, "w": "ใช้วัดว่าเงินที่ลงไป 1 บาท สร้างคุณค่าต่อสังคมกลับมาเท่าไร"}]};
+
+/* ---------- กติกาเกม: ฟังก์ชันบริสุทธิ์ รับสถานะ + คำสั่ง คืนสถานะใหม่ ---------- */
+const BOARD = {
+  N: 30,
+  ladders: { 3: 15, 8: 20, 12: 24 },
+  snakes: { 18: 6, 21: 9, 26: 14, 29: 19 },
+  question: [2, 5, 10, 16, 22, 27],
+  shoot: [7, 13, 25],
+  timerSec: 20,
+  qBack: 1,
+  shootBack: 3,
+  teamColors: ['#F6F5F1', '#C1331D', '#6D912E', '#F5D96B'],
+  defaultNames: ['ทีม 1', 'ทีม 2', 'ทีม 3', 'ทีม 4'],
+};
+
+function squareKind(n) {
+  if (n === 1) return 'start';
+  if (n === BOARD.N) return 'finish';
+  if (BOARD.ladders[n]) return 'ladder';
+  if (BOARD.snakes[n]) return 'snake';
+  if (BOARD.question.includes(n)) return 'question';
+  if (BOARD.shoot.includes(n)) return 'shoot';
+  return 'plain';
+}
+
+function initialState() {
+  return {
+    v: 0,
+    phase: 'setup',
+    nTeams: 4,
+    names: BOARD.defaultNames.slice(),
+    pos: [0, 0, 0, 0],
+    orderKeys: [[], [], [], []],
+    orderPending: [],
+    order: [],
+    turn: 0,
+    dice: null,          // {value, nonce, team}
+    move: null,          // {nonce, team, segs:[...]}
+    pendingCard: null,   // 'q' | 'shoot'
+    shooter: null,
+    card: null,          // {kind, idx, no, answerer, shooter, result}
+    timer: { state: 'idle', remaining: BOARD.timerSec, nonce: 0 },
+    next: { q: 0, shoot: 0 },
+    winner: null,
+    endedEarly: false,
+    round: 1,
+  };
+}
+
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+function current(s) { return s.order[s.turn]; }
+
+function rollDie(rng) { return 1 + Math.floor(rng() * 6); }
+
+function compareKeys(a, b) {
+  // เรียงจากมากไปน้อยแบบไล่ทีละรอบทอย
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const x = a[i] ?? -1, y = b[i] ?? -1;
+    if (x !== y) return y - x;
+  }
+  return 0;
+}
+
+function teamsInPlay(s) { return [...Array(s.nTeams).keys()]; }
+
+function advanceTurn(s) {
+  s.turn = (s.turn + 1) % s.order.length;
+  s.phase = 'ready';
+  s.card = null;
+  s.pendingCard = null;
+  s.shooter = null;
+  s.timer = { state: 'idle', remaining: BOARD.timerSec, nonce: s.v };
+}
+
+function leaderIndex(s) {
+  let best = s.order[0];
+  for (const t of s.order) if (s.pos[t] > s.pos[best]) best = t;
+  return best;
+}
+
+/**
+ * apply(state, action, rng, now) => new state
+ * action.type: setup | rollOrder | startPlay | roll | pickTarget | openCard |
+ *   timerStart | timerPause | timerResume | timerReset | judge | closeCard |
+ *   skip | moveTo | endNow | newRound | reset
+ */
+function apply(prev, action, rng = Math.random) {
+  const s = clone(prev);
+  s.v = prev.v + 1;
+  const nonce = s.v;
+  switch (action.type) {
+    case 'setup': {
+      const n = Math.min(4, Math.max(2, action.nTeams | 0));
+      s.nTeams = n;
+      s.names = BOARD.defaultNames.map((d, i) => {
+        const t = (action.names && action.names[i] || '').trim().slice(0, 24);
+        return t || d;
+      });
+      s.pos = [0, 0, 0, 0];
+      s.orderKeys = [[], [], [], []];
+      s.orderPending = teamsInPlay(s);
+      s.order = [];
+      s.turn = 0;
+      s.dice = null; s.move = null; s.card = null; s.pendingCard = null; s.shooter = null;
+      s.winner = null; s.endedEarly = false;
+      s.playStartedAt = null; s.endedAt = null;
+      if (action.resetCards) s.next = { q: 0, shoot: 0 };
+      s.timer = { state: 'idle', remaining: BOARD.timerSec, nonce };
+      s.phase = 'order';
+      return s;
+    }
+    case 'rollOrder': {
+      if (s.phase !== 'order' || !s.orderPending.length) return prev;
+      const t = s.orderPending.shift();
+      const value = rollDie(rng);
+      s.orderKeys[t].push(value);
+      s.dice = { value, nonce, team: t };
+      if (!s.orderPending.length) {
+        // หาทีมที่คะแนนเสมอกันทุกรอบ ให้ทอยใหม่เฉพาะทีมนั้น
+        const ts = teamsInPlay(s);
+        const tied = ts.filter((a) => ts.some((b) => b !== a && compareKeys(s.orderKeys[a], s.orderKeys[b]) === 0));
+        if (tied.length) s.orderPending = tied;
+        else s.order = ts.slice().sort((a, b) => compareKeys(s.orderKeys[a], s.orderKeys[b]));
+      }
+      return s;
+    }
+    case 'startPlay': {
+      if (s.phase !== 'order' || !s.order.length) return prev;
+      s.phase = 'ready';
+      s.turn = 0;
+      s.dice = null;
+      s.playStartedAt = action.now || null;
+      return s;
+    }
+    case 'roll': {
+      if (s.phase !== 'ready') return prev;
+      const t = current(s);
+      const value = action.value || rollDie(rng);
+      s.dice = { value, nonce, team: t };
+      const from = s.pos[t];
+      const target = Math.min(BOARD.N, from + value);
+      const path = [];
+      for (let i = from + 1; i <= target; i++) path.push(i);
+      const segs = [{ type: 'walk', path }];
+      let land = target;
+      if (from + value >= BOARD.N) {
+        s.pos[t] = BOARD.N;
+        s.move = { nonce, team: t, segs };
+        s.winner = t;
+        s.phase = 'won';
+        s.endedAt = action.now || null;
+        return s;
+      }
+      if (BOARD.ladders[land]) { segs.push({ type: 'ladder', from: land, to: BOARD.ladders[land] }); land = BOARD.ladders[land]; }
+      else if (BOARD.snakes[land]) { segs.push({ type: 'snake', from: land, to: BOARD.snakes[land] }); land = BOARD.snakes[land]; }
+      s.pos[t] = land;
+      s.move = { nonce, team: t, segs };
+      const k = squareKind(land);
+      if (k === 'question') { s.phase = 'cardPending'; s.pendingCard = 'q'; }
+      else if (k === 'shoot' && s.nTeams > 1) { s.phase = 'pickTarget'; s.pendingCard = 'shoot'; s.shooter = t; }
+      else advanceTurn(s);
+      return s;
+    }
+    case 'pickTarget': {
+      if (s.phase !== 'pickTarget') return prev;
+      const tgt = action.team;
+      if (tgt === current(s) || tgt < 0 || tgt >= s.nTeams) return prev;
+      s.card = null;
+      s.target = tgt;
+      s.phase = 'cardPending';
+      return s;
+    }
+    case 'openCard': {
+      if (s.phase !== 'cardPending') return prev;
+      const kind = s.pendingCard;
+      const deck = CARDS[kind];
+      const idx = s.next[kind] % deck.length;
+      s.next[kind] = s.next[kind] + 1;
+      const answerer = kind === 'shoot' ? s.target : current(s);
+      s.card = { kind, idx, no: idx + 1, answerer, shooter: kind === 'shoot' ? current(s) : null, result: null };
+      s.timer = { state: 'idle', remaining: BOARD.timerSec, nonce };
+      s.phase = 'card';
+      return s;
+    }
+    case 'timerStart':
+    case 'timerResume': {
+      if (s.phase !== 'card') return prev;
+      if (s.timer.state === 'running' && action.type === 'timerResume') return prev;
+      const restart = action.type === 'timerStart' || s.timer.state === 'idle' || (s.timer.remaining || 0) <= 0;
+      const remaining = restart ? BOARD.timerSec : s.timer.remaining;
+      s.timer = { state: 'running', remaining, nonce, startedAt: action.now || null };
+      return s;
+    }
+    case 'timerPause': {
+      if (s.phase !== 'card' || s.timer.state !== 'running') return prev;
+      s.timer = { state: 'paused', remaining: Math.max(0, action.remaining ?? s.timer.remaining), nonce };
+      return s;
+    }
+    case 'timerReset': {
+      if (s.phase !== 'card') return prev;
+      s.timer = { state: 'idle', remaining: BOARD.timerSec, nonce };
+      return s;
+    }
+    case 'judge': {
+      if (s.phase !== 'card') return prev;
+      s.card.result = action.correct ? 'right' : 'wrong';
+      s.card.back = action.correct ? 0 : (s.card.kind === 'shoot' ? BOARD.shootBack : BOARD.qBack);
+      s.timer = { state: 'stopped', remaining: action.remaining ?? s.timer.remaining, nonce };
+      s.phase = 'judged';
+      return s;
+    }
+    case 'closeCard': {
+      if (s.phase !== 'judged') return prev;
+      const c = s.card;
+      if (c.result === 'wrong') {
+        const t = c.answerer;
+        const from = s.pos[t];
+        if (from > 1) {
+          const to = Math.max(1, from - c.back);
+          const path = [];
+          for (let i = from - 1; i >= to; i--) path.push(i);
+          s.pos[t] = to;
+          s.move = { nonce, team: t, segs: [{ type: 'back', path }] };
+        }
+      }
+      s.target = null;
+      advanceTurn(s);
+      return s;
+    }
+    case 'skip': {
+      if (!['ready', 'cardPending', 'pickTarget', 'card', 'judged'].includes(s.phase)) return prev;
+      s.target = null;
+      advanceTurn(s);
+      return s;
+    }
+    case 'moveTo': {
+      const t = action.team, to = Math.max(0, Math.min(BOARD.N, action.square | 0));
+      if (t < 0 || t >= s.nTeams || s.phase === 'setup') return prev;
+      s.pos[t] = to;
+      s.move = { nonce, team: t, segs: [{ type: 'jump', to }] };
+      if (to === BOARD.N && s.phase !== 'order') { s.winner = t; s.phase = 'won'; s.endedAt = action.now || null; }
+      return s;
+    }
+    case 'endNow': {
+      if (!['ready', 'cardPending', 'pickTarget', 'card', 'judged'].includes(s.phase)) return prev;
+      s.winner = leaderIndex(s);
+      s.endedEarly = true;
+      s.endedAt = action.now || null;
+      s.card = null;
+      s.phase = 'won';
+      return s;
+    }
+    case 'newRound': {
+      const n = apply(prev, { type: 'setup', nTeams: s.nTeams, names: s.names }, rng);
+      n.round = (prev.round || 1) + 1;
+      return n;
+    }
+    case 'reset': {
+      const n = initialState();
+      n.v = s.v;
+      n.names = s.names;
+      n.nTeams = s.nTeams;
+      n.next = s.next;
+      n.round = (prev.round || 1) + 1;
+      return n;
+    }
+    default:
+      return prev;
+  }
+}
+
+/* เวลาที่จอโชว์ใช้เล่นแอนิเมชันของการเปลี่ยนสถานะ ให้จอควบคุมล็อกปุ่มไว้เท่านั้น */
+const ANIM = { dice: 1100, step: 300, special: 1000, pause: 350, land: 900 };
+function animDuration(prev, next) {
+  let ms = 0;
+  if (next.dice && (!prev.dice || next.dice.nonce !== prev.dice.nonce)) ms += ANIM.dice + ANIM.pause;
+  if (next.move && (!prev.move || next.move.nonce !== prev.move.nonce)) {
+    for (const g of next.move.segs) {
+      if (g.type === 'walk' || g.type === 'back') ms += g.path.length * ANIM.step;
+      else if (g.type === 'jump') ms += 500;
+      else ms += ANIM.special + ANIM.pause;
+    }
+    ms += ANIM.pause;
+    if (next.move.segs[0] && next.move.segs[0].type === 'walk') ms += ANIM.land;
+  }
+  if (prev.phase === 'judged' && next.phase !== 'judged') ms += 450;
+  return ms;
+}
+
+if (typeof module !== 'undefined') module.exports = { BOARD, squareKind, initialState, apply, animDuration, compareKeys };
+
+/* ================= ตัวช่วยทั่วไป ================= */
+const $ = (sel, root = document) => root.querySelector(sel);
+const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const store = {
+  get(k, area = 'local') { try { return (area === 'local' ? localStorage : sessionStorage).getItem(k); } catch (e) { return null; } },
+  set(k, v, area = 'local') { try { (area === 'local' ? localStorage : sessionStorage).setItem(k, v); } catch (e) {} },
+  del(k, area = 'local') { try { (area === 'local' ? localStorage : sessionStorage).removeItem(k); } catch (e) {} },
+};
+const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const T = REDUCED ? 0.25 : 1; // ตัวคูณเวลาแอนิเมชัน
+
+const COLORS = BOARD.teamColors;
+const BADGE_TXT = ['#0A0A0A', '#F6F5F1', '#F6F5F1', '#0A0A0A'];
+const nameOf = (s, t) => esc(s.names[t]);
+const sqLabel = (p) => (p <= 0 ? 'รอเริ่ม' : 'ช่อง ' + p);
+
+/* เวลาที่เหลือของนาฬิกา คำนวณเองในแต่ละเครื่อง */
+function makeClock() {
+  return { nonce: null, base: BOARD.timerSec, start: 0, first: true };
+}
+function timerNow(st, clk) {
+  const tm = st.timer || { state: 'idle', remaining: BOARD.timerSec, nonce: 0 };
+  if (tm.nonce !== clk.nonce) {
+    clk.nonce = tm.nonce;
+    clk.base = tm.remaining;
+    clk.start = performance.now();
+    // เปิดหน้ามากลางทาง ใช้นาฬิกาจริงช่วยประมาณ ถ้าค่าดูสมเหตุสมผล
+    if (clk.first && tm.state === 'running' && tm.startedAt) {
+      const d = (Date.now() - tm.startedAt) / 1000;
+      if (d >= 0 && d < tm.remaining + 2) clk.start -= d * 1000;
+    }
+  }
+  clk.first = false;
+  if (tm.state === 'running') return Math.max(0, clk.base - (performance.now() - clk.start) / 1000);
+  return Math.max(0, tm.remaining);
+}
+
+/* ================= เสียง (ค่าเริ่มต้นปิด) ================= */
+const Sound = {
+  on: store.get('bandai-sound') === '1',
+  ctx: null,
+  ensure() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+  beep(freq, dur = 0.08, type = 'square', vol = 0.06, when = 0) {
+    if (!this.on || !this.ctx) return;
+    const t0 = this.ctx.currentTime + when;
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(this.ctx.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+  },
+  tick() { this.beep(220 + Math.random() * 200, 0.04); },
+  step() { this.beep(523, 0.06); },
+  up() { [523, 659, 784, 1046].forEach((f, i) => this.beep(f, 0.1, 'square', 0.06, i * 0.09)); },
+  down() { [784, 622, 494, 392].forEach((f, i) => this.beep(f, 0.12, 'triangle', 0.08, i * 0.1)); },
+  right() { [659, 988].forEach((f, i) => this.beep(f, 0.14, 'square', 0.06, i * 0.12)); },
+  wrong() { this.beep(140, 0.35, 'sawtooth', 0.05); },
+  win() { [523, 659, 784, 1046, 784, 1046].forEach((f, i) => this.beep(f, 0.16, 'square', 0.06, i * 0.13)); },
+  card() { this.beep(392, 0.08); this.beep(587, 0.1, 'square', 0.06, 0.08); },
+  last() { this.beep(880, 0.05, 'square', 0.05); },
+  buzz() { this.beep(110, 0.7, 'sawtooth', 0.07); this.beep(98, 0.7, 'square', 0.04); },
+};
+
+/* ================= กระดาน: เรขาคณิตและภาพพิกเซล ================= */
+const S = 180, BX = 48, BY = 90;
+function sqXY(n) {
+  if (n < 1) n = 1;
+  const r = Math.floor((n - 1) / 6);
+  let c = (n - 1) % 6;
+  if (r % 2 === 1) c = 5 - c;
+  return { x: BX + c * S + S / 2, y: BY + (4 - r) * S + S / 2, c, r };
+}
+const G = {
+  q: ['.###.', '#...#', '....#', '...#.', '..#..', '.....', '..#..'],
+  target: ['#######', '#.....#', '#.###.#', '#.#.#.#', '#.###.#', '#.....#', '#######'],
+  star: ['..#..', '.###.', '#####', '.###.', '.#.#.'],
+  flag: ['##...', '####.', '#####', '###..', '#....', '#....', '#....'],
+};
+function glyph(rows, x, y, px, color) {
+  let s = '';
+  rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] === '#') s += `<rect x="${x + i * px}" y="${y + j * px}" width="${px}" height="${px}" fill="${color}"/>`; });
+  return s;
+}
+const snap = (v, g) => Math.round(v / g) * g;
+
+/* เส้นทางงู: เดินตามเส้นแบ่งช่องเพื่อไม่ทับช่องคำถามและช่องยิง */
+const SNAKE_ROUTES = {
+  18: { amp: 8, pts: [[1010, 515], [962, 575], [948, 640], [948, 800], [962, 855], [1004, 900]] },
+  21: { amp: 8, pts: [[650, 335], [602, 395], [588, 460], [588, 640], [602, 695], [646, 742]] },
+  26: { amp: 30, pts: [[336, 160], [308, 570]] },
+  29: { amp: 30, pts: [[876, 160], [1028, 390]] },
+};
+function snakePoints(head) {
+  const R = SNAKE_ROUTES[head];
+  const segs = [];
+  let total = 0;
+  for (let i = 1; i < R.pts.length; i++) {
+    const [x1, y1] = R.pts[i - 1], [x2, y2] = R.pts[i];
+    const L = Math.hypot(x2 - x1, y2 - y1);
+    segs.push({ x1, y1, x2, y2, L, s0: total });
+    total += L;
+  }
+  const pts = [];
+  const N = Math.round(total / 5);
+  for (let i = 0; i <= N; i++) {
+    const d = (i / N) * total, t = i / N;
+    const g = segs.find((q) => d <= q.s0 + q.L + 0.001) || segs[segs.length - 1];
+    const u = Math.min(1, (d - g.s0) / g.L);
+    const nx = -(g.y2 - g.y1) / g.L, ny = (g.x2 - g.x1) / g.L;
+    const amp = R.amp * Math.sin((d / 150) * Math.PI * 2) * (0.35 + 0.65 * Math.sin(Math.PI * Math.min(1, t * 1.1)));
+    pts.push({ x: g.x1 + (g.x2 - g.x1) * u + nx * amp, y: g.y1 + (g.y2 - g.y1) * u + ny * amp, t });
+  }
+  return pts;
+}
+/* บันไดเลื่อนไปชิดขอบช่อง ไม่ทับไอคอนช่องคำถามและช่องยิง */
+const LADDER_DX = { 3: -76, 8: -50, 12: 76 };
+function ladderEnds(foot, top) {
+  const A = sqXY(foot), B = sqXY(top), dx = LADDER_DX[foot] || 0;
+  return { a: { x: A.x + dx, y: A.y + 30 }, b: { x: B.x + dx, y: B.y - 20 } };
+}
+
+function drawBoardSVG() {
+ let top = '';
+  let s = `<svg id="board-svg" width="1920" height="1080" viewBox="0 0 1920 1080" shape-rendering="crispEdges" aria-label="กระดานบันไดงู 30 ช่อง">`;
+  // กรอบกระดาน
+  s += `<rect x="${BX - 14 + 12}" y="${BY - 14 + 12}" width="${6 * S + 28}" height="${5 * S + 28}" fill="#853F1A"/>`;
+  s += `<rect x="${BX - 14}" y="${BY - 14}" width="${6 * S + 28}" height="${5 * S + 28}" fill="#EA8B25"/>`;
+  for (let n = 1; n <= 30; n++) {
+    const { x, y, c, r } = sqXY(n);
+    const x0 = x - S / 2, y0 = y - S / 2;
+    const k = squareKind(n);
+    let fill = (c + r) % 2 ? '#17120C' : '#221a11';
+    if (k === 'shoot') fill = '#CC7021';
+    if (k === 'finish') fill = '#F5D96B';
+    s += `<rect x="${x0}" y="${y0}" width="${S}" height="${S}" fill="${fill}"/>`;
+    s += `<rect x="${x0 + 2}" y="${y0 + 2}" width="${S - 4}" height="${S - 4}" fill="none" stroke="#853F1A" stroke-width="4"/>`;
+    const dark = k === 'shoot' || k === 'finish';
+    if (k === 'question') {
+      s += `<rect x="${x0 + 10}" y="${y0 + 10}" width="${S - 20}" height="${S - 20}" fill="none" stroke="#F5D96B" stroke-width="8"/>`;
+      s += glyph(G.q, x - 30, y - 50, 12, '#F5D96B');
+      top += `<text x="${x}" y="${y0 + S - 24}" text-anchor="middle" font-size="30" font-weight="700" fill="#F5D96B" stroke="#17120C" stroke-width="6" paint-order="stroke">คำถาม</text>`;
+    } else if (k === 'shoot') {
+      s += glyph(G.target, x - 35, y - 48, 10, '#EFD3A6');
+      top += `<text x="${x}" y="${y0 + S - 22}" text-anchor="middle" font-size="28" font-weight="700" fill="#0A0A0A" stroke="#CC7021" stroke-width="6" paint-order="stroke">ยิงทีมอื่น</text>`;
+    } else if (k === 'finish') {
+      s += glyph(G.star, x - 60, y - 40, 8, '#EA8B25') + glyph(G.star, x + 20, y - 40, 8, '#EA8B25') + glyph(G.flag, x - 22, y - 44, 10, '#0A0A0A');
+      s += `<text x="${x}" y="${y0 + S - 22}" text-anchor="middle" font-size="30" font-weight="700" fill="#0A0A0A">เส้นชัย</text>`;
+    } else if (k === 'start') {
+      s += `<text x="${x}" y="${y0 + S - 22}" text-anchor="middle" font-size="30" font-weight="700" fill="#EFD3A6">เริ่ม</text>`;
+    } else if (k === 'ladder') {
+      const tag = 'ขึ้น ' + BOARD.ladders[n];
+      top += `<rect x="${x0 + S - 122}" y="${y0 + S - 50}" width="112" height="42" fill="#EA8B25"/><text x="${x0 + S - 66}" y="${y0 + S - 19}" text-anchor="middle" font-size="28" font-weight="700" fill="#0A0A0A">${tag}</text>`;
+    } else if (k === 'snake') {
+      const tag = 'ลง ' + BOARD.snakes[n];
+      top += `<rect x="${x0 + S - 104}" y="${y0 + S - 50}" width="94" height="42" fill="#C1331D"/><text x="${x0 + S - 57}" y="${y0 + S - 19}" text-anchor="middle" font-size="28" font-weight="700" fill="#F6F5F1">${tag}</text>`;
+    }
+    top += `<text x="${x0 + 16}" y="${y0 + 44}" font-family="'Press Start 2P', monospace" font-size="24" fill="${dark ? '#0A0A0A' : '#F6F5F1'}">${n}</text>`;
+  }
+  // บันได
+  for (const [f, t] of Object.entries(BOARD.ladders)) {
+    const { a, b } = ladderEnds(+f, t);
+    const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy), nx = -dy / L * 24, ny = dx / L * 24;
+    let out = '', rung = '', rail = '';
+    for (let d = 0; d <= L; d += 5) {
+      const px = a.x + dx * d / L, py = a.y + dy * d / L;
+      for (const sgn of [-1, 1]) {
+        const rx = snap(px + nx * sgn, 4), ry = snap(py + ny * sgn, 4);
+        out += `<rect x="${rx - 9}" y="${ry - 9}" width="18" height="18" fill="#0A0A0A"/>`;
+        rail += `<rect x="${rx - 5}" y="${ry - 5}" width="10" height="10" fill="#EA8B25"/>`;
+      }
+    }
+    for (let d = 26; d < L - 10; d += 36) {
+      const px = a.x + dx * d / L, py = a.y + dy * d / L;
+      for (let u = -1; u <= 1; u += 0.12) {
+        const rx = snap(px + nx * u, 4), ry = snap(py + ny * u, 4);
+        out += `<rect x="${rx - 7}" y="${ry - 7}" width="14" height="14" fill="#0A0A0A"/>`;
+        rung += `<rect x="${rx - 4}" y="${ry - 4}" width="8" height="8" fill="#EFD3A6"/>`;
+      }
+    }
+    s += `<g class="ladder">${out}${rung}${rail}</g>`;
+  }
+  // งู
+  for (const [h, t] of Object.entries(BOARD.snakes)) {
+    const pts = snakePoints(+h);
+    let out = '', body = '', dots = '';
+    pts.forEach((p, i) => {
+      const w = Math.round((22 - 10 * p.t) / 2) * 2;
+      const rx = snap(p.x, 4), ry = snap(p.y, 4);
+      out += `<rect x="${rx - w / 2 - 4}" y="${ry - w / 2 - 4}" width="${w + 8}" height="${w + 8}" fill="#0A0A0A"/>`;
+      body += `<rect x="${rx - w / 2}" y="${ry - w / 2}" width="${w}" height="${w}" fill="#6D912E"/>`;
+      if (i % 7 === 3 && p.t < 0.92) dots += `<rect x="${rx - 3}" y="${ry - 3}" width="6" height="6" fill="#F5D96B"/>`;
+    });
+    const hp = pts[0], hx = snap(hp.x, 4), hy = snap(hp.y, 4);
+    const head = `<rect x="${hx - 26}" y="${hy - 24}" width="52" height="44" fill="#0A0A0A"/><rect x="${hx - 22}" y="${hy - 20}" width="44" height="36" fill="#6D912E"/>` +
+      `<rect x="${hx - 14}" y="${hy - 14}" width="10" height="10" fill="#F6F5F1"/><rect x="${hx + 4}" y="${hy - 14}" width="10" height="10" fill="#F6F5F1"/>` +
+      `<rect x="${hx - 10}" y="${hy - 10}" width="5" height="5" fill="#0A0A0A"/><rect x="${hx + 8}" y="${hy - 10}" width="5" height="5" fill="#0A0A0A"/>` +
+      `<rect x="${hx - 3}" y="${hy - 36}" width="6" height="12" fill="#C1331D"/><rect x="${hx - 9}" y="${hy - 42}" width="6" height="6" fill="#C1331D"/><rect x="${hx + 3}" y="${hy - 42}" width="6" height="6" fill="#C1331D"/>`;
+    s += `<g class="snake">${out}${body}${dots}${head}</g>`;
+  }
+  s += top + `</svg>`;
+  return s;
+}
+
+/* หมากเป็นตัวละครพิกเซลชาวชุมชน เสื้อสีประจำทีม */
+const SPRITE = [
+  '...KKKKKK...',
+  '..KHHHHHHK..',
+  '..KHSSSSHK..',
+  '..KSKSSKSK..',
+  '..KSSSSSSK..',
+  '...KSSSSK...',
+  '.KKCCCCCCKK.',
+  'KCCCCCCCCCCK',
+  'KSKCCCCCCKSK',
+  'KKKCCCCCCKKK',
+  '..KPPPPPPK..',
+  '..KPPKKPPK..',
+  '..KPK..KPK..',
+  '..KKK..KKK..',
+];
+function sprite(color, px = 6) {
+  const pal = { K: '#0A0A0A', H: '#853F1A', S: '#EFD3A6', C: color, P: '#4a2a14' };
+  let s = `<svg width="${12 * px}" height="${14 * px}" viewBox="0 0 ${12 * px} ${14 * px}" shape-rendering="crispEdges" aria-hidden="true">`;
+  SPRITE.forEach((row, j) => { for (let i = 0; i < 12; i++) { const ch = row[i]; if (pal[ch]) s += `<rect x="${i * px}" y="${j * px}" width="${px}" height="${px}" fill="${pal[ch]}"/>`; } });
+  return s + '</svg>';
+}
+const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+function diceSVG(v) {
+  let s = `<svg viewBox="0 0 170 170" shape-rendering="crispEdges" aria-label="เต๋าได้ ${v || ''}">` +
+    `<rect x="14" y="14" width="156" height="156" fill="#853F1A"/><rect x="0" y="0" width="156" height="156" fill="#0A0A0A"/><rect x="8" y="8" width="140" height="140" fill="#F6F5F1"/>` +
+    `<rect x="8" y="136" width="140" height="12" fill="#EFD3A6"/>`;
+  if (v) for (const p of PIPS[v]) { const cx = 36 + (p % 3) * 42, cy = 36 + Math.floor(p / 3) * 42; s += `<rect x="${cx - 13}" y="${cy - 13}" width="26" height="26" fill="#0A0A0A"/>`; }
+  else s += `<text x="78" y="102" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="56" fill="#853F1A">?</text>`;
+  return s + '</svg>';
+}
+
+/* ================= การซิงก์ระหว่างสองจอ ================= */
+const KEY_DOC = 'bandai-oph2026-doc', KEY_PING = 'bandai-oph2026-ping';
+const Sync = {
+  mode: 'connecting', db: null, room: null, ref: null, bc: null,
+  ready: null, loaded: false, dead: false,
+  screenSeen: 0, peersScreen: null, roomOk: true, roomDownSince: 0, listeners: new Set(),
+  myId: Math.random().toString(36).slice(2, 10), otherCtlSeen: 0, peersOtherCtl: false,
+  otherControl() {
+    if (this.mode === 'firebase' || (this.mode === 'online' && this.room)) return this.peersOtherCtl;
+    return Date.now() - this.otherCtlSeen < 4500;
+  },
+  fb: null, fbConnected: false, fbSince: Date.now(), roomCode: '',
+  init() {
+    this.ready = (async () => {
+      // เวอร์ชันขึ้นเว็บจริง: ใช้ Firebase ถ้ามีค่าตั้งค่า
+      if ('FIREBASE_CONFIG' in window) {
+        const fc = window.FIREBASE_CONFIG;
+        if (fc && fc.apiKey && fc.databaseURL && window.firebase) {
+          try { const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(fc); this.fb = app.database(); this.mode = 'firebase'; }
+          catch (e) { console.error(e); this.mode = 'noconfig'; }
+        } else this.mode = 'noconfig';
+        if (this.mode === 'noconfig' && store.get('bandai-force-offline', 'session') === '1') this.goOffline();
+        this.emit();
+        return;
+      }
+      const c = window.claude;
+      if (c && typeof c.use === 'function') {
+        try { this.db = await c.use('db'); } catch (e) { this.db = null; }
+        if (this.db) { try { this.room = await c.use('room'); } catch (e) { this.room = null; } }
+      }
+      this.inViewer = !!(c && typeof c.use === 'function');
+      if (this.db) { this.mode = 'online'; this.ref = this.db.doc('game/current'); }
+      else if (this.inViewer && store.get('bandai-force-offline', 'session') !== '1') { this.mode = 'blocked'; }
+      else this.goOffline();
+      this.emit();
+    })();
+    return this.ready;
+  },
+  goOffline() { this.mode = 'offline'; try { this.bc = new BroadcastChannel('bandai-oph2026'); } catch (e) { this.bc = null; } },
+  emit() { this.listeners.forEach((f) => f()); },
+  onChange(f) { this.listeners.add(f); },
+  netOk() {
+    if (this.mode === 'firebase') return this.fbConnected || Date.now() - this.fbSince < 3000;
+    if (!navigator.onLine && this.mode === 'online') return false;
+    if (this.dead) return false;
+    if (this.room && !this.roomOk && Date.now() - this.roomDownSince > 2500) return false;
+    return true;
+  },
+  screenOnline() {
+    if (this.mode === 'firebase') return this.peersScreen;
+    if (this.mode === 'online' && this.room) return this.peersScreen;
+    if (this.mode === 'offline') return Date.now() - this.screenSeen < 4500;
+    return null;
+  },
+  start(role, onDoc) {
+    window.addEventListener('online', () => this.emit());
+    window.addEventListener('offline', () => this.emit());
+    if (this.mode === 'firebase') {
+      const base = this.fb.ref('rooms/' + this.roomCode);
+      this.ref = base.child('doc');
+      this.presRef = base.child('presence/' + this.myId);
+      this.presData = { role, v: 0 };
+      this.ref.on('value', (snap) => {
+        this.loaded = true;
+        const v = snap.val();
+        let doc = null;
+        if (v && v.json) { try { doc = JSON.parse(v.json); } catch (e) {} }
+        onDoc(doc, 'fb');
+        this.emit();
+      }, () => { this.dead = true; this.emit(); });
+      this.fb.ref('.info/connected').on('value', (s) => {
+        this.fbConnected = !!s.val();
+        if (this.fbConnected) {
+          this.presRef.onDisconnect().remove();
+          this.presRef.set(this.presData);
+        }
+        this.emit();
+      });
+      base.child('presence').on('value', (s) => {
+        const all = s.val() || {};
+        const others = Object.entries(all).filter(([k]) => k !== this.myId).map(([, p]) => p || {});
+        this.peersScreen = others.some((p) => p.role === 'screen');
+        this.peersOtherCtl = others.some((p) => p.role === 'control');
+        this.emit();
+      });
+      setTimeout(() => { if (!this.loaded) this.emit(); }, 10000);
+    } else if (this.mode === 'online') {
+      this.ref.onSnapshot((snap) => {
+        this.loaded = true;
+        if (snap.exists) onDoc(snap.data(), 'db');
+        else if (!snap.metadata || !snap.metadata.fromCache) onDoc(null, 'db');
+        this.emit();
+      }, (err) => { this.dead = err && err.code; this.emit(); });
+      setTimeout(() => { if (!this.loaded) this.emit(); }, 10000);
+      const room = this.room;
+      if (room) {
+        room.onConnection((c) => { if (!c && this.roomOk) this.roomDownSince = Date.now(); this.roomOk = c; this.emit(); setTimeout(() => this.emit(), 2700); });
+        if (role === 'screen') {
+          room.on('s', (m) => { if (m && m.data && typeof m.data === 'object' && !m.isMe) onDoc({ state: m.data }, 'room'); });
+          room.presence({ role: 'screen', v: 0 }).catch(() => {});
+        } else {
+          room.presence({ role: 'control', id: this.myId }).catch(() => {});
+          room.onPeers((ch) => {
+            this.peersScreen = ch.peers.some((p) => !p.isMe && p.presence && p.presence.role === 'screen');
+            this.peersOtherCtl = ch.peers.some((p) => !p.isMe && p.presence && p.presence.role === 'control');
+            this.emit();
+          });
+        }
+      }
+    } else {
+      const raw = store.get(KEY_DOC);
+      setTimeout(() => onDoc(raw ? JSON.parse(raw) : null, 'local'), 0);
+      this.loaded = true;
+      const handle = (d) => {
+        if (!d) return;
+        if (d.t === 'doc') onDoc(d.doc, 'bc');
+        if (d.t === 'ping') { this.screenSeen = Date.now(); }
+        if (d.t === 'cping' && d.id !== this.myId) { this.otherCtlSeen = Date.now(); }
+      };
+      if (this.bc) this.bc.onmessage = (e) => handle(e.data);
+      window.addEventListener('storage', (e) => {
+        if (e.key === KEY_DOC && e.newValue) { try { onDoc(JSON.parse(e.newValue), 'storage'); } catch (er) {} }
+        if (e.key === KEY_PING) this.screenSeen = Date.now();
+        if (e.key === 'bandai-oph2026-cping' && e.newValue && !e.newValue.startsWith(this.myId)) this.otherCtlSeen = Date.now();
+      });
+      if (role === 'screen') {
+        const ping = () => { if (this.bc) this.bc.postMessage({ t: 'ping' }); store.set(KEY_PING, String(Date.now())); };
+        ping(); setInterval(ping, 1500);
+      } else {
+        const cping = () => { if (this.bc) this.bc.postMessage({ t: 'cping', id: this.myId }); store.set('bandai-oph2026-cping', this.myId + ':' + Date.now()); };
+        cping(); setInterval(cping, 1500);
+      }
+    }
+    setInterval(() => this.emit(), 1000);
+  },
+  screenAck(v) {
+    if (this.mode === 'firebase' && this.presRef) { this.presData = { role: 'screen', v }; if (this.fbConnected) this.presRef.set(this.presData).catch(() => {}); }
+    if (this.room) this.room.presence({ role: 'screen', v }).catch(() => {});
+  },
+  async write(doc) {
+    if (this.mode === 'firebase') {
+      if (!this.fbConnected) throw new Error('offline');
+      await Promise.race([this.ref.set({ json: JSON.stringify(doc), v: doc.state.v }), sleep(8000).then(() => { throw new Error('timeout'); })]);
+    } else if (this.mode === 'online') {
+      if (!this.netOk()) throw new Error('offline');
+      await Promise.race([this.ref.set(doc), sleep(8000).then(() => { throw new Error('timeout'); })]);
+      if (this.room) {
+        try {
+          const bytes = new TextEncoder().encode(JSON.stringify(doc.state)).length;
+          if (bytes < 3900) this.room.emit('s', doc.state).catch(() => {});
+        } catch (e) {}
+      }
+    } else {
+      store.set(KEY_DOC, JSON.stringify(doc));
+      if (this.bc) this.bc.postMessage({ t: 'doc', doc });
+    }
+  },
+};
+
+/* ================= จอโชว์ ================= */
+const Screen = {
+  shown: null, latest: null, busy: false, seenDice: 0, seenMove: 0, clk: makeClock(), lastSec: null,
+  piecePos: {}, el: {},
+  mount() {
+    document.getElementById('app').innerHTML = `
+      <div class="screen-wrap" id="wrap">
+        <div id="stage">
+          ${drawBoardSVG()}
+          <div class="pieces" id="pieces"></div>
+          <div class="side">
+            <div class="brand">
+              <div class="eyebrow">SWU OPEN HOUSE 2026 · SE</div>
+              <h2>บันไดธุรกิจ<span>พิชิตสังคม</span></h2>
+            </div>
+            <div class="teams" id="teams"></div>
+            <div class="legend">
+              <span><i style="border:5px solid #F5D96B"></i>ช่องคำถาม ผิดถอย 1</span>
+              <span><i style="background:#CC7021"></i>ช่องยิง ผิดถอย 3</span>
+            </div>
+            <div class="statusbox">
+              <div class="dice" id="dice">${diceSVG(0)}</div>
+              <div class="status-txt" id="status"></div>
+            </div>
+          </div>
+          <div class="toast" id="toast"></div>
+          <div class="overlay" id="ov-splash"></div>
+          <div class="overlay board-only" id="ov-order"></div>
+          <div class="overlay" id="ov-card"></div>
+          <div class="overlay" id="ov-win"><canvas id="confetti" width="1920" height="1080"></canvas><div class="win" id="win"></div></div>
+        </div>
+        <div class="corner" id="corner">
+          <button id="btn-sound" type="button"></button>
+          <button id="btn-full" type="button">เต็มจอ</button>
+          <button id="btn-role" type="button">${Sync.roomCode ? 'ห้อง ' + esc(Sync.roomCode) + ' · ' : ''}เปลี่ยนบทบาท</button>
+        </div>
+        <div class="netnote" id="netnote" hidden></div>
+        <div class="fshint" id="fshint" hidden>หน้านี้กดเต็มจอเองไม่ได้ ให้ใช้เต็มจอของ Chrome แทน บน Mac กด Control + Command + F บน Windows กด F11</div>
+      </div>`;
+    this.el = { stage: $('#stage'), pieces: $('#pieces'), teams: $('#teams'), status: $('#status'), dice: $('#dice'), toast: $('#toast'),
+      splash: $('#ov-splash'), order: $('#ov-order'), card: $('#ov-card'), win: $('#ov-win'), winBox: $('#win'), corner: $('#corner'), net: $('#netnote') };
+    let pieces = '';
+    for (let t = 0; t < 4; t++) pieces += `<div class="piece" id="pc${t}" hidden><div class="no" style="background:${COLORS[t]};color:${BADGE_TXT[t]}">${t + 1}</div><div style="margin-top:14px">${sprite(COLORS[t])}</div></div>`;
+    this.el.pieces.innerHTML = pieces;
+    const fit = () => {
+      const w = window.innerWidth, h = window.innerHeight, k = Math.min(w / 1920, h / 1080);
+      this.el.stage.style.transform = `translate(${(w - 1920 * k) / 2}px, ${(h - 1080 * k) / 2}px) scale(${k})`;
+    };
+    fit(); window.addEventListener('resize', fit);
+    // ปุ่มมุมจอ ซ่อนเองเมื่อไม่ขยับเมาส์
+    let idle;
+    const wake = () => { this.el.corner.classList.remove('hide'); $('#wrap').classList.remove('nocursor'); clearTimeout(idle); idle = setTimeout(() => { this.el.corner.classList.add('hide'); $('#wrap').classList.add('nocursor'); }, 3000); };
+    ['mousemove', 'mousedown', 'touchstart', 'keydown'].forEach((e) => window.addEventListener(e, wake)); wake();
+    const sb = $('#btn-sound');
+    const paintSound = () => { sb.textContent = Sound.on ? 'เสียง เปิด' : 'เสียง ปิด'; };
+    paintSound();
+    sb.onclick = () => { Sound.on = !Sound.on; store.set('bandai-sound', Sound.on ? '1' : '0'); Sound.ensure(); paintSound(); if (Sound.on) Sound.step(); };
+    $('#btn-full').onclick = () => {
+      Sound.ensure();
+      const d = document;
+      const hint = () => { const h = $('#fshint'); h.hidden = false; clearTimeout(this._fh); this._fh = setTimeout(() => { h.hidden = true; }, 9000); };
+      if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen().catch(() => {}); }
+      else if (!d.documentElement.requestFullscreen || d.fullscreenEnabled === false) hint();
+      else { const p = d.documentElement.requestFullscreen(); if (p && p.catch) p.catch(hint); setTimeout(() => { if (!d.fullscreenElement) hint(); }, 700); }
+      try { navigator.wakeLock && navigator.wakeLock.request('screen').catch(() => {}); } catch (e) {}
+    };
+    $('#btn-role').onclick = () => switchRole();
+    try { navigator.wakeLock && navigator.wakeLock.request('screen').catch(() => {}); } catch (e) {}
+    Sync.onChange(() => this.paintNet());
+    requestAnimationFrame(() => this.tick());
+    this.renderAll(null);
+  },
+  paintNet() {
+    let msg = '';
+    if (Sync.mode === 'online' && !Sync.loaded) msg = 'กำลังเชื่อมต่อข้อมูลเกม';
+    else if (!Sync.netOk()) msg = 'กำลังเชื่อมต่อใหม่';
+    this.el.net.hidden = !msg;
+    this.el.net.textContent = msg;
+  },
+  receive(doc) {
+    if (!doc || !doc.state) { if (!this.shown) this.renderAll(null); return; }
+    const st = doc.state;
+    if (this.latest && st.v <= this.latest.v && !(st.v < this.latest.v - 50)) return; // ข้อมูลเก่า
+    this.latest = st;
+    if (!this.busy) this.process();
+  },
+  async process() {
+    this.busy = true;
+    while (this.latest && (!this.shown || this.latest.v !== this.shown.v)) {
+      const next = this.latest;
+      try { await this.transition(this.shown, next); } catch (e) { console.error(e); }
+      this.shown = next;
+      Sync.screenAck(next.v);
+    }
+    this.busy = false;
+  },
+  async transition(prev, next) {
+    if (!prev) {
+      this.seenDice = next.dice ? next.dice.nonce : 0;
+      this.seenMove = next.move ? next.move.nonce : 0;
+      this.renderAll(next);
+      return;
+    }
+    const diceNew = next.dice && next.dice.nonce > this.seenDice;
+    const moveNew = next.move && next.move.nonce > this.seenMove;
+    // ปิดหน้าซ้อนที่จะหายไปก่อน
+    const cardOn = (s) => s && (s.phase === 'card' || s.phase === 'judged');
+    if (cardOn(prev) && !cardOn(next)) { this.el.card.classList.remove('on'); await sleep(420 * T); }
+    if (prev.phase === 'won' && next.phase !== 'won') this.el.win.classList.remove('on');
+    if (prev.phase === 'setup' && next.phase !== 'setup') this.el.splash.classList.remove('on');
+    if (diceNew) {
+      this.seenDice = next.dice.nonce;
+      if (next.phase !== 'order' && prev.phase !== 'order') this.renderPanel(prev, next.dice.team);
+      await this.rollDice(next.dice.value);
+      if (next.phase === 'order' || prev.phase === 'order') this.renderOrder(next);
+    }
+    if (moveNew) {
+      this.seenMove = next.move.nonce;
+      await this.animateMove(prev, next);
+    }
+    this.renderAll(next);
+  },
+  async rollDice(v) {
+    const d = this.el.dice;
+    d.classList.remove('land'); d.classList.add('spin');
+    const end = performance.now() + ANIM.dice * T;
+    while (performance.now() < end) { d.innerHTML = diceSVG(1 + Math.floor(Math.random() * 6)); Sound.tick(); await sleep(85); }
+    d.classList.remove('spin'); d.innerHTML = diceSVG(v); void d.offsetWidth; d.classList.add('land');
+    Sound.step();
+    await sleep(ANIM.pause * T);
+  },
+  toast(text, kind = '', ms = 1100) {
+    const t = this.el.toast; t.className = 'toast ' + kind; t.textContent = text; void t.offsetWidth; t.classList.add('show');
+    clearTimeout(this._tt); this._tt = setTimeout(() => t.classList.remove('show'), ms * T);
+  },
+  pieceAt(t, x, y, sc = 1) { const p = $('#pc' + t); p.style.transform = `translate(${x}px, ${y}px)` + (sc !== 1 ? ` scale(${sc})` : ''); this.piecePos[t] = { x, y }; },
+  slot(st, t) {
+    // จัดหมากหลายตัวในช่องเดียวกันไม่ให้ทับกัน
+    const p = st.pos[t];
+    if (p === 0) {
+      // หมากที่ยังไม่ออกเดิน ย่อเล็กเรียงแถวบนช่อง 1
+      const wait = [...Array(st.nTeams).keys()].filter((u) => st.pos[u] === 0);
+      const c1 = sqXY(1), k = wait.indexOf(t);
+      return { x: c1.x - 66 + k * 44, y: c1.y - 6, sc: 0.6 };
+    }
+    const here = [...Array(st.nTeams).keys()].filter((u) => st.pos[u] === p);
+    const i = here.indexOf(t), n = here.length;
+    const c = sqXY(p);
+    const offs = n === 1 ? [[0, 6]] : n === 2 ? [[-36, 6], [36, 6]] : [[-38, -22], [38, -22], [-38, 50], [38, 50]];
+    const o = offs[Math.max(0, i)] || [0, 0];
+    return { x: c.x + o[0], y: c.y + o[1] };
+  },
+  layoutPieces(st) {
+    for (let t = 0; t < 4; t++) {
+      const el = $('#pc' + t);
+      const on = st && t < st.nTeams && st.phase !== 'setup';
+      el.hidden = !on;
+      if (on) { const p = this.slot(st, t); this.pieceAt(t, p.x, p.y, p.sc || 1); }
+    }
+  },
+  async hopTo(el, from, to) {
+    const mid = { x: (from.x + to.x) / 2, y: Math.min(from.y, to.y) - 40 };
+    const a = el.animate([
+      { transform: `translate(${from.x}px, ${from.y}px)` },
+      { transform: `translate(${mid.x}px, ${mid.y}px)` },
+      { transform: `translate(${to.x}px, ${to.y}px)` },
+    ], { duration: ANIM.step * T, easing: 'steps(6, end)' });
+    await a.finished.catch(() => {});
+    el.style.transform = `translate(${to.x}px, ${to.y}px)`;
+  },
+  async glide(el, pts, ms) {
+    const frames = pts.map((p) => ({ transform: `translate(${p.x}px, ${p.y}px)` }));
+    const a = el.animate(frames, { duration: ms * T, easing: 'linear' });
+    await a.finished.catch(() => {});
+    const last = pts[pts.length - 1];
+    el.style.transform = `translate(${last.x}px, ${last.y}px)`;
+  },
+  async animateMove(prev, next) {
+    const mv = next.move, t = mv.team, el = $('#pc' + t);
+    this.layoutPieces(prev);
+    el.hidden = false; el.style.opacity = '1';
+    el.classList.add('moving');
+    let cur = { ...(this.piecePos[t] || sqXY(1)) };
+    const ctr = (n) => { const c = sqXY(n); return { x: c.x, y: c.y + 6 }; };
+    for (const g of mv.segs) {
+      if (g.type === 'walk' || g.type === 'back') {
+        if (g.type === 'back') this.toast(`${next.names[t]} ถอย ${g.path.length} ช่อง`, 'bad', 900);
+        for (const n of g.path) { const to = ctr(n); await this.hopTo(el, cur, to); cur = to; Sound.step(); }
+      } else if (g.type === 'ladder') {
+        await sleep(150 * T);
+        this.toast(`ปีนบันได ขึ้นไปช่อง ${g.to}`, 'good', 1300); Sound.up();
+        const { a, b } = ladderEnds(g.from, g.to);
+        await this.glide(el, [cur, { x: a.x, y: a.y }, { x: b.x, y: b.y }, ctr(g.to)], ANIM.special);
+        cur = ctr(g.to);
+      } else if (g.type === 'snake') {
+        await sleep(150 * T);
+        this.toast(`โดนงู ไหลลงช่อง ${g.to}`, 'bad', 1300); Sound.down();
+        const pts = snakePoints(g.from).filter((_, i) => i % 3 === 0).map((p) => ({ x: p.x, y: p.y }));
+        await this.glide(el, [cur, ...pts, ctr(g.to)], ANIM.special);
+        cur = ctr(g.to);
+      } else if (g.type === 'jump') {
+        const to = ctr(Math.max(1, g.to)); await this.glide(el, [cur, { x: (cur.x + to.x) / 2, y: Math.min(cur.y, to.y) - 60 }, to], 500); cur = to;
+      }
+    }
+    this.piecePos[t] = cur;
+    el.classList.remove('moving');
+    const first = mv.segs[0];
+    if (first && first.type === 'walk') {
+      const land = next.pos[t], k = squareKind(land), last = mv.segs[mv.segs.length - 1];
+      if (next.phase === 'won') { /* หน้าชนะจะขึ้นเอง */ }
+      else if (last.type === 'walk' && k === 'question') this.toast(`ช่องคำถาม ${next.names[t]} ตอบเอง`, '', 1300);
+      else if (last.type === 'walk' && k === 'shoot') this.toast(`ช่องยิง ${next.names[t]} ได้ยิง`, '', 1300);
+      else if (last.type === 'walk') this.toast(`${next.names[t]} ถึงช่อง ${land}`, '', 1100);
+      await sleep(ANIM.land * T);
+    }
+    await sleep(ANIM.pause * T);
+  },
+  renderPanel(st, turnTeam) {
+    if (!st) { this.el.teams.innerHTML = ''; return; }
+    const playing = ['ready', 'cardPending', 'pickTarget', 'card', 'judged'].includes(st.phase);
+    const cur = turnTeam ?? (playing ? st.order[st.turn] : null);
+    let h = '';
+    const list = st.order && st.order.length ? st.order : [...Array(st.nTeams).keys()];
+    for (const t of list) {
+      const cls = t === cur ? 'turn' : (st.phase === 'won' && st.winner !== t ? 'dim' : '');
+      h += `<div class="tcard ${cls}"><div class="avatar">${sprite(COLORS[t], 7)}</div><div class="nm">${nameOf(st, t)}</div><div class="sq">${st.pos[t] > 0 ? `<small>ช่อง</small>${st.pos[t]}` : '<small>รอเริ่ม</small>'}</div></div>`;
+    }
+    this.el.teams.innerHTML = h;
+  },
+  statusText(st) {
+    if (!st) return ['รอจอควบคุม', 'เปิดลิงก์เดียวกันอีกเครื่อง แล้วเลือกจอควบคุม'];
+    const cur = st.order && st.order.length ? st.order[st.turn] : null;
+    const tn = (t) => `<span class="tn">${nameOf(st, t)}</span>`;
+    switch (st.phase) {
+      case 'setup': return ['รอเริ่มเกม', 'สตาฟกำลังตั้งชื่อทีม'];
+      case 'order': return st.order.length ? ['ได้ลำดับแล้ว', 'พร้อมเริ่มเล่น'] : ['ทอยเรียงลำดับ', st.orderPending.length ? `ถัดไป ${nameOf(st, st.orderPending[0])}` : ''];
+      case 'ready': return [`ตา ${tn(cur)}`, 'ตัวแทนทีมกดรีโมตทอยเต๋า'];
+      case 'cardPending': return st.pendingCard === 'shoot' ? [`${tn(cur)} ยิง ${tn(st.target)}`, 'รอเปิดการ์ดยิง'] : [`${tn(cur)} ตกช่องคำถาม`, 'รอเปิดการ์ด'];
+      case 'pickTarget': return [`${tn(cur)} ตกช่องยิง`, 'เลือกทีมที่จะยิง ผิดถอย 3 ช่อง'];
+      case 'card': case 'judged': return [`${tn(st.card.answerer)} ตอบ`, 'ภายใน 20 วินาที'];
+      case 'won': return [`${tn(st.winner)} ชนะ`, st.endedEarly ? 'นำอยู่ตอนจบเกม' : 'ถึงเส้นชัยก่อน'];
+    }
+    return ['', ''];
+  },
+  renderStatus(st) {
+    const [a, b] = this.statusText(st);
+    this.el.status.innerHTML = `<div class="big">${a}</div><div class="sub">${b}</div>`;
+  },
+  renderOrder(st) {
+    const ov = this.el.order;
+    if (!st || st.phase !== 'order') { ov.classList.remove('on'); return; }
+    const ts = [...Array(st.nTeams).keys()];
+    const done = st.order.length > 0;
+    const rows = (done ? st.order : ts).map((t, i) => {
+      const rolls = st.orderKeys[t].map((r) => `<i>${r}</i>`).join('') || '<i>-</i>';
+      const next = !done && st.orderPending[0] === t;
+      return `<div class="order-row ${next ? 'next' : ''}"><div class="rank">${done ? '#' + (i + 1) : ''}</div><div class="nm">${nameOf(st, t)}</div><div class="rolls">${rolls}</div></div>`;
+    }).join('');
+    const tie = !done && st.orderPending.length && ts.every((t) => st.orderKeys[t].length) ;
+    ov.innerHTML = `<div class="order-box"><h3>${done ? 'ลำดับการเล่น' : 'ทอยเรียงลำดับ'}</h3><div class="sub">${done ? 'แต้มมากได้เล่นก่อน' : tie ? 'แต้มเสมอ ทีมที่เสมอทอยใหม่' : 'แต้มมากได้เล่นก่อน'}</div><div class="order-list">${rows}</div></div>`;
+    ov.classList.add('on');
+  },
+  renderSplash(st) {
+    const ov = this.el.splash;
+    if (st && st.phase !== 'setup') { ov.classList.remove('on'); return; }
+    ov.innerHTML = `<div class="splash"><div class="eyebrow">SWU OPEN HOUSE 2026 · SE</div><h1>บันไดธุรกิจ<span>พิชิตสังคม</span></h1><p>${st ? 'รอเริ่มเกม' : 'รอจอควบคุม'}</p></div>`;
+    ov.classList.add('on');
+  },
+  renderCard(st) {
+    const ov = this.el.card;
+    if (!st || !(st.phase === 'card' || st.phase === 'judged')) { ov.classList.remove('on'); this._cardKey = null; return; }
+    const c = st.card, deck = CARDS[c.kind], q = deck[c.idx];
+    const key = st.card.kind + st.card.idx + ':' + st.card.no + ':' + (st.dice ? st.dice.nonce : 0);
+    const shoot = c.kind === 'shoot';
+    if (this._cardKey !== key) {
+      this._cardKey = key;
+      const who = `<span class="av">${sprite(COLORS[c.answerer], 5)}</span><span>${shoot ? `<small>${nameOf(st, c.shooter)} ยิง</small>` : ''}${nameOf(st, c.answerer)} ตอบ</span>`;
+      ov.innerHTML = `<div class="card ${shoot ? 'shoot' : ''}" id="card">
+        <div class="card-head"><div class="kind"><span>${shoot ? 'SHOOT CARD' : 'QUESTION CARD'}</span><b>${shoot ? 'การ์ดยิง' : 'การ์ดคำถาม'} ข้อ ${c.no}</b></div><div class="who">${who}</div></div>
+        <div class="card-body"><div><p class="card-q">${esc(q.q)}</p><div class="card-rule">${shoot ? 'ตอบผิด ทีมที่ถูกยิงถอย 3 ช่อง' : 'ตอบผิด ถอย 1 ช่อง'}</div></div>
+          <div class="timer" id="timer"><svg viewBox="0 0 190 190" shape-rendering="crispEdges" id="timer-ring"></svg><div class="num" id="timer-num">20</div></div></div>
+        <div class="opts">${q.o.map((o, i) => `<div class="opt ${i === q.a ? 'ok' : ''}"><div class="l">${'ABCD'[i]}</div><div class="t">${esc(o)}</div></div>`).join('')}</div>
+        <div class="verdict" id="verdict"></div>
+      </div>`;
+      ov.classList.remove('on'); void ov.offsetWidth; ov.classList.add('on');
+      Sound.card();
+      this.lastSec = null;
+    }
+    const card = $('#card');
+    if (st.phase === 'judged') {
+      if (!card.classList.contains('revealed')) {
+        const v = $('#verdict');
+        const ok = c.result === 'right';
+        v.className = 'verdict ' + (ok ? 'right' : 'wrong');
+        v.innerHTML = `<b>${ok ? 'ตอบถูก อยู่ที่เดิม' : `ตอบผิด ${nameOf(st, c.answerer)} ถอย ${c.back} ช่อง`}</b><p>${esc(q.w)}</p>`;
+        card.classList.add('revealed');
+        ok ? Sound.right() : Sound.wrong();
+      }
+    } else card.classList.remove('revealed');
+    this.paintTimer(st);
+  },
+  paintTimer(st) {
+    const box = $('#timer'); if (!box) return;
+    const rem = timerNow(st, this.clk);
+    const tm = st.timer;
+    const sec = Math.ceil(rem - 0.001);
+    const lit = tm.state === 'idle' ? 20 : Math.max(0, Math.min(20, Math.ceil(rem - 0.001)));
+    const ring = $('#timer-ring');
+    if (ring && ring.dataset.lit !== String(lit)) {
+      ring.dataset.lit = lit;
+      let s = '';
+      for (let i = 0; i < 20; i++) {
+        const a = (i / 20) * Math.PI * 2 - Math.PI / 2;
+        const x = 95 + Math.cos(a) * 78, y = 95 + Math.sin(a) * 78;
+        const on = i < lit;
+        s += `<rect x="${Math.round(x - 9)}" y="${Math.round(y - 9)}" width="18" height="18" fill="${on ? (lit <= 5 ? '#C1331D' : '#F5D96B') : '#2a2017'}"/>`;
+      }
+      ring.innerHTML = s;
+    }
+    const num = $('#timer-num');
+    const out = tm.state === 'running' && rem <= 0;
+    box.classList.toggle('out', out);
+    const cardEl = $('#card');
+    if (cardEl) cardEl.classList.toggle('timeout', out);
+    if (out && this._outNonce !== tm.nonce) { this._outNonce = tm.nonce; Sound.buzz(); }
+    box.classList.toggle('warn', !out && tm.state === 'running' && sec <= 5);
+    num.innerHTML = out ? 'หมด<br>เวลา' : (tm.state === 'idle' ? '20' : String(sec));
+    if (tm.state === 'running' && sec !== this.lastSec) {
+      if (this.lastSec !== null && sec <= 5 && sec >= 0) Sound.last();
+      this.lastSec = sec;
+    }
+  },
+  renderWin(st) {
+    const ov = this.el.win;
+    if (!st || st.phase !== 'won') { ov.classList.remove('on'); this._winKey = null; return; }
+    const key = st.v + ':' + st.winner;
+    if (this._winKey === st.winner + ':' + st.round) return;
+    this._winKey = st.winner + ':' + st.round;
+    const t = st.winner;
+    this.el.winBox.innerHTML = `<div class="eyebrow">MISSION COMPLETE · IMPACT 100%</div><h1>ชนะเลิศ!</h1><div class="big-avatar">${sprite(COLORS[t], 18)}</div><div class="nm">${nameOf(st, t)}</div><p>${st.endedEarly ? 'นำอยู่ตอนจบเกม' : 'ถึงช่อง 30 ก่อน'}</p>`;
+    ov.classList.add('on');
+    Sound.win();
+    this.confetti();
+  },
+  confetti() {
+    const cv = $('#confetti'), g = cv.getContext('2d');
+    const cols = ['#EA8B25', '#F5D96B', '#EFD3A6', '#CC7021', '#F6F5F1', '#6D912E', '#C1331D'];
+    const bits = Array.from({ length: REDUCED ? 40 : 180 }, () => ({ x: Math.random() * 1920, y: -Math.random() * 1080, s: 10 + Math.floor(Math.random() * 3) * 6, v: 3 + Math.random() * 5, c: cols[Math.floor(Math.random() * cols.length)], w: Math.random() * 6 }));
+    const t0 = performance.now();
+    const frame = (now) => {
+      g.clearRect(0, 0, 1920, 1080);
+      for (const b of bits) { b.y += b.v; b.x += Math.sin((now - t0) / 300 + b.w) * 1.5; if (b.y > 1090) { b.y = -20; } g.fillStyle = b.c; g.fillRect(Math.round(b.x / 6) * 6, Math.round(b.y / 6) * 6, b.s, b.s); }
+      if (this.el.win.classList.contains('on') && now - t0 < 12000) requestAnimationFrame(frame); else g.clearRect(0, 0, 1920, 1080);
+    };
+    requestAnimationFrame(frame);
+  },
+  renderAll(st) {
+    this.renderSplash(st);
+    this.renderPanel(st);
+    this.renderStatus(st);
+    if (st && st.dice && !this.el.dice.classList.contains('spin')) this.el.dice.innerHTML = diceSVG(st.dice.value);
+    if (!st || !st.dice) this.el.dice.innerHTML = diceSVG(0);
+    this.renderOrder(st);
+    this.layoutPieces(st);
+    this.renderCard(st);
+    this.renderWin(st);
+    this.paintNet();
+  },
+  tick() {
+    if (this.shown && (this.shown.phase === 'card') && !this.busy) this.paintTimer(this.shown);
+    requestAnimationFrame(() => this.tick());
+  },
+};
+
+/* ================= จอควบคุม ================= */
+const Control = {
+  hideAns: store.get('bandai-hide-ans') === '1',
+  doc: null, pending: false, lockUntil: 0, err: '', renderedKey: null, setupN: null, armed: {}, clk: makeClock(), lastWrite: 0,
+  mount() {
+    this.mountedAt = Date.now();
+    document.getElementById('app').innerHTML = `<div class="ctl" id="ctl">
+      <div class="ctl-top"><h1>บันไดธุรกิจ <span>จอควบคุม</span></h1><span class="pill" id="pill-net"><i></i><span></span></span><span class="pill" id="pill-screen"><i></i><span></span></span><span class="pill" id="pill-time" hidden></span>${Sync.roomCode ? `<span class="pill">ห้อง ${esc(Sync.roomCode)}</span>` : ''}</div>
+      <div class="chips" id="chips"></div>
+      <div id="errbox"></div>
+      <div class="main" id="main"></div>
+      <div class="help" id="help"></div>
+    </div>`;
+    document.addEventListener('click', (e) => this.onClick(e));
+    document.addEventListener('keydown', (e) => this.onKey(e));
+    Sync.onChange(() => { this.paintTop(); this.paintMainBtn(); this.renderErr(); });
+    this.render();
+    const loop = () => { this.paintTimer(); this.paintMainBtn(); this.paintElapsed(); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  },
+  get st() { return this.doc && this.doc.state; },
+  receive(doc, src) {
+    if (!doc) {
+      if (!this.doc && !this.pending) this.commit({ state: initialState(), hist: [] }, true);
+      return;
+    }
+    if (!doc.state) return;
+    const incoming = JSON.parse(JSON.stringify(doc));
+    if (!incoming.hist) incoming.hist = this.doc ? this.doc.hist : [];
+    if (this.doc && incoming.state.v < this.doc.state.v && !this.pending) {
+      // ข้อมูลเก่ากว่า ไม่ต้องใช้ เว้นแต่ห่างกันมากผิดปกติ
+      if (this.doc.state.v - incoming.state.v < 50) return;
+    }
+    if (this.pending) return;
+    this.doc = incoming;
+    this.render();
+  },
+  async commit(doc, silent = false) {
+    this.pending = true; this.err = ''; this.renderErr(); this.paintMainBtn();
+    try {
+      await Sync.write(doc);
+      this.doc = doc;
+      this.lastWrite = Date.now();
+    } catch (e) {
+      if (!silent) this.err = Sync.netOk() ? 'ส่งไม่สำเร็จ กดอีกครั้ง' : 'เน็ตหลุด ส่งคำสั่งไม่ได้ รอเน็ตกลับมาแล้วกดอีกครั้ง';
+    }
+    this.pending = false;
+    this.render();
+  },
+  dispatch(action, { main = false } = {}) {
+    const s = this.st; if (!s || this.pending) return;
+    if (main && Date.now() < this.lockUntil) return;
+    action.now = Date.now();
+    if (action.type === 'timerPause' || action.type === 'judge') action.remaining = Math.round(timerNow(s, this.clk) * 10) / 10;
+    const next = apply(s, action);
+    if (next === s) return;
+    const hist = [s, ...(this.doc.hist || [])].slice(0, 20);
+    this.lockUntil = Date.now() + animDuration(s, next);
+    this.commit({ state: next, hist });
+  },
+  undo() {
+    const d = this.doc; if (!d || !d.hist || !d.hist.length || this.pending) return;
+    const restored = JSON.parse(JSON.stringify(d.hist[0]));
+    restored.v = d.state.v + 1;
+    this.lockUntil = 0;
+    this.commit({ state: restored, hist: d.hist.slice(1) });
+  },
+  mainAction() {
+    const s = this.st;
+    if (!s) return { label: 'กำลังเชื่อมต่อ', act: null };
+    const cur = s.order && s.order.length ? s.order[s.turn] : null;
+    switch (s.phase) {
+      case 'setup': return { label: 'เริ่มเกม', act: 'start' };
+      case 'order': return s.order.length ? { label: 'เริ่มเล่น', act: 'startPlay' } : { label: `ทอยเรียงลำดับให้ ${s.names[s.orderPending[0]]}`, act: 'rollOrder' };
+      case 'ready': return { label: `ทอยเต๋าให้ ${s.names[cur]}`, act: 'roll' };
+      case 'cardPending': return { label: s.pendingCard === 'shoot' ? 'เปิดการ์ดยิง' : 'เปิดการ์ดคำถาม', act: 'openCard' };
+      case 'pickTarget': return { label: 'เลือกทีมที่จะยิงด้านล่าง', act: null };
+      case 'card': {
+        const rem = timerNow(s, this.clk);
+        if (s.timer.state === 'idle') return { label: 'เริ่มจับเวลา 20 วินาที', act: 'timerStart' };
+        if (s.timer.state === 'running' && rem > 0) return { label: 'หยุดเวลา', act: 'timerPause' };
+        if (s.timer.state === 'paused') return { label: 'เดินเวลาต่อ', act: 'timerResume' };
+        return { label: 'หมดเวลา กดเพื่อจับเวลาใหม่', act: 'timerStart' };
+      }
+      case 'judged': return { label: 'ปิดการ์ด ไปตาถัดไป', act: 'closeCard' };
+      case 'won': return { label: 'เล่นรอบใหม่ ชื่อทีมเดิม', act: 'newRound' };
+    }
+    return { label: '', act: null };
+  },
+  runMain() {
+    const m = this.mainAction();
+    if (!m.act) return;
+    if (m.act === 'start') {
+      const n = this.setupN || this.st.nTeams;
+      const names = [0, 1, 2, 3].map((i) => { const el = document.getElementById('team-name-' + i); return el ? el.value : ''; });
+      this.dispatch({ type: 'setup', nTeams: n, names }, { main: true });
+    } else this.dispatch({ type: m.act }, { main: true });
+  },
+  onClick(e) {
+    const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+    const act = b.dataset.act, s = this.st;
+    switch (act) {
+      case 'main': this.runMain(); break;
+      case 'n': this.setupN = +b.dataset.n; this.renderedKey = null; this.render(); break;
+      case 'target': this.dispatch({ type: 'pickTarget', team: +b.dataset.t }, { main: true }); break;
+      case 'right': this.dispatch({ type: 'judge', correct: true }); break;
+      case 'wrong': this.dispatch({ type: 'judge', correct: false }); break;
+      case 'timerReset': this.dispatch({ type: 'timerReset' }); break;
+      case 'undo': this.undo(); break;
+      case 'skip': this.dispatch({ type: 'skip' }); break;
+      case 'move': {
+        const t = +$('#mv-team').value, q = parseInt($('#mv-sq').value, 10);
+        if (Number.isNaN(q) || q < 0 || q > 30) { this.err = 'ใส่เลขช่อง 0 ถึง 30 (0 คือยังไม่ขึ้นกระดาน)'; this.renderErr(); break; }
+        this.dispatch({ type: 'moveTo', team: t, square: q }); break;
+      }
+      case 'endNow': case 'reset': {
+        if (this.armed[act] && Date.now() - this.armed[act] < 4000) { this.armed[act] = 0; this.dispatch({ type: act }); }
+        else { this.armed[act] = Date.now(); this.renderHelp(); setTimeout(() => this.renderHelp(), 4100); }
+        break;
+      }
+      case 'rename': this.dispatch({ type: 'reset' }); break;
+      case 'role': switchRole(); break;
+      case 'toggleAns': this.hideAns = !this.hideAns; store.set('bandai-hide-ans', this.hideAns ? '1' : '0'); this.renderedKey = null; this.render(); break;
+    }
+  },
+  onKey(e) {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+    const s = this.st; if (!s) return;
+    if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) this.runMain(); }
+    else if (['PageDown', 'ArrowRight', 'ArrowDown'].includes(e.code)) {
+      // รีโมตพรีเซนต์ ให้ตัวแทนทีมกดทอยเต๋าเอง ใช้ได้เฉพาะตอนทอยเท่านั้น
+      e.preventDefault();
+      if (!e.repeat && (s.phase === 'ready' || (s.phase === 'order' && !s.order.length))) this.runMain();
+    }
+    else if (s.phase === 'card' && e.code === 'KeyY') this.dispatch({ type: 'judge', correct: true });
+    else if (s.phase === 'card' && e.code === 'KeyN') this.dispatch({ type: 'judge', correct: false });
+    else if (s.phase === 'pickTarget' && /^Digit[1-4]$/.test(e.code)) this.dispatch({ type: 'pickTarget', team: +e.code.slice(5) - 1 }, { main: true });
+  },
+  paintTop() {
+    const pn = $('#pill-net'), ps = $('#pill-screen'); if (!pn) return;
+    const ok = Sync.netOk();
+    pn.className = 'pill ' + (ok ? 'ok' : 'bad');
+    pn.lastElementChild.textContent = Sync.mode === 'offline' ? 'โหมดออฟไลน์ เครื่องเดียว' : (ok ? 'ออนไลน์' : 'เน็ตหลุด');
+    const so = Sync.screenOnline();
+    const early = Date.now() - (this.mountedAt || 0) < 5000;
+    ps.className = 'pill ' + (so === true ? 'ok' : so === false && !early ? 'bad' : '');
+    ps.lastElementChild.textContent = so === true ? 'จอโชว์เชื่อมต่ออยู่' : so === false ? (early ? 'กำลังหาจอโชว์' : 'ยังไม่เห็นจอโชว์') : 'ไม่ทราบสถานะจอโชว์';
+  },
+  paintMainBtn() {
+    const btn = $('#mainbtn'); if (!btn) return;
+    const m = this.mainAction();
+    const locked = Date.now() < this.lockUntil;
+    const net = Sync.netOk();
+    const dis = !m.act || this.pending || locked || !net;
+    if (btn.disabled !== dis) btn.disabled = dis;
+    const label = this.pending ? 'กำลังส่ง' : !net ? 'เน็ตหลุด รอสักครู่' : m.label;
+    const lab = btn.querySelector('.lab');
+    if (lab.textContent !== label) lab.textContent = label;
+    const bar = btn.querySelector('.bar');
+    if (locked) { const total = Math.max(1, this.lockUntil - (this._lockStart || Date.now())); bar.style.width = Math.min(100, 100 * (1 - (this.lockUntil - Date.now()) / total)) + '%'; }
+    else bar.style.width = '0';
+  },
+  paintTimer() {
+    const el = $('#ctl-timer'); const s = this.st; if (!el || !s || s.phase !== 'card') return;
+    const rem = timerNow(s, this.clk);
+    const out = s.timer.state === 'running' && rem <= 0;
+    const txt = s.timer.state === 'idle' ? '20' : out ? '0' : String(Math.ceil(rem - 0.001));
+    if (el.textContent !== txt) el.textContent = txt;
+    el.classList.toggle('warn', out || (s.timer.state === 'running' && rem <= 5));
+  },
+  paintElapsed() {
+    const el = $('#pill-time'), s = this.st; if (!el) return;
+    if (!s || !s.playStartedAt || s.phase === 'setup' || s.phase === 'order') { if (!el.hidden) el.hidden = true; return; }
+    const ms = Math.max(0, (s.endedAt || Date.now()) - s.playStartedAt);
+    const m = Math.floor(ms / 60000), sec = Math.floor((ms % 60000) / 1000);
+    const txt = `${s.phase === 'won' ? 'เกมนี้ใช้เวลา' : 'เล่นไปแล้ว'} ${m}:${String(sec).padStart(2, '0')} นาที`;
+    if (el.textContent !== txt) el.textContent = txt;
+    el.hidden = false;
+  },
+  renderErr() {
+    const b = $('#errbox'); if (!b) return;
+    const two = Sync.otherControl();
+    const html = (two ? '<div class="err warn" role="alert">มีจอควบคุมเปิดอยู่อีกเครื่องหรืออีกหน้าต่าง สองจอจะแย่งกันสั่งเกม ปิดอันที่ไม่ได้ใช้</div>' : '') +
+      (this.err ? `<div class="err" role="alert">${esc(this.err)}</div>` : '');
+    if (b.innerHTML !== html) b.innerHTML = html;
+  },
+  renderChips() {
+    const s = this.st, box = $('#chips'); if (!s) { box.innerHTML = ''; return; }
+    const playing = ['ready', 'cardPending', 'pickTarget', 'card', 'judged'].includes(s.phase);
+    const cur = playing ? s.order[s.turn] : null;
+    const list = s.order && s.order.length ? s.order : [...Array(s.nTeams).keys()];
+    box.innerHTML = s.phase === 'setup' ? '' : list.map((t) => `<div class="chip ${t === cur ? 'turn' : ''}"><span class="sw" style="background:${COLORS[t]}"></span><span class="nm">${nameOf(s, t)}</span><span class="sq">${s.pos[t] > 0 ? s.pos[t] : '-'}</span></div>`).join('');
+  },
+  render() {
+    this.paintTop(); this.renderChips(); this.renderErr(); this.renderHelp();
+    const s = this.st, main = $('#main');
+    const key = s ? (s.phase === 'setup' ? 'setup' + (this.setupN || '') : s.v) : 'none';
+    if (key === this.renderedKey) { this.paintMainBtn(); return; }
+    this.renderedKey = key;
+    this._lockStart = Date.now();
+    const btn = `<button class="bigbtn" id="mainbtn" data-act="main" type="button"><span class="lab"></span><span class="key">แป้นเว้นวรรค</span><span class="bar"></span></button>`;
+    if (!s) { main.innerHTML = `<p class="headline">กำลังเชื่อมต่อข้อมูลเกม</p><p class="hint">ถ้ารอนานเกิน 10 วินาที ตรวจเน็ตของเครื่องนี้</p>`; return; }
+    const cur = s.order && s.order.length ? s.order[s.turn] : null;
+    const tn = (t) => `<span class="tn">${nameOf(s, t)}</span>`;
+    let h = '';
+    switch (s.phase) {
+      case 'setup': {
+        const n = this.setupN || s.nTeams;
+        h = `<div class="phase-label">ขั้นที่ 1 · เตรียมเกม</div><p class="headline">ตั้งชื่อทีม แล้วกดเริ่มเกม</p>
+          <div class="form"><div><label>จำนวนทีมรอบนี้</label><div class="seg">${[2, 3, 4].map((k) => `<button type="button" data-act="n" data-n="${k}" class="${k === n ? 'on' : ''}">${k} ทีม</button>`).join('')}</div></div>
+          <div class="names">${[0, 1, 2, 3].slice(0, n).map((i) => `<label for="team-name-${i}">ชื่อทีม ${i + 1} <span style="color:${COLORS[i]}">■</span><input id="team-name-${i}" maxlength="24" value="${esc(s.names[i] !== BOARD.defaultNames[i] ? s.names[i] : '')}" placeholder="${BOARD.defaultNames[i]}"></label>`).join('')}</div>
+          <p class="hint">เว้นว่างไว้ได้ ระบบจะใช้ชื่อ ทีม 1 ถึง ทีม ${n}</p></div>${btn}`;
+        break;
+      }
+      case 'order': {
+        const done = s.order.length > 0;
+        const rows = (done ? s.order : [...Array(s.nTeams).keys()]).map((t, i) => `<li>${done ? (i + 1) + '. ' : ''}${nameOf(s, t)} <span style="color:var(--gold)">${s.orderKeys[t].join(' · ') || '-'}</span></li>`).join('');
+        const tie = !done && s.orderPending.length && [...Array(s.nTeams).keys()].every((t) => s.orderKeys[t].length);
+        h = `<div class="phase-label">ขั้นที่ 2 · ทอยเรียงลำดับ</div><p class="headline">${done ? 'ได้ลำดับแล้ว' : tie ? 'แต้มเสมอ ทอยใหม่เฉพาะทีมที่เสมอ' : 'ทอยให้ทีละทีม แต้มมากได้เล่นก่อน'}</p>
+          <div class="prev-card"><ol>${rows}</ol></div>${btn}`;
+        break;
+      }
+      case 'ready':
+        h = `<div class="phase-label">ตาเล่น</div><p class="headline">ตา ${tn(cur)} · ${sqLabel(s.pos[cur])}</p><p class="hint">ยื่นรีโมตพรีเซนต์ให้ตัวแทนทีมกดทอยเต๋า หรือสตาฟกดปุ่มด้านล่าง ถ้ารีโมตกดไม่ติด ให้คลิกในหน้านี้ 1 ครั้งก่อน</p>${btn}`;
+        break;
+      case 'cardPending':
+        h = `<div class="phase-label">${s.pendingCard === 'shoot' ? 'ช่องยิง' : 'ช่องคำถาม'}</div><p class="headline">${s.pendingCard === 'shoot' ? `${tn(cur)} ยิง ${tn(s.target)}` : `${tn(cur)} ตกช่องคำถาม ช่อง ${s.pos[cur]}`}</p>
+          <p class="hint">การ์ดใบถัดไปคือ ${s.pendingCard === 'shoot' ? 'การ์ดยิง' : 'การ์ดคำถาม'} ข้อ ${(s.next[s.pendingCard] % CARDS[s.pendingCard].length) + 1}</p>${btn}`;
+        break;
+      case 'pickTarget': {
+        const others = [...Array(s.nTeams).keys()].filter((t) => t !== cur);
+        h = `<div class="phase-label">ช่องยิง</div><p class="headline">${tn(cur)} ตกช่องยิง จะยิงทีมไหน</p><p class="hint">ทีมที่ถูกยิงตอบผิด ถอย 3 ช่อง · กดแป้นเลขทีมได้</p>
+          <div class="targets">${others.map((t) => `<button class="btn" type="button" data-act="target" data-t="${t}">${nameOf(s, t)}<small>${sqLabel(s.pos[t])} · แป้น ${t + 1}</small></button>`).join('')}</div>`;
+        break;
+      }
+      case 'card': case 'judged': {
+        const c = s.card, q = CARDS[c.kind][c.idx];
+        const judged = s.phase === 'judged';
+        h = `<div class="phase-label">${c.kind === 'shoot' ? 'การ์ดยิง' : 'การ์ดคำถาม'} ข้อ ${c.no}</div>
+          <p class="headline">${c.kind === 'shoot' ? `${tn(c.shooter)} ยิง · ` : ''}${tn(c.answerer)} ตอบ</p>
+          <div class="prev-card ${this.hideAns && !judged ? 'hide-ans' : ''}"><p class="q">${esc(q.q)}</p><ol>${q.o.map((o, i) => `<li class="${i === q.a ? 'ok' : ''}">${'ABCD'[i]}. ${esc(o)}</li>`).join('')}</ol><p class="why">เฉลย: ${esc(q.w)}</p></div>
+          ${judged ? `<p class="headline">${c.result === 'right' ? '<span class="ok-note">ตอบถูก อยู่ที่เดิม</span>' : `ตอบผิด ${nameOf(s, c.answerer)} ถอย ${c.back} ช่อง ตอนปิดการ์ด`}</p>` :
+            `<div class="tbox"><span class="tnum" id="ctl-timer">20</span><span class="hint">วินาที</span><button class="sbtn" type="button" data-act="timerReset">ตั้งเวลาใหม่</button><button class="sbtn" type="button" data-act="toggleAns">${this.hideAns ? 'แสดงเฉลย' : 'ซ่อนเฉลย'}</button></div>
+             <div class="row2"><button class="btn good" type="button" data-act="right">ตอบถูก<small>แป้น Y</small></button><button class="btn bad" type="button" data-act="wrong">ตอบผิด<small>แป้น N</small></button></div>`}
+          ${btn}`;
+        break;
+      }
+      case 'won':
+        h = `<div class="phase-label">จบเกม</div><p class="headline">${tn(s.winner)} ชนะ</p><p class="hint">${s.endedEarly ? 'จบเกมก่อนเวลา ทีมที่นำอยู่ชนะ' : 'ถึงช่อง 30 ก่อน'}</p>${btn}
+          <button class="sbtn" type="button" data-act="rename">ตั้งชื่อทีมใหม่ก่อนเล่น</button>`;
+        break;
+    }
+    main.innerHTML = h;
+    this.paintMainBtn();
+    this.paintTimer();
+  },
+  renderHelp() {
+    const s = this.st, box = $('#help'); if (!box) return;
+    const playing = s && ['ready', 'cardPending', 'pickTarget', 'card', 'judged'].includes(s.phase);
+    const canUndo = this.doc && this.doc.hist && this.doc.hist.length;
+    const armed = (k) => this.armed[k] && Date.now() - this.armed[k] < 4000;
+    const teams = s ? [...Array(s.nTeams).keys()] : [];
+    box.innerHTML = `<h2>ปุ่มช่วยแก้ปัญหา</h2>
+      <div class="help-row">
+        <button class="sbtn" type="button" data-act="undo" ${canUndo && !this.pending ? '' : 'disabled'}>ย้อนกลับ 1 ขั้น</button>
+        <button class="sbtn" type="button" data-act="skip" ${playing ? '' : 'disabled'}>ข้ามตานี้</button>
+        <button class="sbtn ${armed('endNow') ? 'arm' : ''}" type="button" data-act="endNow" ${playing ? '' : 'disabled'}>${armed('endNow') ? 'กดอีกครั้งเพื่อจบเกม' : 'จบเกมตอนนี้ ทีมนำชนะ'}</button>
+        <button class="sbtn ${armed('reset') ? 'arm' : ''}" type="button" data-act="reset" ${s && s.phase !== 'setup' ? '' : 'disabled'}>${armed('reset') ? 'กดอีกครั้งเพื่อเริ่มใหม่' : 'เริ่มเกมใหม่'}</button>
+      </div>
+      <div class="help-row">
+        <label for="mv-team" style="font-size:15px;color:var(--cream)">ย้ายหมาก</label>
+        <select id="mv-team" ${s && s.phase !== 'setup' ? '' : 'disabled'}>${teams.map((t) => `<option value="${t}">${nameOf(s, t)}</option>`).join('')}</select>
+        <input id="mv-sq" type="number" min="0" max="30" inputmode="numeric" placeholder="ช่อง" style="width:90px" ${s && s.phase !== 'setup' ? '' : 'disabled'}>
+        <button class="sbtn" type="button" data-act="move" ${s && s.phase !== 'setup' ? '' : 'disabled'}>ย้าย</button>
+      </div>
+      <div class="help-row"><button class="sbtn" type="button" data-act="role">กลับหน้าเลือกบทบาท</button></div>`;
+  },
+};
+
+/* ================= เริ่มต้น ================= */
+function switchRole() {
+  store.del('bandai-role', 'session');
+  try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  try { location.reload(); } catch (e) {}
+  setTimeout(() => chooser(), 600);
+}
+
+const ROOM_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const cleanRoom = (t) => String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+function newRoomCode() { let c = ''; for (let i = 0; i < 5; i++) c += ROOM_CHARS[Math.floor(Math.random() * ROOM_CHARS.length)]; return c; }
+
+function chooser() {
+  const fbBuild = 'FIREBASE_CONFIG' in window;
+  const urlRoom = cleanRoom(new URLSearchParams(location.search).get('room'));
+  const saved = urlRoom || cleanRoom(store.get('bandai-room'));
+  document.getElementById('app').innerHTML = `<div class="chooser"><div class="chooser-inner">
+    <div class="eyebrow">SWU OPEN HOUSE 2026 · SE · IMPACT DISTRICT</div>
+    <h1>บันไดธุรกิจ<span>พิชิตสังคม</span></h1>
+    ${fbBuild ? `<div class="roomrow"><label for="room-code">รหัสห้อง ใช้รหัสเดียวกันทั้งสองเครื่อง</label>
+      <div class="help-row"><input id="room-code" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(saved)}" placeholder="เช่น K7PQ2"><button class="sbtn" type="button" id="btn-newroom">สร้างรหัสใหม่</button></div></div>` : ''}
+    <div class="roles">
+      <button class="role" type="button" data-role="control"><span class="px">CONTROL</span><b>จอควบคุม</b><small>เครื่องของสตาฟ ทอยเต๋า เปิดการ์ด จับเวลา และตัดสินคำตอบ</small></button>
+      <button class="role" type="button" data-role="screen"><span class="px">SCREEN</span><b>จอโชว์</b><small>เครื่องที่ต่อโปรเจกเตอร์ โชว์กระดาน การ์ด และเวลา ไม่ต้องกดอะไร</small></button>
+    </div>
+    <div class="mode-note" id="mode-note">กำลังตรวจการเชื่อมต่อ</div>
+  </div></div>`;
+  if (fbBuild) {
+    $('#btn-newroom').onclick = () => { $('#room-code').value = newRoomCode(); paint(); };
+    $('#room-code').addEventListener('input', (e) => { const v = cleanRoom(e.target.value); if (e.target.value !== v) e.target.value = v; paint(); });
+  }
+  const paint = () => {
+    const n = $('#mode-note'); if (!n) return;
+    const code = fbBuild ? cleanRoom(($('#room-code') || {}).value) : '';
+    const needCode = Sync.mode === 'firebase' && code.length < 4;
+    const blocked = Sync.mode === 'blocked' || Sync.mode === 'connecting' || Sync.mode === 'noconfig' || needCode;
+    document.querySelectorAll('[data-role]').forEach((b) => { b.disabled = blocked; b.style.opacity = blocked ? '.4' : ''; });
+    const single = () => { store.set('bandai-force-offline', '1', 'session'); Sync.goOffline(); Sync.emit(); };
+    if (Sync.mode === 'noconfig') {
+      n.className = 'mode-note blocked';
+      n.innerHTML = `<b>ยังไม่ได้ใส่ค่าตั้งค่า Firebase</b> เปิดไฟล์ config.js แล้ววางค่าจาก Firebase ตามไฟล์วิธีตั้งค่า ระหว่างนี้ใช้เครื่องเดียวเปิดสองหน้าต่างไปก่อนได้
+        <div class="help-row"><button class="sbtn" type="button" id="btn-single">ใช้เครื่องเดียวเปิดสองหน้าต่าง</button></div>`;
+      $('#btn-single').onclick = single;
+      return;
+    }
+    if (Sync.mode === 'blocked') {
+      n.className = 'mode-note blocked';
+      n.innerHTML = `<b>เครื่องนี้ยังเชื่อมระบบเกมไม่ได้</b> ถ้าใช้ต่อแบบนี้ จอนี้จะไม่คุยกับอีกเครื่อง ให้ตรวจ 2 อย่าง
+        <ol><li>เบราว์เซอร์นี้ล็อกอิน claude.ai ด้วยบัญชีเดียวกับอีกเครื่อง ลองเปิด claude.ai ในแท็บใหม่ดูว่าล็อกอินอยู่ไหม</li><li>ไม่ได้เปิดในหน้าต่างไม่ระบุตัวตน</li></ol>
+        <div class="help-row"><button class="sbtn" type="button" id="btn-retry">ลองเชื่อมต่อใหม่</button><button class="sbtn" type="button" id="btn-single">ใช้เครื่องเดียวเปิดสองหน้าต่างแทน</button></div>`;
+      $('#btn-retry').onclick = () => location.reload();
+      $('#btn-single').onclick = single;
+      return;
+    }
+    n.className = 'mode-note';
+    if (Sync.mode === 'firebase') n.innerHTML = needCode ? '<b>ใส่รหัสห้องก่อน</b> เครื่องแรกกดสร้างรหัสใหม่ แล้วพิมพ์รหัสเดียวกันที่อีกเครื่อง' : `<b>โหมดออนไลน์</b> ห้อง ${esc(code)} เปิดลิงก์นี้อีกเครื่อง ใส่รหัสเดียวกัน แล้วเลือกบทบาทที่เหลือ ไม่ต้องล็อกอินอะไร`;
+    else if (Sync.mode === 'online') n.innerHTML = '<b>โหมดออนไลน์</b> เปิดลิงก์นี้อีกเครื่อง แล้วเลือกบทบาทที่เหลือ ทั้งสองเครื่องต้องต่อเน็ตและล็อกอิน Claude';
+    else if (Sync.mode === 'offline') n.innerHTML = '<b>โหมดออฟไลน์</b> ใช้เครื่องเดียว เปิดหน้านี้อีกหน้าต่างในเบราว์เซอร์เดียวกัน แล้วลากหน้าต่างจอโชว์ไปไว้บนโปรเจกเตอร์';
+  };
+  Sync.onChange(paint); paint();
+  document.querySelectorAll('[data-role]').forEach((b) => b.addEventListener('click', () => {
+    if (fbBuild && Sync.mode === 'firebase') { const code = cleanRoom($('#room-code').value); if (code.length < 4) return; store.set('bandai-room', code); }
+    start(b.dataset.role);
+  }));
+}
+
+async function start(role) {
+  await Sync.ready;
+  if (Sync.mode === 'blocked' || Sync.mode === 'noconfig' || Sync.mode === 'connecting') { store.del('bandai-role', 'session'); chooser(); return; }
+  if (Sync.mode === 'firebase') {
+    const code = cleanRoom(store.get('bandai-room'));
+    if (code.length < 4) { store.del('bandai-role', 'session'); chooser(); return; }
+    Sync.roomCode = code;
+  }
+  store.set('bandai-role', role, 'session');
+  if (role === 'screen') { Screen.mount(); Sync.start('screen', (d) => Screen.receive(d)); }
+  else { Control.mount(); Sync.start('control', (d, src) => Control.receive(d, src)); }
+}
+
+(function boot() {
+  Sync.init();
+  const h = (location.hash || '').slice(1);
+  const role = h === 'screen' || h === 'control' ? h : store.get('bandai-role', 'session');
+  if (role === 'screen' || role === 'control') start(role); else chooser();
+})();
+
+</script>
+</body></html>
