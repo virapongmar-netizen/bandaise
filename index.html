@@ -202,6 +202,14 @@ button { font-family: inherit; }
 .btn.good { background: #7fa83a; color: var(--void); }
 .btn.bad { background: var(--poppy); color: var(--bone); }
 .btn small { display: block; font-size: 13px; font-weight: 500; opacity: .8; }
+.diepad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.die { display: grid; justify-items: center; gap: 6px; padding: 12px 6px 10px; background: var(--void); border: 4px solid var(--ember); box-shadow: 0 6px 0 var(--rust); cursor: pointer; color: var(--bone); min-width: 0; }
+.die svg { width: 64px; height: 64px; }
+.die span { font-family: var(--f-px); font-size: 22px; color: var(--gold); }
+.die:hover:not(:disabled) { background: #2a1a0b; }
+.die:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 var(--rust); }
+.die:disabled { opacity: .35; cursor: not-allowed; }
+@media (max-width: 560px) { .diepad { grid-template-columns: repeat(3, 1fr); } }
 .targets { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .prev-card { border: 3px solid var(--rust); background: var(--void); padding: 16px; display: grid; gap: 12px; }
 .prev-card .q { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 0; }
@@ -292,7 +300,8 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
 
 function current(s) { return s.order[s.turn]; }
 
-function rollDie(rng) { return 1 + Math.floor(rng() * 6); }
+// แต้มเต๋ามาจากลูกเต๋ายักษ์ของจริง สตาฟเป็นคนกดแต้มที่ทอยได้
+const dieValue = (v) => { v = v | 0; return v >= 1 && v <= 6 ? v : 0; };
 
 function compareKeys(a, b) {
   // เรียงจากมากไปน้อยแบบไล่ทีละรอบทอย
@@ -354,7 +363,8 @@ function apply(prev, action, rng = Math.random) {
     case 'rollOrder': {
       if (s.phase !== 'order' || !s.orderPending.length) return prev;
       const t = s.orderPending.shift();
-      const value = rollDie(rng);
+      const value = dieValue(action.value);
+      if (!value) return prev;
       s.orderKeys[t].push(value);
       s.dice = { value, nonce, team: t };
       if (!s.orderPending.length) {
@@ -377,7 +387,8 @@ function apply(prev, action, rng = Math.random) {
     case 'roll': {
       if (s.phase !== 'ready') return prev;
       const t = current(s);
-      const value = action.value || rollDie(rng);
+      const value = dieValue(action.value);
+      if (!value) return prev;
       s.dice = { value, nonce, team: t };
       const from = s.pos[t];
       const target = Math.min(BOARD.N, from + value);
@@ -512,7 +523,7 @@ function apply(prev, action, rng = Math.random) {
 }
 
 /* เวลาที่จอโชว์ใช้เล่นแอนิเมชันของการเปลี่ยนสถานะ ให้จอควบคุมล็อกปุ่มไว้เท่านั้น */
-const ANIM = { dice: 1100, step: 300, special: 1000, pause: 350, land: 900 };
+const ANIM = { dice: 500, step: 300, special: 1000, pause: 350, land: 900 };
 function animDuration(prev, next) {
   let ms = 0;
   if (next.dice && (!prev.dice || next.dice.nonce !== prev.dice.nonce)) ms += ANIM.dice + ANIM.pause;
@@ -1039,7 +1050,7 @@ const Screen = {
     if (diceNew) {
       this.seenDice = next.dice.nonce;
       if (next.phase !== 'order' && prev.phase !== 'order') this.renderPanel(prev, next.dice.team);
-      await this.rollDice(next.dice.value);
+      await this.rollDice(next.dice.value, next.names[next.dice.team]);
       if (next.phase === 'order' || prev.phase === 'order') this.renderOrder(next);
     }
     if (moveNew) {
@@ -1048,14 +1059,13 @@ const Screen = {
     }
     this.renderAll(next);
   },
-  async rollDice(v) {
+  async rollDice(v, name) {
+    // แต้มจากลูกเต๋ายักษ์ของจริง โชว์ทันที ไม่หมุนซ้ำ
     const d = this.el.dice;
-    d.classList.remove('land'); d.classList.add('spin');
-    const end = performance.now() + ANIM.dice * T;
-    while (performance.now() < end) { d.innerHTML = diceSVG(1 + Math.floor(Math.random() * 6)); Sound.tick(); await sleep(85); }
-    d.classList.remove('spin'); d.innerHTML = diceSVG(v); void d.offsetWidth; d.classList.add('land');
+    d.classList.remove('land'); d.innerHTML = diceSVG(v); void d.offsetWidth; d.classList.add('land');
+    this.toast(`${name} ทอยได้ ${v}`, '', 900);
     Sound.step();
-    await sleep(ANIM.pause * T);
+    await sleep((ANIM.dice + ANIM.pause) * T);
   },
   toast(text, kind = '', ms = 1100) {
     const t = this.el.toast; t.className = 'toast ' + kind; t.textContent = text; void t.offsetWidth; t.classList.add('show');
@@ -1161,8 +1171,8 @@ const Screen = {
     const tn = (t) => `<span class="tn">${nameOf(st, t)}</span>`;
     switch (st.phase) {
       case 'setup': return ['รอเริ่มเกม', 'สตาฟกำลังตั้งชื่อทีม'];
-      case 'order': return st.order.length ? ['ได้ลำดับแล้ว', 'พร้อมเริ่มเล่น'] : ['ทอยเรียงลำดับ', st.orderPending.length ? `ถัดไป ${nameOf(st, st.orderPending[0])}` : ''];
-      case 'ready': return [`ตา ${tn(cur)}`, 'ตัวแทนทีมกดรีโมตทอยเต๋า'];
+      case 'order': return st.order.length ? ['ได้ลำดับแล้ว', 'พร้อมเริ่มเล่น'] : ['ทอยเรียงลำดับ', st.orderPending.length ? `${nameOf(st, st.orderPending[0])} ทอยเต๋ายักษ์` : ''];
+      case 'ready': return [`ตา ${tn(cur)}`, 'ตัวแทนทีมทอยเต๋ายักษ์'];
       case 'cardPending': return st.pendingCard === 'shoot' ? [`${tn(cur)} ยิง ${tn(st.target)}`, 'รอเปิดการ์ดยิง'] : [`${tn(cur)} ตกช่องคำถาม`, 'รอเปิดการ์ด'];
       case 'pickTarget': return [`${tn(cur)} ตกช่องยิง`, 'เลือกทีมที่จะยิง ผิดถอย 3 ช่อง'];
       case 'card': case 'judged': return [`${tn(st.card.answerer)} ตอบ`, 'ภายใน 20 วินาที'];
@@ -1373,8 +1383,8 @@ const Control = {
     const cur = s.order && s.order.length ? s.order[s.turn] : null;
     switch (s.phase) {
       case 'setup': return { label: 'เริ่มเกม', act: 'start' };
-      case 'order': return s.order.length ? { label: 'เริ่มเล่น', act: 'startPlay' } : { label: `ทอยเรียงลำดับให้ ${s.names[s.orderPending[0]]}`, act: 'rollOrder' };
-      case 'ready': return { label: `ทอยเต๋าให้ ${s.names[cur]}`, act: 'roll' };
+      case 'order': return s.order.length ? { label: 'เริ่มเล่น', act: 'startPlay' } : { label: 'กดแต้มที่ทอยได้ด้านบน', act: null };
+      case 'ready': return { label: 'กดแต้มที่ทอยได้ด้านบน', act: null };
       case 'cardPending': return { label: s.pendingCard === 'shoot' ? 'เปิดการ์ดยิง' : 'เปิดการ์ดคำถาม', act: 'openCard' };
       case 'pickTarget': return { label: 'เลือกทีมที่จะยิงด้านล่าง', act: null };
       case 'card': {
@@ -1404,6 +1414,7 @@ const Control = {
     switch (act) {
       case 'main': this.runMain(); break;
       case 'n': this.setupN = +b.dataset.n; this.renderedKey = null; this.render(); break;
+      case 'die': this.enterDie(+b.dataset.v); break;
       case 'target': this.dispatch({ type: 'pickTarget', team: +b.dataset.t }, { main: true }); break;
       case 'right': this.dispatch({ type: 'judge', correct: true }); break;
       case 'wrong': this.dispatch({ type: 'judge', correct: false }); break;
@@ -1425,15 +1436,23 @@ const Control = {
       case 'toggleAns': this.hideAns = !this.hideAns; store.set('bandai-hide-ans', this.hideAns ? '1' : '0'); this.renderedKey = null; this.render(); break;
     }
   },
+  enterDie(v) {
+    const s = this.st; if (!s) return;
+    if (s.phase === 'order' && !s.order.length) this.dispatch({ type: 'rollOrder', value: v }, { main: true });
+    else if (s.phase === 'ready') this.dispatch({ type: 'roll', value: v }, { main: true });
+  },
+  diePad() {
+    const locked = Date.now() < this.lockUntil || this.pending;
+    return `<div class="diepad">${[1, 2, 3, 4, 5, 6].map((v) => `<button type="button" class="die" data-act="die" data-v="${v}" ${locked ? 'disabled' : ''} aria-label="ทอยได้ ${v}">${diceSVG(v)}<span>${v}</span></button>`).join('')}</div>
+      <p class="hint">ตัวแทนทีมทอยเต๋ายักษ์ แล้วกดแต้มที่ได้ หรือกดแป้นเลข 1 ถึง 6 ถ้ากดผิด ใช้ปุ่มย้อนกลับ 1 ขั้นด้านล่าง</p>`;
+  },
   onKey(e) {
     const tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
     const s = this.st; if (!s) return;
     if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) this.runMain(); }
-    else if (['PageDown', 'ArrowRight', 'ArrowDown'].includes(e.code)) {
-      // รีโมตพรีเซนต์ ให้ตัวแทนทีมกดทอยเต๋าเอง ใช้ได้เฉพาะตอนทอยเท่านั้น
-      e.preventDefault();
-      if (!e.repeat && (s.phase === 'ready' || (s.phase === 'order' && !s.order.length))) this.runMain();
+    else if (/^(Digit|Numpad)[1-6]$/.test(e.code) && (s.phase === 'ready' || (s.phase === 'order' && !s.order.length))) {
+      if (!e.repeat) this.enterDie(+e.code.slice(-1));
     }
     else if (s.phase === 'card' && e.code === 'KeyY') this.dispatch({ type: 'judge', correct: true });
     else if (s.phase === 'card' && e.code === 'KeyN') this.dispatch({ type: 'judge', correct: false });
@@ -1450,6 +1469,8 @@ const Control = {
     ps.lastElementChild.textContent = so === true ? 'จอโชว์เชื่อมต่ออยู่' : so === false ? (early ? 'กำลังหาจอโชว์' : 'ยังไม่เห็นจอโชว์') : 'ไม่ทราบสถานะจอโชว์';
   },
   paintMainBtn() {
+    const lockedNow = Date.now() < this.lockUntil || this.pending || !Sync.netOk();
+    document.querySelectorAll('.die').forEach((d) => { if (d.disabled !== lockedNow) d.disabled = lockedNow; });
     const btn = $('#mainbtn'); if (!btn) return;
     const m = this.mainAction();
     const locked = Date.now() < this.lockUntil;
@@ -1520,11 +1541,11 @@ const Control = {
         const rows = (done ? s.order : [...Array(s.nTeams).keys()]).map((t, i) => `<li>${done ? (i + 1) + '. ' : ''}${nameOf(s, t)} <span style="color:var(--gold)">${s.orderKeys[t].join(' · ') || '-'}</span></li>`).join('');
         const tie = !done && s.orderPending.length && [...Array(s.nTeams).keys()].every((t) => s.orderKeys[t].length);
         h = `<div class="phase-label">ขั้นที่ 2 · ทอยเรียงลำดับ</div><p class="headline">${done ? 'ได้ลำดับแล้ว' : tie ? 'แต้มเสมอ ทอยใหม่เฉพาะทีมที่เสมอ' : 'ทอยให้ทีละทีม แต้มมากได้เล่นก่อน'}</p>
-          <div class="prev-card"><ol>${rows}</ol></div>${btn}`;
+          <div class="prev-card"><ol>${rows}</ol></div>${done ? btn : `<p class="headline">ตา ${tn(s.orderPending[0])} ทอยเรียงลำดับ</p>${this.diePad()}`}`;
         break;
       }
       case 'ready':
-        h = `<div class="phase-label">ตาเล่น</div><p class="headline">ตา ${tn(cur)} · ${sqLabel(s.pos[cur])}</p><p class="hint">ยื่นรีโมตพรีเซนต์ให้ตัวแทนทีมกดทอยเต๋า หรือสตาฟกดปุ่มด้านล่าง ถ้ารีโมตกดไม่ติด ให้คลิกในหน้านี้ 1 ครั้งก่อน</p>${btn}`;
+        h = `<div class="phase-label">ตาเล่น</div><p class="headline">ตา ${tn(cur)} · ${sqLabel(s.pos[cur])}</p>${this.diePad()}`;
         break;
       case 'cardPending':
         h = `<div class="phase-label">${s.pendingCard === 'shoot' ? 'ช่องยิง' : 'ช่องคำถาม'}</div><p class="headline">${s.pendingCard === 'shoot' ? `${tn(cur)} ยิง ${tn(s.target)}` : `${tn(cur)} ตกช่องคำถาม ช่อง ${s.pos[cur]}`}</p>
