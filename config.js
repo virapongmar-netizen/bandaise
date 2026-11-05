@@ -8,3 +8,6 @@ window.FIREBASE_CONFIG = {
   messagingSenderId: "246890140662",
   appId: "1:246890140662:web:54333de9c73f6101a46dd7"
 };
+
+// ห้องเกม ทุกเครื่องที่เปิดลิงก์นี้จะเข้าห้องเดียวกันเอง ไม่ต้องพิมพ์รหัส
+window.GAME_ROOM = "SEOPH26";

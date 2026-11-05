@@ -960,7 +960,7 @@ const Screen = {
         <div class="corner" id="corner">
           <button id="btn-sound" type="button"></button>
           <button id="btn-full" type="button">เต็มจอ</button>
-          <button id="btn-role" type="button">${Sync.roomCode ? 'ห้อง ' + esc(Sync.roomCode) + ' · ' : ''}เปลี่ยนบทบาท</button>
+          <button id="btn-role" type="button">${Sync.roomCode && !Sync.fixedRoom ? 'ห้อง ' + esc(Sync.roomCode) + ' · ' : ''}เปลี่ยนบทบาท</button>
         </div>
         <div class="netnote" id="netnote" hidden></div>
         <div class="fshint" id="fshint" hidden>หน้านี้กดเต็มจอเองไม่ได้ ให้ใช้เต็มจอของ Chrome แทน บน Mac กด Control + Command + F บน Windows กด F11</div>
@@ -1307,7 +1307,7 @@ const Control = {
   mount() {
     this.mountedAt = Date.now();
     document.getElementById('app').innerHTML = `<div class="ctl" id="ctl">
-      <div class="ctl-top"><h1>บันไดธุรกิจ <span>จอควบคุม</span></h1><span class="pill" id="pill-net"><i></i><span></span></span><span class="pill" id="pill-screen"><i></i><span></span></span><span class="pill" id="pill-time" hidden></span>${Sync.roomCode ? `<span class="pill">ห้อง ${esc(Sync.roomCode)}</span>` : ''}</div>
+      <div class="ctl-top"><h1>บันไดธุรกิจ <span>จอควบคุม</span></h1><span class="pill" id="pill-net"><i></i><span></span></span><span class="pill" id="pill-screen"><i></i><span></span></span><span class="pill" id="pill-time" hidden></span>${Sync.roomCode && !Sync.fixedRoom ? `<span class="pill">ห้อง ${esc(Sync.roomCode)}</span>` : ''}</div>
       <div class="chips" id="chips"></div>
       <div id="errbox"></div>
       <div class="main" id="main"></div>
@@ -1592,8 +1592,9 @@ const ROOM_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const cleanRoom = (t) => String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
 function newRoomCode() { let c = ''; for (let i = 0; i < 5; i++) c += ROOM_CHARS[Math.floor(Math.random() * ROOM_CHARS.length)]; return c; }
 
+const FIXED_ROOM = () => cleanRoom(window.GAME_ROOM);
 function chooser() {
-  const fbBuild = 'FIREBASE_CONFIG' in window;
+  const fbBuild = 'FIREBASE_CONFIG' in window && !FIXED_ROOM();
   const urlRoom = cleanRoom(new URLSearchParams(location.search).get('room'));
   const saved = urlRoom || cleanRoom(store.get('bandai-room'));
   document.getElementById('app').innerHTML = `<div class="chooser"><div class="chooser-inner">
@@ -1614,7 +1615,7 @@ function chooser() {
   const paint = () => {
     const n = $('#mode-note'); if (!n) return;
     const code = fbBuild ? cleanRoom(($('#room-code') || {}).value) : '';
-    const needCode = Sync.mode === 'firebase' && code.length < 4;
+    const needCode = fbBuild && Sync.mode === 'firebase' && code.length < 4;
     const blocked = Sync.mode === 'blocked' || Sync.mode === 'connecting' || Sync.mode === 'noconfig' || needCode;
     document.querySelectorAll('[data-role]').forEach((b) => { b.disabled = blocked; b.style.opacity = blocked ? '.4' : ''; });
     const single = () => { store.set('bandai-force-offline', '1', 'session'); Sync.goOffline(); Sync.emit(); };
@@ -1635,7 +1636,8 @@ function chooser() {
       return;
     }
     n.className = 'mode-note';
-    if (Sync.mode === 'firebase') n.innerHTML = needCode ? '<b>ใส่รหัสห้องก่อน</b> เครื่องแรกกดสร้างรหัสใหม่ แล้วพิมพ์รหัสเดียวกันที่อีกเครื่อง' : `<b>โหมดออนไลน์</b> ห้อง ${esc(code)} เปิดลิงก์นี้อีกเครื่อง ใส่รหัสเดียวกัน แล้วเลือกบทบาทที่เหลือ ไม่ต้องล็อกอินอะไร`;
+    if (Sync.mode === 'firebase' && !fbBuild) n.innerHTML = '<b>โหมดออนไลน์</b> เปิดลิงก์นี้อีกเครื่อง แล้วเลือกบทบาทที่เหลือ ไม่ต้องล็อกอินอะไร';
+    else if (Sync.mode === 'firebase') n.innerHTML = needCode ? '<b>ใส่รหัสห้องก่อน</b> เครื่องแรกกดสร้างรหัสใหม่ แล้วพิมพ์รหัสเดียวกันที่อีกเครื่อง' : `<b>โหมดออนไลน์</b> ห้อง ${esc(code)} เปิดลิงก์นี้อีกเครื่อง ใส่รหัสเดียวกัน แล้วเลือกบทบาทที่เหลือ ไม่ต้องล็อกอินอะไร`;
     else if (Sync.mode === 'online') n.innerHTML = '<b>โหมดออนไลน์</b> เปิดลิงก์นี้อีกเครื่อง แล้วเลือกบทบาทที่เหลือ ทั้งสองเครื่องต้องต่อเน็ตและล็อกอิน Claude';
     else if (Sync.mode === 'offline') n.innerHTML = '<b>โหมดออฟไลน์</b> ใช้เครื่องเดียว เปิดหน้านี้อีกหน้าต่างในเบราว์เซอร์เดียวกัน แล้วลากหน้าต่างจอโชว์ไปไว้บนโปรเจกเตอร์';
   };
@@ -1650,8 +1652,9 @@ async function start(role) {
   await Sync.ready;
   if (Sync.mode === 'blocked' || Sync.mode === 'noconfig' || Sync.mode === 'connecting') { store.del('bandai-role', 'session'); chooser(); return; }
   if (Sync.mode === 'firebase') {
-    const code = cleanRoom(store.get('bandai-room'));
+    const code = FIXED_ROOM() || cleanRoom(store.get('bandai-room'));
     if (code.length < 4) { store.del('bandai-role', 'session'); chooser(); return; }
+    Sync.fixedRoom = !!FIXED_ROOM();
     Sync.roomCode = code;
   }
   store.set('bandai-role', role, 'session');
