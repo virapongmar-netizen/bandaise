@@ -59,36 +59,37 @@ button { font-family: inherit; }
 .piece svg { display: block; filter: drop-shadow(3px 0 0 var(--bone)) drop-shadow(-3px 0 0 var(--bone)) drop-shadow(0 3px 0 var(--bone)) drop-shadow(0 -3px 0 var(--bone)) drop-shadow(0 6px 0 rgba(0,0,0,.6)); }
 .piece .no { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); font-family: var(--f-px); font-size: 16px; padding: 5px 6px 4px; border: 3px solid var(--void); color: var(--void); line-height: 1; }
 
-.side { position: absolute; left: 1196px; top: 60px; width: 676px; height: 960px; display: flex; flex-direction: column; gap: 22px; }
+.side { position: absolute; left: 1196px; top: 48px; width: 676px; height: 984px; display: flex; flex-direction: column; gap: 18px; }
 .brand { display: grid; gap: 6px; }
 .brand .eyebrow { font-size: 15px; }
-.brand h2 { margin: 0; font-size: 70px; line-height: 1.08; font-weight: 700; }
+.brand h2 { margin: 0; font-size: 58px; line-height: 1.08; font-weight: 700; }
 .brand h2 span { color: var(--ember); display: block; }
-.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.tcard { position: relative; background: var(--panel); border: 5px solid var(--rust); padding: 14px 16px 14px 122px; height: 166px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
-.tcard .avatar { position: absolute; left: 18px; top: 28px; width: 84px; height: 98px; }
+.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tcard { position: relative; background: var(--panel); border: 5px solid var(--rust); padding: 10px 14px 10px 100px; height: 120px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+.tcard .avatar { position: absolute; left: 14px; top: 13px; width: 72px; height: 84px; }
 .tcard .avatar svg { filter: drop-shadow(3px 0 0 var(--bone)) drop-shadow(-3px 0 0 var(--bone)) drop-shadow(0 3px 0 var(--bone)) drop-shadow(0 -3px 0 var(--bone)); }
-.tcard .nm { font-size: 36px; font-weight: 600; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tcard .sq { font-family: var(--f-px); font-size: 24px; color: var(--gold); line-height: 1.4; }
-.tcard .sq small { font-family: var(--f-th); font-size: 28px; color: var(--cream); margin-right: 8px; }
+.tcard .nm { font-size: 32px; font-weight: 600; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tcard .sq { font-family: var(--f-px); font-size: 22px; color: var(--gold); line-height: 1.4; display: flex; align-items: center; gap: 6px; }
+.tcard .sq small { font-family: var(--f-th); font-size: 24px; color: var(--cream); margin-right: 2px; }
+.stopbadge { font-family: var(--f-th); font-size: 20px; font-weight: 700; background: #5DB8F0; color: var(--void); padding: 0 8px; margin-left: 10px; line-height: 1.5; }
 .tcard.turn { border-color: var(--ember); background: #2a1a0b; animation: blink 0.9s steps(2) infinite; }
-.tcard.turn::after { content: "ถึงตา"; position: absolute; right: -5px; top: -5px; background: var(--ember); color: var(--void); font-size: 20px; font-weight: 700; padding: 2px 12px; }
+.tcard.turn::after { content: "ถึงตา"; position: absolute; right: -5px; top: -5px; background: var(--ember); color: var(--void); font-size: 18px; font-weight: 700; padding: 0 10px; }
 .tcard.dim { opacity: .35; }
 @keyframes blink { 50% { border-color: var(--gold); } }
-.statusbox { margin-top: auto; background: var(--panel); border: 5px solid var(--ember); box-shadow: 8px 8px 0 var(--rust); display: grid; grid-template-columns: 170px 1fr; gap: 24px; align-items: center; padding: 22px; height: 262px; box-sizing: border-box; }
-.dice { width: 170px; height: 170px; position: relative; }
+.statusbox { margin-top: auto; background: var(--panel); border: 5px solid var(--ember); box-shadow: 8px 8px 0 var(--rust); display: grid; grid-template-columns: 150px 1fr; gap: 22px; align-items: center; padding: 18px 22px; height: 220px; box-sizing: border-box; }
+.dice { width: 150px; height: 150px; position: relative; }
 .dice svg { width: 100%; height: 100%; display: block; }
 .dice.spin { animation: spin .22s steps(4) infinite; }
 @keyframes spin { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(14deg) translateY(-14px); } 50% { transform: rotate(0) translateY(0); } 75% { transform: rotate(-14deg) translateY(-8px); } }
 .dice.land { animation: land .35s steps(5); }
 @keyframes land { 0% { transform: scale(1.25); } 100% { transform: scale(1); } }
 .status-txt { display: grid; gap: 8px; min-width: 0; }
-.status-txt .big { font-size: 50px; font-weight: 700; line-height: 1.15; color: var(--bone); }
+.status-txt .big { font-size: 44px; font-weight: 700; line-height: 1.15; color: var(--bone); }
 .status-txt .big .tn { color: var(--ember); }
-.status-txt .sub { font-size: 34px; color: var(--cream); line-height: 1.3; }
-.legend { display: flex; gap: 26px; font-size: 30px; color: var(--cream); }
-.legend span { display: flex; align-items: center; gap: 10px; }
-.legend i { width: 30px; height: 30px; display: inline-block; box-sizing: border-box; }
+.status-txt .sub { font-size: 30px; color: var(--cream); line-height: 1.3; }
+.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 24px; color: var(--cream); }
+.legend span { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.legend i { width: 26px; height: 26px; display: inline-block; box-sizing: border-box; flex: none; }
 
 .toast { position: absolute; left: 600px; top: 540px; transform: translate(-50%, -50%) scale(.6); background: var(--ember); color: var(--void); font-size: 56px; font-weight: 700; padding: 18px 44px; border: 6px solid var(--void); box-shadow: 10px 10px 0 var(--rust); opacity: 0; transition: opacity .15s, transform .25s steps(4); white-space: nowrap; z-index: 20; }
 .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -137,7 +138,10 @@ button { font-family: inherit; }
 .order-box h3 { margin: 0; font-size: 60px; text-align: center; }
 .order-box .sub { text-align: center; font-size: 34px; color: var(--cream); margin-top: -12px; }
 .order-list { display: grid; gap: 14px; }
-.order-row { display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 24px; background: var(--panel); border: 5px solid var(--rust); padding: 10px 22px; height: 104px; box-sizing: border-box; }
+.order-row { display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 24px; background: var(--panel); border: 5px solid var(--rust); padding: 6px 22px; height: 96px; box-sizing: border-box; animation: rowin .4s steps(4) both; }
+.order-row:nth-child(2) { animation-delay: .12s; } .order-row:nth-child(3) { animation-delay: .24s; } .order-row:nth-child(4) { animation-delay: .36s; } .order-row:nth-child(5) { animation-delay: .48s; }
+@keyframes rowin { from { opacity: 0; transform: translateX(-60px); } }
+.order-row .av svg { display: block; }
 .order-row.next { border-color: var(--ember); }
 .order-row .rank { font-family: var(--f-px); font-size: 30px; color: var(--gold); }
 .order-row .nm { font-size: 40px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -168,6 +172,52 @@ button { font-family: inherit; }
 .fshint { position: fixed; left: 50%; top: calc(16px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); background: var(--ember); color: var(--void); font-size: 18px; font-weight: 600; padding: 12px 18px; border: 3px solid var(--void); z-index: 60; max-width: calc(100% - 32px); box-sizing: border-box; text-align: center; }
 .netnote { position: fixed; left: max(14px, env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); cursor: default; z-index: 50; }
 .screen-wrap.nocursor { cursor: none; }
+
+/* ---------- เอฟเฟกต์แกล้งกัน ---------- */
+.fxlayer { position: absolute; inset: 0; pointer-events: none; z-index: 12; }
+.flash { position: absolute; inset: 0; pointer-events: none; z-index: 11; opacity: 0; }
+.flash.red { background: radial-gradient(circle at 600px 540px, rgba(193,51,29,0) 30%, rgba(193,51,29,.75) 100%); }
+.flash.green { background: radial-gradient(circle at 600px 540px, rgba(109,145,46,0) 30%, rgba(109,145,46,.7) 100%); }
+.flash.white { background: #F6F5F1; }
+.flash.ice { background: radial-gradient(circle at 600px 540px, rgba(93,184,240,0) 30%, rgba(93,184,240,.7) 100%); }
+.flash.on { animation: flashout .7s steps(5) forwards; }
+@keyframes flashout { 0% { opacity: 1; } 100% { opacity: 0; } }
+.quake { animation: quake .6s steps(8); }
+@keyframes quake { 0% { translate: 0 0; } 15% { translate: -18px 8px; } 30% { translate: 16px -10px; } 45% { translate: -12px 6px; } 60% { translate: 10px -4px; } 75% { translate: -6px 4px; } 100% { translate: 0 0; } }
+.piece.hurt > div { animation: shake .12s steps(2) 5; }
+.piece.hurt svg, .piece.reverse svg { filter: drop-shadow(4px 0 0 #ff3b1f) drop-shadow(-4px 0 0 #ff3b1f) drop-shadow(0 4px 0 #ff3b1f) drop-shadow(0 -4px 0 #ff3b1f); }
+.piece.hurt .no { animation: blink2 .2s steps(2) infinite; }
+@keyframes shake { 0% { transform: translateX(-9px) rotate(-6deg); } 100% { transform: translateX(9px) rotate(6deg); } }
+.piece.glow svg { filter: drop-shadow(4px 0 0 #F5D96B) drop-shadow(-4px 0 0 #F5D96B) drop-shadow(0 4px 0 #F5D96B) drop-shadow(0 -4px 0 #F5D96B); }
+.piece.frozen svg { filter: drop-shadow(3px 0 0 #5DB8F0) drop-shadow(-3px 0 0 #5DB8F0) drop-shadow(0 3px 0 #5DB8F0) drop-shadow(0 -3px 0 #5DB8F0) saturate(.3) brightness(1.2); }
+.piece.frozen::after { content: "ZZ"; position: absolute; right: -14px; top: 10px; font-family: var(--f-px); font-size: 16px; color: #5DB8F0; animation: blink2 1s steps(2) infinite; }
+.floattxt { position: absolute; transform: translate(-50%, 0); font-family: var(--f-px); font-size: 40px; color: var(--gold); text-shadow: 4px 4px 0 var(--void), -3px -3px 0 var(--void); animation: floatup 1.5s steps(10) forwards; white-space: nowrap; }
+.floattxt.bad { color: #ff5a3c; font-size: 56px; }
+.floattxt.ice { color: #5DB8F0; font-family: var(--f-th); font-weight: 700; font-size: 46px; }
+@keyframes floatup { 0% { opacity: 0; translate: 0 30px; } 15% { opacity: 1; translate: 0 0; } 80% { opacity: 1; } 100% { opacity: 0; translate: 0 -70px; } }
+.bitesnake { position: absolute; width: 140px; height: 140px; margin: -150px 0 0 -70px; animation: snakepop 1.1s steps(6) forwards; }
+@keyframes snakepop { 0% { transform: translateY(120px) scale(.3); opacity: 0; } 30% { transform: translateY(0) scale(1.15); opacity: 1; } 45% { transform: translateY(50px) scale(1); } 60% { transform: translateY(0) scale(1.2); } 85% { opacity: 1; } 100% { transform: translateY(20px) scale(1); opacity: 0; } }
+.boom { position: absolute; width: 0; height: 0; }
+.boom::before { content: ""; position: absolute; left: -40px; top: -40px; width: 80px; height: 80px; background: #F5D96B; box-shadow: 0 0 0 16px #EA8B25, 0 0 0 32px #C1331D; animation: boomcore .9s steps(6) forwards; }
+.boom i { position: absolute; left: -12px; top: -12px; width: 24px; height: 24px; background: #EA8B25; transform: rotate(var(--a)) translateY(0); animation: debris .9s steps(8) forwards; }
+.boom i:nth-child(3n) { background: #F5D96B; } .boom i:nth-child(3n+1) { background: #C1331D; }
+@keyframes boomcore { 0% { transform: scale(.2); } 40% { transform: scale(3.2); opacity: 1; } 100% { transform: scale(4.2); opacity: 0; } }
+@keyframes debris { 0% { transform: rotate(var(--a)) translateY(0); opacity: 1; } 100% { transform: rotate(var(--a)) translateY(calc(var(--d) * -1)); opacity: 0; } }
+/* ---------- วงล้อลงโทษ ---------- */
+.wheel-box { display: grid; justify-items: center; gap: 14px; }
+.wheel-title { display: flex; align-items: center; gap: 16px; font-size: 48px; font-weight: 700; color: var(--bone); }
+.wheel-title .av svg { display: block; filter: drop-shadow(3px 0 0 var(--bone)) drop-shadow(-3px 0 0 var(--bone)) drop-shadow(0 3px 0 var(--bone)) drop-shadow(0 -3px 0 var(--bone)); }
+.wheel-svg .bulb { fill: #F5D96B; animation: bulbs .5s steps(2) infinite; }
+.wheel-svg .bulb.b2 { animation-delay: .25s; }
+@keyframes bulbs { 50% { fill: #853F1A; } }
+.wheel-svg path.win { animation: segwin .3s steps(2) infinite; }
+@keyframes segwin { 50% { fill: #F6F5F1; } }
+.wheel-res { min-height: 84px; font-size: 60px; font-weight: 700; padding: 4px 40px; border: 6px solid var(--void); box-shadow: 8px 8px 0 var(--rust); display: grid; justify-items: center; line-height: 1.2; visibility: hidden; }
+.wheel-res.bad, .wheel-res.good { visibility: visible; animation: land .35s steps(5); }
+.wheel-res.bad { background: var(--poppy); color: var(--bone); }
+.wheel-res.good { background: var(--olive); color: var(--bone); }
+.wheel-res small { font-size: 30px; font-weight: 600; }
+.unlock { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 70; background: var(--gold); color: var(--void); font-size: 20px; font-weight: 700; padding: 12px 22px; border: 3px solid var(--void); cursor: pointer; animation: blink2 1.2s steps(2) infinite; }
 
 /* ---------- จอควบคุม ---------- */
 .ctl { max-width: 1080px; margin: 0 auto; padding-block: 18px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 18px; }
@@ -228,6 +278,13 @@ button { font-family: inherit; }
 .seg button { font-size: 18px; padding: 10px 18px; background: var(--void); color: var(--bone); border: 3px solid var(--rust); cursor: pointer; }
 .seg button.on { background: var(--ember); color: var(--void); border-color: var(--ember); font-weight: 700; }
 .names { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.ordbtns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.ordbtn { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; padding: 10px 14px; background: var(--void); color: var(--bone); border: 3px solid var(--rust); cursor: pointer; }
+.ordbtn .sw { width: 18px; height: 18px; border: 2px solid var(--bone); box-sizing: border-box; }
+.ordbtn b { font-family: var(--f-px); font-size: 14px; background: var(--ember); color: var(--void); padding: 4px 6px; }
+.ordbtn.on { border-color: var(--ember); background: #2a1a0b; }
+.lastnote { background: #2a1a0b; border-left: 4px solid var(--ember); padding: 8px 12px; }
+.chip .stopbadge { font-size: 13px; margin-left: 4px; padding: 0 5px; }
 .help { border: 3px dashed var(--rust); padding: 16px; display: grid; gap: 14px; }
 .help h2 { margin: 0; font-size: 17px; color: var(--cream); font-weight: 600; }
 .help-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -246,21 +303,32 @@ button { font-family: inherit; }
 </style>
 <div id="app"></div>
 <script>
-const CARDS = {"q": [{"q": "เป้าหมายหลักของธุรกิจเพื่อสังคม (SE) คืออะไร", "o": ["ทำกำไรให้ผู้ถือหุ้นมากที่สุด", "แก้ปัญหาสังคมหรือสิ่งแวดล้อม และมีรายได้เลี้ยงตัวเองได้", "รับเงินบริจาคอย่างเดียว", "ทำงานแทนหน่วยงานรัฐ"], "a": 1, "w": "SE ใช้วิธีทำธุรกิจเพื่อแก้ปัญหาสังคม และหารายได้เองเพื่อให้อยู่ได้ยาว"}, {"q": "สาขาวิชาธุรกิจเพื่อสังคม มศว อยู่ในคณะอะไร", "o": ["คณะเศรษฐศาสตร์", "คณะสังคมศาสตร์", "คณะบริหารธุรกิจเพื่อสังคม", "คณะมนุษยศาสตร์"], "a": 2, "w": "สาขา SE อยู่ในคณะบริหารธุรกิจเพื่อสังคม มศว"}, {"q": "SE ต่างจากมูลนิธิทั่วไปตรงไหนมากที่สุด", "o": ["SE ไม่สนใจเรื่องสังคม", "SE หารายได้จากการขายสินค้าหรือบริการ ไม่พึ่งเงินบริจาคเป็นหลัก", "มูลนิธิต้องจ่ายภาษีมากกว่า", "ไม่ต่างกันเลย"], "a": 1, "w": "มูลนิธิส่วนใหญ่อยู่ได้ด้วยเงินบริจาค ส่วน SE หารายได้เองจากสินค้าหรือบริการ"}, {"q": "แนวคิด Triple Bottom Line วัดความสำเร็จของธุรกิจ 3 ด้าน คือด้านใด", "o": ["คน โลก กำไร (People, Planet, Profit)", "ราคา สินค้า โปรโมชัน", "เงิน เวลา แรงงาน", "ลูกค้า คู่แข่ง พนักงาน"], "a": 0, "w": "ธุรกิจที่ดีต้องดูแลทั้งผู้คน สิ่งแวดล้อม และผลกำไรไปพร้อมกัน"}, {"q": "เป้าหมายการพัฒนาที่ยั่งยืน (SDGs) ของสหประชาชาติ มีทั้งหมดกี่ข้อ", "o": ["10 ข้อ", "12 ข้อ", "17 ข้อ", "20 ข้อ"], "a": 2, "w": "SDGs มี 17 เป้าหมาย เช่น ขจัดความยากจน การศึกษาที่มีคุณภาพ"}, {"q": "SDGs ตั้งเป้าให้สำเร็จภายในปี ค.ศ. ใด", "o": ["ค.ศ. 2025", "ค.ศ. 2030", "ค.ศ. 2040", "ค.ศ. 2050"], "a": 1, "w": "SDGs เริ่มปี ค.ศ. 2015 และตั้งเป้าไว้ที่ปี ค.ศ. 2030"}, {"q": "ผู้ก่อตั้งธนาคารกรามีน ที่ปล่อยกู้รายย่อยให้คนจนจนได้รางวัลโนเบลสาขาสันติภาพ คือใคร", "o": ["บิล เกตส์", "มูฮัมหมัด ยูนุส", "อีลอน มัสก์", "แจ็ค หม่า"], "a": 1, "w": "มูฮัมหมัด ยูนุส ได้รับรางวัลโนเบลสาขาสันติภาพร่วมกับธนาคารกรามีน"}, {"q": "โครงการพัฒนาดอยตุงฯ ช่วยให้ชาวบ้านเลิกปลูกพืชเสพติด แล้วหันมาทำอาชีพอะไรแทน", "o": ["ปลูกกาแฟ แมคคาเดเมีย และทำงานหัตถกรรม", "ทำเหมืองแร่", "เลี้ยงวัวนม", "ตัดไม้ขาย"], "a": 0, "w": "ดอยตุงเปลี่ยนพื้นที่ปลูกฝิ่นเป็นกาแฟ แมคคาเดเมีย งานผ้าทอ และการท่องเที่ยว"}, {"q": "ข้อใดเป็นตัวอย่างของการค้าที่เป็นธรรม (Fair Trade)", "o": ["กดราคาซื้อจากเกษตรกรให้ต่ำที่สุด", "รับซื้อผลผลิตในราคาที่เป็นธรรม และจ่ายเงินตรงเวลา", "ลดราคาสินค้าทั้งปี", "นำเข้าสินค้าราคาถูกจากต่างประเทศ"], "a": 1, "w": "Fair Trade ให้ผู้ผลิตรายเล็กได้ราคาที่เป็นธรรมและมีรายได้มั่นคง"}, {"q": "เศรษฐกิจหมุนเวียน (Circular Economy) เน้นเรื่องอะไร", "o": ["ผลิตให้มาก ใช้แล้วทิ้ง", "ใช้ทรัพยากรให้คุ้มที่สุด นำกลับมาใช้ซ้ำ และลดขยะ", "ขึ้นราคาสินค้าทุกปี", "ส่งออกให้มากที่สุด"], "a": 1, "w": "ของที่ใช้แล้วถูกนำกลับเข้าระบบอีกครั้ง แทนที่จะกลายเป็นขยะ"}, {"q": "Business Model Canvas มีทั้งหมดกี่ช่อง", "o": ["6 ช่อง", "8 ช่อง", "9 ช่อง", "12 ช่อง"], "a": 2, "w": "BMC มี 9 ช่อง เช่น กลุ่มลูกค้า คุณค่าที่ส่งมอบ ช่องทาง โครงสร้างต้นทุน"}, {"q": "ก่อนเริ่มทำ SE สิ่งแรกที่ควรเข้าใจให้ลึกที่สุดคืออะไร", "o": ["โลโก้ของแบรนด์", "ปัญหา และกลุ่มคนที่ได้รับผลกระทบ", "ราคาหุ้น", "ออฟฟิศที่สวยงาม"], "a": 1, "w": "ถ้าเข้าใจปัญหาไม่ลึก ทางแก้ที่คิดมาก็อาจไม่ตรงกับที่คนต้องการจริง"}, {"q": "CSR ที่บริษัทใหญ่ทำ ต่างจาก SE อย่างไร", "o": ["CSR เป็นกิจกรรมเสริมของบริษัท ส่วน SE ตั้งขึ้นมาเพื่อแก้ปัญหาสังคมตั้งแต่แรก", "เหมือนกันทุกอย่าง", "CSR ทำได้เฉพาะหน่วยงานรัฐ", "SE ห้ามมีกำไร"], "a": 0, "w": "สำหรับ SE การแก้ปัญหาสังคมคือหัวใจของธุรกิจ ไม่ใช่กิจกรรมเสริม"}, {"q": "การท่องเที่ยวแบบไหนที่ชุมชนเป็นเจ้าของและได้รายได้โดยตรง", "o": ["การท่องเที่ยวโดยชุมชน", "ทัวร์ช้อปปิ้งในห้าง", "ล่องเรือสำราญ", "ทัวร์ศูนย์เหรียญ"], "a": 0, "w": "ชุมชนเป็นคนออกแบบและจัดการเอง รายได้จึงกลับไปที่คนในพื้นที่"}, {"q": "SE มีกำไรได้หรือไม่", "o": ["ไม่ได้เลย", "ได้ แต่นำกำไรส่วนใหญ่กลับไปแก้ปัญหาสังคมหรือพัฒนากิจการ", "ได้ และต้องแบ่งให้เจ้าของทั้งหมด", "ได้เฉพาะปีแรก"], "a": 1, "w": "SE มีกำไรได้ แต่กำไรส่วนใหญ่ต้องย้อนกลับไปสร้างผลดีต่อสังคม"}, {"q": "ประเทศไทยออกกฎหมายส่งเสริมวิสาหกิจเพื่อสังคมในปีใด", "o": ["พ.ศ. 2550", "พ.ศ. 2555", "พ.ศ. 2562", "พ.ศ. 2567"], "a": 2, "w": "พระราชบัญญัติส่งเสริมวิสาหกิจเพื่อสังคม พ.ศ. 2562"}], "shoot": [{"q": "มูฮัมหมัด ยูนุส ได้รับรางวัลโนเบลสาขาสันติภาพในปี ค.ศ. ใด", "o": ["ค.ศ. 1996", "ค.ศ. 2001", "ค.ศ. 2006", "ค.ศ. 2016"], "a": 2, "w": "ได้รับรางวัลปี ค.ศ. 2006 ร่วมกับธนาคารกรามีน"}, {"q": "ธนาคารกรามีนตั้งอยู่ในประเทศใด", "o": ["อินเดีย", "บังกลาเทศ", "เนปาล", "ปากีสถาน"], "a": 1, "w": "ธนาคารกรามีนเริ่มต้นที่บังกลาเทศ"}, {"q": "ใครเป็นคนคิดคำว่า Triple Bottom Line", "o": ["จอห์น เอลคิงตัน", "ฟิลิป คอตเลอร์", "ปีเตอร์ ดรักเกอร์", "สตีฟ จ็อบส์"], "a": 0, "w": "จอห์น เอลคิงตัน เสนอแนวคิดนี้ในปี ค.ศ. 1994"}, {"q": "SDGs ข้อที่ 1 คือเรื่องอะไร", "o": ["ขจัดความยากจน", "ความเท่าเทียมทางเพศ", "พลังงานสะอาด", "น้ำสะอาดและสุขาภิบาล"], "a": 0, "w": "SDG 1 คือ No Poverty ขจัดความยากจนทุกรูปแบบ"}, {"q": "SDGs ข้อที่ 13 คือเรื่องอะไร", "o": ["การศึกษาที่มีคุณภาพ", "การรับมือการเปลี่ยนแปลงสภาพภูมิอากาศ", "ทรัพยากรทางทะเล", "สันติภาพและความยุติธรรม"], "a": 1, "w": "SDG 13 คือ Climate Action"}, {"q": "ใน Business Model Canvas ช่อง Value Proposition หมายถึงอะไร", "o": ["ต้นทุนของธุรกิจ", "คุณค่าที่ธุรกิจส่งมอบให้ลูกค้า", "ช่องทางการขาย", "พาร์ทเนอร์หลัก"], "a": 1, "w": "คือเหตุผลที่ลูกค้าเลือกเรา แทนที่จะเลือกเจ้าอื่น"}, {"q": "โครงการพัฒนาดอยตุงฯ อยู่ในจังหวัดอะไร", "o": ["เชียงใหม่", "เชียงราย", "น่าน", "แม่ฮ่องสอน"], "a": 1, "w": "ดอยตุงอยู่ที่อำเภอแม่ฟ้าหลวง จังหวัดเชียงราย"}, {"q": "SROI ที่ใช้วัดผลกระทบทางสังคม ย่อมาจากอะไร", "o": ["Social Return on Investment", "Sales Return on Income", "Social Risk of Investment", "Service Rate of Interest"], "a": 0, "w": "ใช้วัดว่าเงินที่ลงไป 1 บาท สร้างคุณค่าต่อสังคมกลับมาเท่าไร"}]};
+const CARDS = {"q": [{"q": "ข้อไหนเป็นธุรกิจเพื่อสังคม (SE)", "o": ["Trash Lucky", "Grab", "7-Eleven", "Shopee"], "a": 0, "w": "Trash Lucky ชวนคนแยกขยะรีไซเคิลแลกแต้มลุ้นรางวัล แก้ปัญหาขยะด้วยโมเดลธุรกิจ"}, {"q": "อยากเที่ยวชุมชนที่ชาวบ้านออกแบบทริปและนำเที่ยวเอง ควรจองกับใคร", "o": ["Traveloka", "Local Alike", "Agoda", "Booking.com"], "a": 1, "w": "Local Alike ทำทัวร์ร่วมกับชุมชน รายได้ตกถึงคนในพื้นที่โดยตรง"}, {"q": "Trash Lucky ทำให้คนอยากแยกขยะด้วยวิธีไหน", "o": ["แจกถุงขยะฟรีทุกบ้าน", "ปรับเงินคนที่ไม่แยกขยะ", "แยกขยะแลกแต้ม แล้วเอาแต้มไปลุ้นรางวัล", "ขอให้รัฐออกกฎหมายบังคับ"], "a": 2, "w": "ยิ่งส่งขยะรีไซเคิลมาก ยิ่งได้แต้มไปลุ้นรางวัลมาก ทำให้การแยกขยะสนุกขึ้น"}, {"q": "ข้อไหน \"ไม่ใช่\" ธุรกิจเพื่อสังคม", "o": ["แบรนด์ที่เอาผ้าเหลือจากโรงงานมาทำสินค้าใหม่", "บริษัทใหญ่พาพนักงานไปปลูกป่าปีละครั้ง", "ร้านกาแฟที่รับซื้อกาแฟชาวเขาในราคาเป็นธรรม", "แพลตฟอร์มทัวร์ที่รายได้เข้าชุมชน"], "a": 1, "w": "ปลูกป่าปีละครั้งคือ CSR เป็นกิจกรรมเสริม ส่วน SE ตั้งธุรกิจขึ้นมาเพื่อแก้ปัญหาตั้งแต่แรก"}, {"q": "Moreloop แก้ปัญหาอะไร", "o": ["ผ้าเหลือจากโรงงานที่จะกลายเป็นขยะ", "อาหารเหลือทิ้งในร้าน", "น้ำเสียจากโรงงาน", "ขยะพลาสติกในทะเล"], "a": 0, "w": "Moreloop เอาผ้าค้างสต็อกจากโรงงานมาขายต่อและทำเป็นสินค้าใหม่ แทนที่จะไปจบที่กองขยะ"}, {"q": "LOCOL เอาเศษโกโก้ที่เหลือทิ้ง ไปทำเป็นอะไร", "o": ["เชื้อเพลิงรถยนต์", "อาหารเสริมวัว ช่วยลดก๊าซมีเทน", "ปุ๋ยสำหรับนาข้าว", "ช็อกโกแลตราคาถูก"], "a": 1, "w": "LOCOL ทำก้อนอาหารเสริมให้วัวจากเศษโกโก้ ช่วยลดก๊าซมีเทนที่ทำให้โลกร้อน"}, {"q": "ซื้อห้องพักหรือมื้ออาหารผ่าน Socialgiver แล้วเงินส่วนใหญ่ไปไหน", "o": ["เข้าโรงแรมทั้งหมด", "เก็บเป็นแต้มสะสม", "จ่ายภาษีให้รัฐ", "ไปช่วยโครงการเพื่อสังคมที่เราเลือก"], "a": 3, "w": "เงินราว 70% ไปสนับสนุนโครงการเพื่อสังคมที่ผู้ซื้อเลือกเอง"}, {"q": "กาแฟ อาข่า อ่ามา ช่วยชุมชนชาวอาข่าอย่างไร", "o": ["ย้ายชาวบ้านเข้ามาทำงานในเมือง", "เปลี่ยนไปปลูกยางพาราแทน", "แจกเงินให้ชาวบ้านทุกเดือน", "สร้างแบรนด์ขายกาแฟที่ชุมชนปลูก ไม่ต้องโดนคนกลางกดราคา"], "a": 3, "w": "พอมีแบรนด์ของตัวเอง ชาวบ้านขายกาแฟได้ราคาดีขึ้น ไม่ต้องพึ่งพ่อค้าคนกลาง"}, {"q": "แอป Too Good To Go แก้ปัญหาอะไร", "o": ["ขยะอิเล็กทรอนิกส์", "คนว่างงาน", "อาหารเหลือทิ้งจากร้าน โดยขายถูกก่อนร้านปิด", "รถติด"], "a": 2, "w": "ร้านเอาอาหารที่ขายไม่หมดมาขายลดราคา คนได้ของถูก ขยะอาหารก็ลดลง"}, {"q": "รองเท้า TOMS โด่งดังจากโมเดลอะไร", "o": ["ซื้อ 1 คู่ บริจาค 1 คู่ให้เด็กที่ไม่มีรองเท้า", "ผ่อน 0% 10 เดือน", "ซื้อ 1 แถม 1", "เช่ารองเท้าแทนการซื้อ"], "a": 0, "w": "TOMS ใช้โมเดล One for One ทุกคู่ที่ขายได้ จะบริจาคอีกคู่ให้เด็ก"}, {"q": "ร้านอาหารที่ตั้งใจจ้างผู้พิการเป็นพนักงาน กำลังแก้ปัญหาอะไร", "o": ["ผู้พิการหางานทำยาก", "ร้านขาดลูกค้า", "อาหารราคาแพง", "ภาษีร้านอาหารสูง"], "a": 0, "w": "SE หลายแห่งใช้การจ้างงานเป็นทางแก้ ให้คนที่เข้าถึงงานยากมีรายได้ของตัวเอง"}, {"q": "ธนาคารกรามีนช่วยคนจนด้วยวิธีไหน", "o": ["ให้ดอกเบี้ยเงินฝากสูงมาก", "ให้กู้เงินก้อนเล็กโดยไม่ต้องมีหลักทรัพย์ค้ำ", "แจกเงินฟรี", "สร้างบ้านให้ฟรี"], "a": 1, "w": "สินเชื่อรายย่อยทำให้คนจนมีทุนเริ่มอาชีพ ทั้งที่ธนาคารทั่วไปไม่ยอมปล่อยกู้"}, {"q": "การฟอกเขียว (Greenwashing) คืออะไร", "o": ["ปลูกต้นไม้ในเมือง", "ล้างผักให้สะอาด", "รีไซเคิลขวดพลาสติก", "ทำให้แบรนด์ดูรักษ์โลกเกินจริง ทั้งที่ทำจริงน้อย"], "a": 3, "w": "บางแบรนด์โฆษณาว่ารักษ์โลก แต่ทำจริงนิดเดียว ผู้บริโภคต้องดูให้ออก"}, {"q": "ข้อไหนอธิบาย SE ได้ถูกที่สุด", "o": ["อยู่ได้ด้วยเงินบริจาคอย่างเดียว", "เป็นหน่วยงานของรัฐ", "ทำกำไรสูงสุด แล้วบริจาคนิดหน่อย", "ใช้ธุรกิจแก้ปัญหาสังคม และหารายได้เลี้ยงตัวเองได้"], "a": 3, "w": "SE แก้ปัญหาสังคมและมีรายได้ของตัวเอง ไม่ต้องรอเงินบริจาค"}, {"q": "Triple Bottom Line วัดความสำเร็จของธุรกิจ 3 ด้าน คืออะไร", "o": ["ลูกค้า คู่แข่ง พนักงาน", "ราคา สินค้า โปรโมชัน", "คน โลก กำไร", "เงิน เวลา แรงงาน"], "a": 2, "w": "ธุรกิจที่ดีต้องดูแลผู้คน สิ่งแวดล้อม และผลกำไรไปพร้อมกัน"}, {"q": "ร้านขายข้าวออนไลน์ที่รับซื้อข้าวตรงจากชาวนา กำลังแก้ปัญหาอะไรเป็นหลัก", "o": ["ส่งของช้า", "ข้าวไม่อร่อย", "ชาวนาโดนพ่อค้าคนกลางกดราคา", "ข้าวราคาแพงเกินไป"], "a": 2, "w": "ตัดคนกลางออก ชาวนาได้ราคาดีขึ้น และคนซื้อรู้ว่าข้าวมาจากใคร"}], "shoot": [{"q": "ตามกฎหมาย SE ไทย ถ้าจะแบ่งกำไรให้ผู้ถือหุ้น ต้องเอากำไรไปใช้เพื่อสังคมอย่างน้อยกี่ %", "o": ["30%", "50%", "70%", "100%"], "a": 2, "w": "ต้องใช้กำไรไม่น้อยกว่า 70% เพื่อสังคม ปันผลได้ไม่เกิน 30%"}, {"q": "บริษัทจะได้ตรา B Corp ต้องได้คะแนนประเมินอย่างน้อยกี่คะแนน", "o": ["50", "80", "100", "150"], "a": 1, "w": "ต้องได้อย่างน้อย 80 คะแนน จากแบบประเมิน B Impact Assessment"}, {"q": "มูฮัมหมัด ยูนุส ผู้ก่อตั้งธนาคารกรามีน ได้รางวัลโนเบลสาขาอะไร", "o": ["เศรษฐศาสตร์", "วรรณกรรม", "การแพทย์", "สันติภาพ"], "a": 3, "w": "ได้รางวัลโนเบลสาขาสันติภาพ ปี ค.ศ. 2006 ร่วมกับธนาคารกรามีน"}, {"q": "หน่วยงานที่รับจดทะเบียนวิสาหกิจเพื่อสังคมในไทย ชื่อย่อว่าอะไร", "o": ["สสว.", "สสส.", "สวส.", "สกว."], "a": 2, "w": "สวส. คือสำนักงานส่งเสริมวิสาหกิจเพื่อสังคม ส่วน สสว. ดูแล SME"}, {"q": "ปี 2022 ผู้ก่อตั้ง Patagonia ทำอะไรกับบริษัท", "o": ["ยกบริษัทให้กองทุนและองค์กรที่เอากำไรไปสู้โลกร้อน", "เอาเข้าตลาดหุ้น", "ขายให้ Nike", "ปิดบริษัท"], "a": 0, "w": "เขาประกาศว่าตอนนี้โลกคือผู้ถือหุ้นคนเดียวของบริษัท"}, {"q": "ธนาคารกรามีนเริ่มต้นที่ประเทศไหน", "o": ["เนปาล", "อินเดีย", "บังกลาเทศ", "ปากีสถาน"], "a": 2, "w": "ธนาคารกรามีนเริ่มต้นที่บังกลาเทศ"}, {"q": "SROI ที่ใช้วัดผลกระทบทางสังคม ย่อมาจากอะไร", "o": ["Social Return on Investment", "Social Risk of Investment", "Service Rate of Interest", "Sales Return on Income"], "a": 0, "w": "ใช้วัดว่าเงินที่ลงไป 1 บาท สร้างคุณค่าต่อสังคมกลับมาเท่าไร"}, {"q": "SDGs ข้อที่ 13 คือเรื่องอะไร", "o": ["สันติภาพและความยุติธรรม", "รับมือการเปลี่ยนแปลงสภาพภูมิอากาศ", "การศึกษาที่มีคุณภาพ", "ทรัพยากรทางทะเล"], "a": 1, "w": "SDG 13 คือ Climate Action"}, {"q": "ข้อไหนเป็นตัวอย่างเศรษฐกิจหมุนเวียนชัดที่สุด", "o": ["ร้านเสื้อออกคอลเลกชันใหม่ทุกสัปดาห์", "เอาผ้าเหลือจากโรงงานมาทำสินค้าใหม่", "แจกหลอดพลาสติกฟรี", "ขายน้ำดื่มขวดเล็กลง"], "a": 1, "w": "ของที่จะเป็นขยะถูกพากลับเข้าระบบให้มีค่าอีกครั้ง"}, {"q": "โครงการพัฒนาดอยตุงฯ อยู่จังหวัดอะไร", "o": ["เชียงราย", "เชียงใหม่", "แม่ฮ่องสอน", "น่าน"], "a": 0, "w": "ดอยตุงอยู่ที่อำเภอแม่ฟ้าหลวง จังหวัดเชียงราย"}]};
 
 /* ---------- กติกาเกม: ฟังก์ชันบริสุทธิ์ รับสถานะ + คำสั่ง คืนสถานะใหม่ ---------- */
+const MAXT = 5;
 const BOARD = {
   N: 30,
   ladders: { 3: 15, 8: 20, 12: 24 },
   snakes: { 18: 6, 21: 9, 26: 14, 29: 19 },
   question: [2, 5, 10, 16, 22, 27],
   shoot: [7, 13, 25],
-  timerSec: 20,
-  qBack: 1,
-  shootBack: 3,
-  teamColors: ['#F6F5F1', '#C1331D', '#6D912E', '#F5D96B'],
-  defaultNames: ['ทีม 1', 'ทีม 2', 'ทีม 3', 'ทีม 4'],
+  swap: [11, 20],
+  bite: [4, 15],
+  bomb: [28],
+  timerSec: 15,
+  biteBack: 3,
+  bombBack: 2,
+  teamColors: ['#F6F5F1', '#C1331D', '#6D912E', '#F5D96B', '#5DB8F0'],
+  defaultNames: ['ทีม 1', 'ทีม 2', 'ทีม 3', 'ทีม 4', 'ทีม 5'],
 };
+
+/* วงล้อลงโทษ 8 ช่อง เรียงตามเข็มนาฬิกาจากด้านบน การ์ดยิงโหดกว่าการ์ดคำถาม */
+const WHEEL = {
+  q: [{ t: 'back', n: 1 }, { t: 'back', n: 2 }, { t: 'safe' }, { t: 'back', n: 3 }, { t: 'stop' }, { t: 'back', n: 1 }, { t: 'swapLast' }, { t: 'back', n: 2 }],
+  shoot: [{ t: 'back', n: 2 }, { t: 'back', n: 3 }, { t: 'stop' }, { t: 'back', n: 4 }, { t: 'safe' }, { t: 'back', n: 3 }, { t: 'swapLast' }, { t: 'back', n: 5 }],
+};
+const wheelLabel = (o) => o.t === 'back' ? 'ถอย ' + o.n : o.t === 'stop' ? 'หยุด 1 ตา' : o.t === 'safe' ? 'รอดตัว' : 'สลับกับทีมโหล่';
 
 function squareKind(n) {
   if (n === 1) return 'start';
@@ -269,24 +337,29 @@ function squareKind(n) {
   if (BOARD.snakes[n]) return 'snake';
   if (BOARD.question.includes(n)) return 'question';
   if (BOARD.shoot.includes(n)) return 'shoot';
+  if (BOARD.swap.includes(n)) return 'swap';
+  if (BOARD.bite.includes(n)) return 'bite';
+  if (BOARD.bomb.includes(n)) return 'bomb';
   return 'plain';
 }
 
+const zeros = () => Array(MAXT).fill(0);
 function initialState() {
   return {
     v: 0,
     phase: 'setup',
-    nTeams: 4,
+    nTeams: 5,
     names: BOARD.defaultNames.slice(),
-    pos: [0, 0, 0, 0],
-    orderKeys: [[], [], [], []],
-    orderPending: [],
+    pos: zeros(),
+    stop: zeros(),
     order: [],
     turn: 0,
     dice: null,          // {value, nonce, team}
     move: null,          // {nonce, team, segs:[...]}
+    fx: null,            // {nonce, list:[...]} เอฟเฟกต์ที่จอโชว์ต้องเล่นหลังเดินหมาก
     pendingCard: null,   // 'q' | 'shoot'
-    shooter: null,
+    prank: null,         // 'shoot' | 'swap' | 'bite' ตอนรอเลือกทีม
+    target: null,
     card: null,          // {kind, idx, no, answerer, shooter, result}
     timer: { state: 'idle', remaining: BOARD.timerSec, nonce: 0 },
     next: { q: 0, shoot: 0 },
@@ -297,29 +370,55 @@ function initialState() {
 }
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
+const isCurrentState = (s) => !!(s && Array.isArray(s.stop) && Array.isArray(s.pos) && s.pos.length === MAXT && 'prank' in s);
 
 function current(s) { return s.order[s.turn]; }
 
 // แต้มเต๋ามาจากลูกเต๋ายักษ์ของจริง สตาฟเป็นคนกดแต้มที่ทอยได้
 const dieValue = (v) => { v = v | 0; return v >= 1 && v <= 6 ? v : 0; };
 
-function compareKeys(a, b) {
-  // เรียงจากมากไปน้อยแบบไล่ทีละรอบทอย
-  for (let i = 0; i < Math.max(a.length, b.length); i++) {
-    const x = a[i] ?? -1, y = b[i] ?? -1;
-    if (x !== y) return y - x;
-  }
-  return 0;
-}
-
 function teamsInPlay(s) { return [...Array(s.nTeams).keys()]; }
 
+function fxPush(s, step) {
+  if (!s.fx || s.fx.nonce !== s.v) s.fx = { nonce: s.v, list: [] };
+  s.fx.list.push(step);
+}
+
+// ถอยหลัง n ช่อง ไม่ต่ำกว่าช่อง 1 คืนเส้นทางที่ถอย
+function pushBack(s, t, n) {
+  const from = s.pos[t];
+  if (from <= 1) return [];
+  const to = Math.max(1, from - n);
+  const path = [];
+  for (let i = from - 1; i >= to; i--) path.push(i);
+  s.pos[t] = to;
+  return path;
+}
+
+// ใครเล่นได้ในฐานะเป้าหมายของแต่ละช่องแกล้ง
+function validTargets(s, kind, me) {
+  return teamsInPlay(s).filter((t) => {
+    if (t === me) return false;
+    if (kind === 'swap') return s.pos[t] >= 1 && s.pos[t] !== s.pos[me];
+    if (kind === 'bite') return s.pos[t] > 1;
+    return true;
+  });
+}
+
 function advanceTurn(s) {
-  s.turn = (s.turn + 1) % s.order.length;
+  if (!s.stop) s.stop = zeros();
+  const len = s.order.length;
+  for (let i = 0; i < len; i++) {
+    s.turn = (s.turn + 1) % len;
+    const t = s.order[s.turn];
+    if (s.stop[t] > 0) { s.stop[t]--; fxPush(s, { k: 'skipped', team: t }); continue; }
+    break;
+  }
   s.phase = 'ready';
   s.card = null;
   s.pendingCard = null;
-  s.shooter = null;
+  s.prank = null;
+  s.target = null;
   s.timer = { state: 'idle', remaining: BOARD.timerSec, nonce: s.v };
 }
 
@@ -329,51 +428,43 @@ function leaderIndex(s) {
   return best;
 }
 
+// ทีมโหล่ที่ไม่ใช่ตัวเอง ถ้าเสมอกันเอาทีมที่มาก่อนในลำดับเล่น
+function lastPlace(s, me) {
+  let w = null;
+  for (const t of s.order) if (t !== me && (w === null || s.pos[t] < s.pos[w])) w = t;
+  return w;
+}
+
 /**
  * apply(state, action, rng, now) => new state
- * action.type: setup | rollOrder | startPlay | roll | pickTarget | openCard |
- *   timerStart | timerPause | timerResume | timerReset | judge | closeCard |
+ * action.type: setup | startPlay | roll | pickTarget | openCard |
+ *   timerStart | timerPause | timerResume | timerReset | judge | closeCard | spin |
  *   skip | moveTo | endNow | newRound | reset
  */
 function apply(prev, action, rng = Math.random) {
   const s = clone(prev);
   s.v = prev.v + 1;
   const nonce = s.v;
+  if (!s.stop) s.stop = zeros();
   switch (action.type) {
     case 'setup': {
-      const n = Math.min(4, Math.max(2, action.nTeams | 0));
+      const n = Math.min(MAXT, Math.max(2, action.nTeams | 0));
       s.nTeams = n;
       s.names = BOARD.defaultNames.map((d, i) => {
         const t = (action.names && action.names[i] || '').trim().slice(0, 24);
         return t || d;
       });
-      s.pos = [0, 0, 0, 0];
-      s.orderKeys = [[], [], [], []];
-      s.orderPending = teamsInPlay(s);
-      s.order = [];
+      // ลำดับที่สตาฟเรียงเอง ทีมที่ไม่ได้เลือกต่อท้ายตามเลขทีม
+      const picked = (action.order || []).filter((t, i, a) => Number.isInteger(t) && t >= 0 && t < n && a.indexOf(t) === i);
+      s.order = picked.concat(teamsInPlay(s).filter((t) => !picked.includes(t)));
+      s.pos = zeros(); s.stop = zeros();
       s.turn = 0;
-      s.dice = null; s.move = null; s.card = null; s.pendingCard = null; s.shooter = null;
+      s.dice = null; s.move = null; s.fx = null; s.card = null; s.pendingCard = null; s.prank = null; s.target = null;
       s.winner = null; s.endedEarly = false;
       s.playStartedAt = null; s.endedAt = null;
       if (action.resetCards) s.next = { q: 0, shoot: 0 };
       s.timer = { state: 'idle', remaining: BOARD.timerSec, nonce };
       s.phase = 'order';
-      return s;
-    }
-    case 'rollOrder': {
-      if (s.phase !== 'order' || !s.orderPending.length) return prev;
-      const t = s.orderPending.shift();
-      const value = dieValue(action.value);
-      if (!value) return prev;
-      s.orderKeys[t].push(value);
-      s.dice = { value, nonce, team: t };
-      if (!s.orderPending.length) {
-        // หาทีมที่คะแนนเสมอกันทุกรอบ ให้ทอยใหม่เฉพาะทีมนั้น
-        const ts = teamsInPlay(s);
-        const tied = ts.filter((a) => ts.some((b) => b !== a && compareKeys(s.orderKeys[a], s.orderKeys[b]) === 0));
-        if (tied.length) s.orderPending = tied;
-        else s.order = ts.slice().sort((a, b) => compareKeys(s.orderKeys[a], s.orderKeys[b]));
-      }
       return s;
     }
     case 'startPlay': {
@@ -410,17 +501,37 @@ function apply(prev, action, rng = Math.random) {
       s.move = { nonce, team: t, segs };
       const k = squareKind(land);
       if (k === 'question') { s.phase = 'cardPending'; s.pendingCard = 'q'; }
-      else if (k === 'shoot' && s.nTeams > 1) { s.phase = 'pickTarget'; s.pendingCard = 'shoot'; s.shooter = t; }
+      else if (k === 'shoot' || k === 'swap' || k === 'bite') {
+        if (validTargets(s, k, t).length) { s.phase = 'pickTarget'; s.prank = k; }
+        else { fxPush(s, { k: 'fizzle', team: t, kind: k }); advanceTurn(s); }
+      } else if (k === 'bomb') {
+        const hits = [];
+        for (const u of s.order) if (u !== t) { const p = pushBack(s, u, BOARD.bombBack); if (p.length) hits.push({ team: u, path: p }); }
+        fxPush(s, { k: 'bomb', team: t, at: land, hits });
+        advanceTurn(s);
+      }
       else advanceTurn(s);
       return s;
     }
     case 'pickTarget': {
       if (s.phase !== 'pickTarget') return prev;
-      const tgt = action.team;
-      if (tgt === current(s) || tgt < 0 || tgt >= s.nTeams) return prev;
-      s.card = null;
-      s.target = tgt;
-      s.phase = 'cardPending';
+      const me = current(s), tgt = action.team;
+      if (!validTargets(s, s.prank, me).includes(tgt)) return prev;
+      if (s.prank === 'shoot') {
+        s.card = null;
+        s.target = tgt;
+        s.pendingCard = 'shoot';
+        s.phase = 'cardPending';
+        return s;
+      }
+      if (s.prank === 'swap') {
+        const pa = s.pos[me], pb = s.pos[tgt];
+        s.pos[me] = pb; s.pos[tgt] = pa;
+        fxPush(s, { k: 'swap', a: me, b: tgt, pa, pb });
+      } else if (s.prank === 'bite') {
+        fxPush(s, { k: 'bite', team: tgt, by: me, path: pushBack(s, tgt, BOARD.biteBack) });
+      }
+      advanceTurn(s);
       return s;
     }
     case 'openCard': {
@@ -457,32 +568,37 @@ function apply(prev, action, rng = Math.random) {
     case 'judge': {
       if (s.phase !== 'card') return prev;
       s.card.result = action.correct ? 'right' : 'wrong';
-      s.card.back = action.correct ? 0 : (s.card.kind === 'shoot' ? BOARD.shootBack : BOARD.qBack);
       s.timer = { state: 'stopped', remaining: action.remaining ?? s.timer.remaining, nonce };
       s.phase = 'judged';
       return s;
     }
     case 'closeCard': {
-      if (s.phase !== 'judged') return prev;
-      const c = s.card;
-      if (c.result === 'wrong') {
-        const t = c.answerer;
-        const from = s.pos[t];
-        if (from > 1) {
-          const to = Math.max(1, from - c.back);
-          const path = [];
-          for (let i = from - 1; i >= to; i--) path.push(i);
-          s.pos[t] = to;
-          s.move = { nonce, team: t, segs: [{ type: 'back', path }] };
-        }
+      if (s.phase !== 'judged' || s.card.result === 'wrong') return prev;
+      advanceTurn(s);
+      return s;
+    }
+    case 'spin': {
+      if (s.phase !== 'judged' || s.card.result !== 'wrong') return prev;
+      const c = s.card, t = c.answerer, wheel = WHEEL[c.kind];
+      const idx = Math.min(wheel.length - 1, Math.floor(rng() * wheel.length));
+      const o = wheel[idx];
+      const step = { k: 'wheel', team: t, kind: c.kind, idx, jitter: Math.round((rng() - 0.5) * 30), out: o.t, label: wheelLabel(o) };
+      if (o.t === 'back') {
+        step.path = pushBack(s, t, o.n);
+        if (!step.path.length) step.note = 'ยังอยู่ช่องเริ่ม ถอยไม่ได้แล้ว';
+      } else if (o.t === 'stop') {
+        s.stop[t] = (s.stop[t] || 0) + 1;
+      } else if (o.t === 'swapLast') {
+        const w = lastPlace(s, t);
+        if (w === null || s.pos[w] >= s.pos[t]) step.note = 'เป็นทีมโหล่อยู่แล้ว รอดไป';
+        else { step.with = w; step.pa = s.pos[t]; step.pb = s.pos[w]; s.pos[t] = step.pb; s.pos[w] = step.pa; }
       }
-      s.target = null;
+      fxPush(s, step);
       advanceTurn(s);
       return s;
     }
     case 'skip': {
       if (!['ready', 'cardPending', 'pickTarget', 'card', 'judged'].includes(s.phase)) return prev;
-      s.target = null;
       advanceTurn(s);
       return s;
     }
@@ -504,7 +620,7 @@ function apply(prev, action, rng = Math.random) {
       return s;
     }
     case 'newRound': {
-      const n = apply(prev, { type: 'setup', nTeams: s.nTeams, names: s.names }, rng);
+      const n = apply(prev, { type: 'setup', nTeams: s.nTeams, names: s.names, order: s.order }, rng);
       n.round = (prev.round || 1) + 1;
       return n;
     }
@@ -514,6 +630,7 @@ function apply(prev, action, rng = Math.random) {
       n.names = s.names;
       n.nTeams = s.nTeams;
       n.next = s.next;
+      n.order = s.order;
       n.round = (prev.round || 1) + 1;
       return n;
     }
@@ -523,7 +640,17 @@ function apply(prev, action, rng = Math.random) {
 }
 
 /* เวลาที่จอโชว์ใช้เล่นแอนิเมชันของการเปลี่ยนสถานะ ให้จอควบคุมล็อกปุ่มไว้เท่านั้น */
-const ANIM = { dice: 500, step: 300, special: 1000, pause: 350, land: 900 };
+const ANIM = { dice: 500, step: 300, special: 1000, pause: 350, land: 900, hurt: 650, spin: 3800, verdict: 1500, swap: 1300, bomb: 1400, bite: 1100, note: 1300 };
+function fxDuration(f) {
+  const back = (p) => (p && p.length ? ANIM.hurt + p.length * ANIM.step : 0);
+  switch (f.k) {
+    case 'wheel': return 600 + ANIM.spin + ANIM.verdict + back(f.path) + (f.with != null ? ANIM.swap : 0) + 300;
+    case 'swap': return ANIM.swap + 400;
+    case 'bite': return ANIM.bite + back(f.path) + 300;
+    case 'bomb': return ANIM.bomb + Math.max(0, ...f.hits.map((h) => back(h.path))) + 300;
+    default: return ANIM.note;
+  }
+}
 function animDuration(prev, next) {
   let ms = 0;
   if (next.dice && (!prev.dice || next.dice.nonce !== prev.dice.nonce)) ms += ANIM.dice + ANIM.pause;
@@ -536,11 +663,12 @@ function animDuration(prev, next) {
     ms += ANIM.pause;
     if (next.move.segs[0] && next.move.segs[0].type === 'walk') ms += ANIM.land;
   }
+  if (next.fx && (!prev.fx || next.fx.nonce !== prev.fx.nonce)) for (const f of next.fx.list) ms += fxDuration(f);
   if (prev.phase === 'judged' && next.phase !== 'judged') ms += 450;
   return ms;
 }
 
-if (typeof module !== 'undefined') module.exports = { BOARD, squareKind, initialState, apply, animDuration, compareKeys };
+if (typeof module !== 'undefined') module.exports = { BOARD, WHEEL, squareKind, initialState, apply, animDuration };
 
 /* ================= ตัวช่วยทั่วไป ================= */
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -555,7 +683,7 @@ const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion:
 const T = REDUCED ? 0.25 : 1; // ตัวคูณเวลาแอนิเมชัน
 
 const COLORS = BOARD.teamColors;
-const BADGE_TXT = ['#0A0A0A', '#F6F5F1', '#F6F5F1', '#0A0A0A'];
+const BADGE_TXT = ['#0A0A0A', '#F6F5F1', '#F6F5F1', '#0A0A0A', '#0A0A0A'];
 const nameOf = (s, t) => esc(s.names[t]);
 const sqLabel = (p) => (p <= 0 ? 'รอเริ่ม' : 'ช่อง ' + p);
 
@@ -580,29 +708,144 @@ function timerNow(st, clk) {
   return Math.max(0, tm.remaining);
 }
 
-/* ================= เสียง (ค่าเริ่มต้นปิด) ================= */
+/* ================= เสียง: เอฟเฟกต์ทุกจังหวะ + เพลงพื้นหลัง (ดังที่จอโชว์) ================= */
 const Sound = {
-  on: store.get('bandai-sound') === '1',
-  ctx: null,
-  ensure() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
-  beep(freq, dur = 0.08, type = 'square', vol = 0.06, when = 0) {
-    if (!this.on || !this.ctx) return;
+  on: store.get('bandai-sound') !== '0',
+  ctx: null, out: null, noiseBuf: null, count: 0,
+  ensure() {
+    if (!this.ctx) {
+      try {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.out = this.ctx.createGain(); this.out.gain.value = 1; this.out.connect(this.ctx.destination);
+        const n = this.ctx.sampleRate * 1.5, b = this.ctx.createBuffer(1, n, this.ctx.sampleRate), d = b.getChannelData(0);
+        for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+        this.noiseBuf = b;
+      } catch (e) {}
+    }
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
+  },
+  ready() { return this.on && this.ctx && this.ctx.state === 'running'; },
+  beep(freq, dur = 0.08, type = 'square', vol = 0.06, when = 0, slideTo = 0) {
+    this.count++;
+    if (!this.ready()) return;
     const t0 = this.ctx.currentTime + when;
     const o = this.ctx.createOscillator(), g = this.ctx.createGain();
     o.type = type; o.frequency.setValueAtTime(freq, t0);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
     g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    o.connect(g); g.connect(this.ctx.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+    o.connect(g); g.connect(this.out); o.start(t0); o.stop(t0 + dur + 0.02);
   },
-  tick() { this.beep(220 + Math.random() * 200, 0.04); },
+  noise(dur = 0.2, vol = 0.08, when = 0, freq = 1800, q = 0.8, type = 'bandpass', freqTo = 0) {
+    this.count++;
+    if (!this.ready() || !this.noiseBuf) return;
+    const t0 = this.ctx.currentTime + when;
+    const src = this.ctx.createBufferSource(), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
+    src.buffer = this.noiseBuf; f.type = type; f.frequency.setValueAtTime(freq, t0); f.Q.value = q;
+    if (freqTo) f.frequency.exponentialRampToValueAtTime(freqTo, t0 + dur);
+    g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(f); f.connect(g); g.connect(this.out); src.start(t0, Math.random() * 0.5); src.stop(t0 + dur + 0.02);
+  },
+  blip() { this.beep(660, 0.05, 'square', 0.05); this.beep(990, 0.06, 'square', 0.04, 0.05); },
+  tick() { this.beep(1400, 0.025, 'square', 0.045); },
   step() { this.beep(523, 0.06); },
+  stepBack() { this.beep(330, 0.07, 'square', 0.06); },
+  dice() { for (let i = 0; i < 5; i++) { this.noise(0.04, 0.12, i * 0.06, 2500 + i * 300, 2); } this.beep(784, 0.12, 'square', 0.06, 0.32); this.beep(1046, 0.16, 'square', 0.06, 0.42); },
   up() { [523, 659, 784, 1046].forEach((f, i) => this.beep(f, 0.1, 'square', 0.06, i * 0.09)); },
-  down() { [784, 622, 494, 392].forEach((f, i) => this.beep(f, 0.12, 'triangle', 0.08, i * 0.1)); },
-  right() { [659, 988].forEach((f, i) => this.beep(f, 0.14, 'square', 0.06, i * 0.12)); },
-  wrong() { this.beep(140, 0.35, 'sawtooth', 0.05); },
-  win() { [523, 659, 784, 1046, 784, 1046].forEach((f, i) => this.beep(f, 0.16, 'square', 0.06, i * 0.13)); },
-  card() { this.beep(392, 0.08); this.beep(587, 0.1, 'square', 0.06, 0.08); },
+  down() { [784, 622, 494, 392].forEach((f, i) => this.beep(f, 0.12, 'triangle', 0.08, i * 0.1)); this.noise(0.5, 0.05, 0, 3000, 1, 'bandpass', 300); },
+  right() { [784, 988, 1318].forEach((f, i) => this.beep(f, 0.14, 'square', 0.06, i * 0.1)); },
+  wrong() { this.beep(220, 0.18, 'sawtooth', 0.06); this.beep(160, 0.35, 'sawtooth', 0.06, 0.18); },
+  win() { [523, 659, 784, 1046, 784, 1046, 1318].forEach((f, i) => this.beep(f, 0.18, 'square', 0.06, i * 0.13)); },
+  card() { this.noise(0.12, 0.06, 0, 4000, 1, 'highpass'); this.beep(392, 0.08, 'square', 0.06, 0.06); this.beep(587, 0.12, 'square', 0.06, 0.14); },
+  close() { this.noise(0.18, 0.05, 0, 2500, 1, 'bandpass', 600); },
   last() { this.beep(880, 0.05, 'square', 0.05); },
   buzz() { this.beep(110, 0.7, 'sawtooth', 0.07); this.beep(98, 0.7, 'square', 0.04); },
+  start() { [392, 523, 659, 784].forEach((f, i) => this.beep(f, 0.12, 'square', 0.06, i * 0.08)); this.beep(1046, 0.4, 'square', 0.06, 0.34); },
+  go() { this.beep(523, 0.12, 'square', 0.06); this.beep(523, 0.12, 'square', 0.06, 0.25); this.beep(1046, 0.35, 'square', 0.07, 0.5); },
+  whistle() { this.beep(900, 0.2, 'square', 0.05, 0, 1800); },
+  pause() { this.beep(700, 0.08, 'square', 0.05); this.beep(500, 0.1, 'square', 0.05, 0.08); },
+  alarm() { for (let i = 0; i < 3; i++) { this.beep(880, 0.09, 'square', 0.06, i * 0.18); this.beep(660, 0.09, 'square', 0.06, i * 0.18 + 0.09); } },
+  lock() { this.beep(1200, 0.05, 'square', 0.05); this.beep(1200, 0.05, 'square', 0.05, 0.09); this.beep(1600, 0.15, 'square', 0.05, 0.18); },
+  hurt() { this.noise(0.25, 0.14, 0, 900, 0.7, 'lowpass', 120); this.beep(300, 0.3, 'sawtooth', 0.07, 0, 80); },
+  swap() { this.beep(300, 0.35, 'square', 0.05, 0, 1200); this.beep(1200, 0.35, 'square', 0.04, 0.05, 300); this.noise(0.4, 0.05, 0, 800, 1, 'bandpass', 4000); },
+  hiss() { this.noise(0.6, 0.09, 0, 6000, 4, 'bandpass'); },
+  chomp() { this.beep(180, 0.08, 'square', 0.08); this.noise(0.08, 0.12, 0, 1200, 1); this.beep(140, 0.1, 'square', 0.08, 0.14); this.noise(0.1, 0.12, 0.14, 1000, 1); },
+  fuse() { for (let i = 0; i < 8; i++) this.noise(0.03, 0.06, i * 0.07, 5000, 3); },
+  boom() { this.noise(1.2, 0.35, 0, 1800, 0.5, 'lowpass', 60); this.beep(90, 0.8, 'sine', 0.25, 0, 30); },
+  freeze() { [1318, 1046, 880, 698, 587].forEach((f, i) => this.beep(f, 0.08, 'triangle', 0.08, i * 0.07)); },
+  snore() { this.beep(220, 0.3, 'triangle', 0.08, 0, 160); this.beep(160, 0.4, 'triangle', 0.08, 0.35, 240); },
+  safe() { [659, 784, 1046, 1318].forEach((f, i) => this.beep(f, 0.1, 'square', 0.06, i * 0.08)); },
+  sting() { this.beep(392, 0.15, 'sawtooth', 0.06); this.beep(370, 0.15, 'sawtooth', 0.06, 0.16); this.beep(349, 0.5, 'sawtooth', 0.06, 0.32); },
+  jump() { this.beep(400, 0.25, 'square', 0.05, 0, 900); },
+};
+
+/* เพลงพื้นหลังแนวเกม 8 บิต วนไม่รู้จบ ทำสดด้วย Web Audio ไม่ต้องโหลดไฟล์ */
+const Music = {
+  on: store.get('bandai-music') !== '0',
+  bus: null, timer: null, step: 0, nextT: 0, level: 1, playing: false,
+  BPM: 126, VOL: 0.4,
+  // คอร์ด C Am F G วน 2 รอบ แต่ละคอร์ด 1 ห้อง (16 จังหวะย่อย)
+  CH: [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]],
+  MEL: [
+    [72, null, 76, null, 79, null, 76, 79, 84, null, 79, null, 76, null, 74, null],
+    [72, null, 69, null, 72, null, 76, null, 74, null, 72, null, 69, null, 72, null],
+    [69, null, 72, null, 77, null, 76, 74, 72, null, 69, null, 72, null, 74, null],
+    [71, null, 74, null, 79, null, 77, 76, 74, null, 71, null, 74, 76, 79, null],
+    [76, null, 79, null, 84, null, 83, 81, 79, null, 76, null, 79, null, 76, null],
+    [76, null, 72, null, 69, null, 72, 76, 81, null, 79, null, 76, null, 72, null],
+    [77, null, 76, null, 74, null, 72, null, 69, null, 72, null, 77, null, 81, null],
+    [79, null, 77, null, 76, null, 74, null, 71, 74, 79, null, 83, null, 84, null],
+  ],
+  hz: (m) => 440 * Math.pow(2, (m - 69) / 12),
+  start() {
+    if (!this.on || !Sound.on || !Sound.ctx || Sound.ctx.state !== 'running' || this.playing) return;
+    const c = Sound.ctx;
+    this.bus = c.createGain(); this.bus.gain.setValueAtTime(0.0001, c.currentTime);
+    this.bus.gain.exponentialRampToValueAtTime(this.VOL * this.level, c.currentTime + 1.5);
+    this.bus.connect(Sound.out);
+    this.playing = true; this.step = 0; this.nextT = c.currentTime + 0.1;
+    this.timer = setInterval(() => this.pump(), 30);
+  },
+  stop() {
+    if (!this.playing) return;
+    this.playing = false; clearInterval(this.timer);
+    const b = this.bus, c = Sound.ctx;
+    try { b.gain.setTargetAtTime(0.0001, c.currentTime, 0.2); setTimeout(() => b.disconnect(), 1200); } catch (e) {}
+  },
+  duck(x) {
+    this.level = x;
+    if (this.playing && this.bus) this.bus.gain.setTargetAtTime(Math.max(0.0001, this.VOL * x), Sound.ctx.currentTime, 0.25);
+  },
+  note(freq, t, dur, type, vol) {
+    const c = Sound.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(this.bus); o.start(t); o.stop(t + dur + 0.02);
+  },
+  drum(t, kind) {
+    const c = Sound.ctx;
+    if (kind === 'k') { this.note(110, t, 0.12, 'sine', 0.22); const o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.12); g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14); o.connect(g); g.connect(this.bus); o.start(t); o.stop(t + 0.16); return; }
+    const src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    src.buffer = Sound.noiseBuf; f.type = kind === 's' ? 'bandpass' : 'highpass'; f.frequency.value = kind === 's' ? 1800 : 7000;
+    const dur = kind === 's' ? 0.12 : 0.03, vol = kind === 's' ? 0.12 : 0.05;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(this.bus); src.start(t, Math.random()); src.stop(t + dur + 0.02);
+  },
+  pump() {
+    const c = Sound.ctx; if (!c || !this.playing) return;
+    const sixteenth = 60 / this.BPM / 4;
+    while (this.nextT < c.currentTime + 0.15) {
+      const t = this.nextT, i = this.step % 128, bar = Math.floor(i / 16), b = i % 16;
+      const ch = this.CH[bar % 4];
+      if (b % 4 === 0 || b === 6 || b === 14) this.note(this.hz(ch[0] - 12 + (b === 6 || b === 14 ? 12 : 0)), t, sixteenth * 1.6, 'triangle', 0.11);
+      if (b % 2 === 1) this.note(this.hz(ch[(b >> 1) % 3] + 12), t, sixteenth * 0.8, 'square', 0.018);
+      const m = this.MEL[bar][b];
+      if (m) this.note(this.hz(m), t, sixteenth * 1.8, 'square', 0.035);
+      if (b === 0 || b === 8) this.drum(t, 'k');
+      if (b === 4 || b === 12) this.drum(t, 's');
+      if (b % 2 === 0) this.drum(t, 'h');
+      this.nextT += sixteenth; this.step++;
+    }
+  },
 };
 
 /* ================= กระดาน: เรขาคณิตและภาพพิกเซล ================= */
@@ -619,7 +862,26 @@ const G = {
   target: ['#######', '#.....#', '#.###.#', '#.#.#.#', '#.###.#', '#.....#', '#######'],
   star: ['..#..', '.###.', '#####', '.###.', '.#.#.'],
   flag: ['##...', '####.', '#####', '###..', '#....', '#....', '#....'],
+  swapA: ['.....#..', '.....##.', '########', '.....##.', '.....#..'],
+  swapB: ['..#.....', '.##.....', '########', '.##.....', '..#.....'],
+  bomb: ['.......#.#', '......#.#.', '.....##...', '...####...', '..######..', '.########.', '.########.', '.########.', '..######..', '...####...'],
+  shine: ['##', '#.'],
 };
+/* หัวงูพิกเซล ใช้ทั้งบนกระดานและตอนงูโผล่มากัด */
+function snakeHead(hx, hy, k = 1) {
+  const r = (x, y, w, h, c) => `<rect x="${hx + x * k}" y="${hy + y * k}" width="${w * k}" height="${h * k}" fill="${c}"/>`;
+  return r(-26, -24, 52, 44, '#0A0A0A') + r(-22, -20, 44, 36, '#6D912E') + r(-14, -14, 10, 10, '#F6F5F1') + r(4, -14, 10, 10, '#F6F5F1') +
+    r(-10, -10, 5, 5, '#0A0A0A') + r(8, -10, 5, 5, '#0A0A0A') + r(-3, -36, 6, 12, '#C1331D') + r(-9, -42, 6, 6, '#C1331D') + r(3, -42, 6, 6, '#C1331D') +
+    r(-12, 10, 6, 10, '#F6F5F1') + r(6, 10, 6, 10, '#F6F5F1');
+}
+/* สีและป้ายของช่องพิเศษ */
+const SQ_STYLE = {
+  shoot: { fill: '#CC7021', ink: '#0A0A0A', label: 'ยิงคำถาม' },
+  swap: { fill: '#EFD3A6', ink: '#0A0A0A', label: 'สลับที่' },
+  bite: { fill: '#3d5a1a', ink: '#F6F5F1', label: 'ส่งงูกัด' },
+  bomb: { fill: '#C1331D', ink: '#F6F5F1', label: 'ระเบิด!' },
+};
+const ICON_DX = { 20: 30 };
 function glyph(rows, x, y, px, color) {
   let s = '';
   rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] === '#') s += `<rect x="${x + i * px}" y="${y + j * px}" width="${px}" height="${px}" fill="${color}"/>`; });
@@ -674,18 +936,29 @@ function drawBoardSVG() {
     const x0 = x - S / 2, y0 = y - S / 2;
     const k = squareKind(n);
     let fill = (c + r) % 2 ? '#17120C' : '#221a11';
-    if (k === 'shoot') fill = '#CC7021';
+    if (SQ_STYLE[k]) fill = SQ_STYLE[k].fill;
     if (k === 'finish') fill = '#F5D96B';
     s += `<rect x="${x0}" y="${y0}" width="${S}" height="${S}" fill="${fill}"/>`;
     s += `<rect x="${x0 + 2}" y="${y0 + 2}" width="${S - 4}" height="${S - 4}" fill="none" stroke="#853F1A" stroke-width="4"/>`;
-    const dark = k === 'shoot' || k === 'finish';
+    const dark = k === 'finish' || (SQ_STYLE[k] && SQ_STYLE[k].ink === '#0A0A0A');
+    const ix = x + (ICON_DX[n] || 0);
+    const lab = (t) => `<text x="${ix}" y="${y0 + S - 22}" text-anchor="middle" font-size="28" font-weight="700" fill="${SQ_STYLE[k].ink}" stroke="${SQ_STYLE[k].fill}" stroke-width="6" paint-order="stroke">${t}</text>`;
     if (k === 'question') {
       s += `<rect x="${x0 + 10}" y="${y0 + 10}" width="${S - 20}" height="${S - 20}" fill="none" stroke="#F5D96B" stroke-width="8"/>`;
       s += glyph(G.q, x - 30, y - 50, 12, '#F5D96B');
       top += `<text x="${x}" y="${y0 + S - 24}" text-anchor="middle" font-size="30" font-weight="700" fill="#F5D96B" stroke="#17120C" stroke-width="6" paint-order="stroke">คำถาม</text>`;
     } else if (k === 'shoot') {
-      s += glyph(G.target, x - 35, y - 48, 10, '#EFD3A6');
-      top += `<text x="${x}" y="${y0 + S - 22}" text-anchor="middle" font-size="28" font-weight="700" fill="#0A0A0A" stroke="#CC7021" stroke-width="6" paint-order="stroke">ยิงทีมอื่น</text>`;
+      s += glyph(G.target, ix - 35, y - 48, 10, '#EFD3A6');
+      top += lab(SQ_STYLE.shoot.label);
+    } else if (k === 'swap') {
+      s += glyph(G.swapA, ix - 32, y - 56, 8, '#853F1A') + glyph(G.swapB, ix - 32, y - 8, 8, '#0A0A0A');
+      top += lab(SQ_STYLE.swap.label);
+    } else if (k === 'bite') {
+      s += `<g>${snakeHead(ix, y - 10, 1.2)}</g>`;
+      top += lab(SQ_STYLE.bite.label);
+    } else if (k === 'bomb') {
+      s += glyph(G.bomb, ix - 40, y - 60, 8, '#0A0A0A') + glyph(G.shine, ix - 16, y - 20, 6, '#F6F5F1') + `<rect x="${ix + 16}" y="${y - 60}" width="8" height="8" fill="#F5D96B"/><rect x="${ix + 32}" y="${y - 60}" width="8" height="8" fill="#F5D96B"/><rect x="${ix + 24}" y="${y - 68}" width="8" height="8" fill="#F5D96B"/>`;
+      top += lab(SQ_STYLE.bomb.label);
     } else if (k === 'finish') {
       s += glyph(G.star, x - 60, y - 40, 8, '#EA8B25') + glyph(G.star, x + 20, y - 40, 8, '#EA8B25') + glyph(G.flag, x - 22, y - 44, 10, '#0A0A0A');
       s += `<text x="${x}" y="${y0 + S - 22}" text-anchor="middle" font-size="30" font-weight="700" fill="#0A0A0A">เส้นชัย</text>`;
@@ -939,7 +1212,7 @@ const Sync = {
 
 /* ================= จอโชว์ ================= */
 const Screen = {
-  shown: null, latest: null, busy: false, seenDice: 0, seenMove: 0, clk: makeClock(), lastSec: null,
+  shown: null, latest: null, busy: false, seenDice: 0, seenMove: 0, seenFx: 0, clk: makeClock(), lastSec: null,
   piecePos: {}, el: {},
   mount() {
     document.getElementById('app').innerHTML = `
@@ -954,32 +1227,41 @@ const Screen = {
             </div>
             <div class="teams" id="teams"></div>
             <div class="legend">
-              <span><i style="border:5px solid #F5D96B"></i>ช่องคำถาม ผิดถอย 1</span>
-              <span><i style="background:#CC7021"></i>ช่องยิง ผิดถอย 3</span>
+              <span><i style="border:5px solid #F5D96B"></i>คำถาม ผิดหมุนวงล้อ</span>
+              <span><i style="background:#CC7021"></i>ยิงคำถามใส่ทีมอื่น</span>
+              <span><i style="background:#EFD3A6"></i>สลับที่กับทีมอื่น</span>
+              <span><i style="background:#3d5a1a;border:3px solid #6D912E"></i>ส่งงูกัด ถอย ${BOARD.biteBack}</span>
+              <span><i style="background:#C1331D"></i>ระเบิด ทีมอื่นถอย ${BOARD.bombBack}</span>
             </div>
             <div class="statusbox">
               <div class="dice" id="dice">${diceSVG(0)}</div>
               <div class="status-txt" id="status"></div>
             </div>
           </div>
+          <div class="fxlayer" id="fxlayer"></div>
+          <div class="flash" id="flash"></div>
           <div class="toast" id="toast"></div>
+          <div class="overlay board-only" id="ov-wheel"></div>
           <div class="overlay" id="ov-splash"></div>
           <div class="overlay board-only" id="ov-order"></div>
           <div class="overlay" id="ov-card"></div>
           <div class="overlay" id="ov-win"><canvas id="confetti" width="1920" height="1080"></canvas><div class="win" id="win"></div></div>
         </div>
         <div class="corner" id="corner">
+          <button id="btn-music" type="button"></button>
           <button id="btn-sound" type="button"></button>
           <button id="btn-full" type="button">เต็มจอ</button>
           <button id="btn-role" type="button">${Sync.roomCode && !Sync.fixedRoom ? 'ห้อง ' + esc(Sync.roomCode) + ' · ' : ''}เปลี่ยนบทบาท</button>
         </div>
         <div class="netnote" id="netnote" hidden></div>
+        <button class="unlock" id="unlock" type="button" hidden>คลิกหนึ่งครั้งเพื่อเปิดเสียงและเพลง</button>
         <div class="fshint" id="fshint" hidden>หน้านี้กดเต็มจอเองไม่ได้ ให้ใช้เต็มจอของ Chrome แทน บน Mac กด Control + Command + F บน Windows กด F11</div>
       </div>`;
     this.el = { stage: $('#stage'), pieces: $('#pieces'), teams: $('#teams'), status: $('#status'), dice: $('#dice'), toast: $('#toast'),
-      splash: $('#ov-splash'), order: $('#ov-order'), card: $('#ov-card'), win: $('#ov-win'), winBox: $('#win'), corner: $('#corner'), net: $('#netnote') };
+      splash: $('#ov-splash'), order: $('#ov-order'), card: $('#ov-card'), win: $('#ov-win'), winBox: $('#win'), corner: $('#corner'), net: $('#netnote'),
+      wheel: $('#ov-wheel'), fx: $('#fxlayer'), flash: $('#flash'), unlock: $('#unlock') };
     let pieces = '';
-    for (let t = 0; t < 4; t++) pieces += `<div class="piece" id="pc${t}" hidden><div class="no" style="background:${COLORS[t]};color:${BADGE_TXT[t]}">${t + 1}</div><div style="margin-top:14px">${sprite(COLORS[t])}</div></div>`;
+    for (let t = 0; t < MAXT; t++) pieces += `<div class="piece" id="pc${t}" hidden><div class="no" style="background:${COLORS[t]};color:${BADGE_TXT[t]}">${t + 1}</div><div style="margin-top:14px">${sprite(COLORS[t])}</div></div>`;
     this.el.pieces.innerHTML = pieces;
     const fit = () => {
       const w = window.innerWidth, h = window.innerHeight, k = Math.min(w / 1920, h / 1080);
@@ -990,10 +1272,21 @@ const Screen = {
     let idle;
     const wake = () => { this.el.corner.classList.remove('hide'); $('#wrap').classList.remove('nocursor'); clearTimeout(idle); idle = setTimeout(() => { this.el.corner.classList.add('hide'); $('#wrap').classList.add('nocursor'); }, 3000); };
     ['mousemove', 'mousedown', 'touchstart', 'keydown'].forEach((e) => window.addEventListener(e, wake)); wake();
-    const sb = $('#btn-sound');
-    const paintSound = () => { sb.textContent = Sound.on ? 'เสียง เปิด' : 'เสียง ปิด'; };
-    paintSound();
-    sb.onclick = () => { Sound.on = !Sound.on; store.set('bandai-sound', Sound.on ? '1' : '0'); Sound.ensure(); paintSound(); if (Sound.on) Sound.step(); };
+    const sb = $('#btn-sound'), mb = $('#btn-music');
+    const paintSound = () => {
+      sb.textContent = Sound.on ? 'เสียง เปิด' : 'เสียง ปิด';
+      mb.textContent = Music.on ? 'เพลง เปิด' : 'เพลง ปิด';
+      mb.disabled = !Sound.on;
+      this.el.unlock.hidden = !(Sound.on && (!Sound.ctx || Sound.ctx.state !== 'running'));
+    };
+    this.paintSound = paintSound;
+    // เบราว์เซอร์ยอมให้มีเสียงหลังคลิกหรือกดแป้นครั้งแรกเท่านั้น
+    const unlock = () => { Sound.ensure(); setTimeout(() => { if (Sound.ctx && Sound.ctx.state === 'running') this.syncMusic(); paintSound(); }, 120); };
+    ['pointerdown', 'keydown', 'touchstart'].forEach((e) => window.addEventListener(e, unlock));
+    Sound.ensure(); setTimeout(paintSound, 300);
+    sb.onclick = () => { Sound.on = !Sound.on; store.set('bandai-sound', Sound.on ? '1' : '0'); Sound.ensure(); if (!Sound.on) Music.stop(); paintSound(); setTimeout(() => { this.syncMusic(); if (Sound.on) Sound.blip(); }, 150); };
+    mb.onclick = () => { Music.on = !Music.on; store.set('bandai-music', Music.on ? '1' : '0'); if (!Music.on) Music.stop(); else this.syncMusic(); paintSound(); };
+    this.el.unlock.onclick = () => unlock();
     $('#btn-full').onclick = () => {
       Sound.ensure();
       const d = document;
@@ -1019,6 +1312,7 @@ const Screen = {
   receive(doc) {
     if (!doc || !doc.state) { if (!this.shown) this.renderAll(null); return; }
     const st = doc.state;
+    if (!isCurrentState(st)) return; // รอจอควบคุมแปลงข้อมูลเก่าให้ก่อน
     if (this.latest && st.v <= this.latest.v && !(st.v < this.latest.v - 50)) return; // ข้อมูลเก่า
     this.latest = st;
     if (!this.busy) this.process();
@@ -1037,34 +1331,53 @@ const Screen = {
     if (!prev) {
       this.seenDice = next.dice ? next.dice.nonce : 0;
       this.seenMove = next.move ? next.move.nonce : 0;
+      this.seenFx = next.fx ? next.fx.nonce : 0;
       this.renderAll(next);
       return;
     }
+    const c0 = Sound.count;
     const diceNew = next.dice && next.dice.nonce > this.seenDice;
     const moveNew = next.move && next.move.nonce > this.seenMove;
+    const fxNew = next.fx && next.fx.nonce > this.seenFx;
     // ปิดหน้าซ้อนที่จะหายไปก่อน
     const cardOn = (s) => s && (s.phase === 'card' || s.phase === 'judged');
-    if (cardOn(prev) && !cardOn(next)) { this.el.card.classList.remove('on'); await sleep(420 * T); }
+    if (cardOn(prev) && !cardOn(next)) { Sound.close(); this.el.card.classList.remove('on'); await sleep(420 * T); }
     if (prev.phase === 'won' && next.phase !== 'won') this.el.win.classList.remove('on');
     if (prev.phase === 'setup' && next.phase !== 'setup') this.el.splash.classList.remove('on');
+    if (prev.phase !== 'order' && next.phase === 'order') Sound.start();
+    if (prev.phase === 'order' && next.phase === 'ready') Sound.go();
+    if (next.phase === 'setup' && prev.phase !== 'setup') Sound.start();
+    if (prev.phase === 'pickTarget' && next.phase === 'cardPending') Sound.lock();
+    if (cardOn(prev) && next.phase === 'card' && prev.timer && next.timer && prev.timer.nonce !== next.timer.nonce) {
+      if (next.timer.state === 'running') Sound.whistle();
+      else if (next.timer.state === 'paused') Sound.pause();
+    }
+    // ตำแหน่งระหว่างเล่นแอนิเมชัน เริ่มจากของเดิมแล้วขยับตามทีละขั้น
+    const work = clone(prev);
     if (diceNew) {
       this.seenDice = next.dice.nonce;
-      if (next.phase !== 'order' && prev.phase !== 'order') this.renderPanel(prev, next.dice.team);
+      this.renderPanel(prev, next.dice.team);
       await this.rollDice(next.dice.value, next.names[next.dice.team]);
-      if (next.phase === 'order' || prev.phase === 'order') this.renderOrder(next);
     }
     if (moveNew) {
       this.seenMove = next.move.nonce;
       await this.animateMove(prev, next);
+      const mv = next.move, last = mv.segs[mv.segs.length - 1];
+      work.pos[mv.team] = last.to != null ? last.to : last.path[last.path.length - 1];
+    }
+    if (fxNew) {
+      this.seenFx = next.fx.nonce;
+      for (const f of next.fx.list) { try { await this.playFx(f, work, next); } catch (e) { console.error(e); } }
     }
     this.renderAll(next);
+    if (Sound.count === c0) Sound.blip(); // ทุกการกดต้องมีเสียงเสมอ
   },
   async rollDice(v, name) {
     // แต้มจากลูกเต๋ายักษ์ของจริง โชว์ทันที ไม่หมุนซ้ำ
     const d = this.el.dice;
     d.classList.remove('land'); d.innerHTML = diceSVG(v); void d.offsetWidth; d.classList.add('land');
     this.toast(`${name} ทอยได้ ${v}`, '', 900);
-    Sound.step();
+    Sound.dice();
     await sleep((ANIM.dice + ANIM.pause) * T);
   },
   toast(text, kind = '', ms = 1100) {
@@ -1079,20 +1392,21 @@ const Screen = {
       // หมากที่ยังไม่ออกเดิน ย่อเล็กเรียงแถวบนช่อง 1
       const wait = [...Array(st.nTeams).keys()].filter((u) => st.pos[u] === 0);
       const c1 = sqXY(1), k = wait.indexOf(t);
-      return { x: c1.x - 66 + k * 44, y: c1.y - 6, sc: 0.6 };
+      return { x: c1.x - 68 + k * 34, y: c1.y - 6, sc: 0.6 };
     }
     const here = [...Array(st.nTeams).keys()].filter((u) => st.pos[u] === p);
     const i = here.indexOf(t), n = here.length;
     const c = sqXY(p);
-    const offs = n === 1 ? [[0, 6]] : n === 2 ? [[-36, 6], [36, 6]] : [[-38, -22], [38, -22], [-38, 50], [38, 50]];
+    const offs = n === 1 ? [[0, 6]] : n === 2 ? [[-36, 6], [36, 6]] : n === 3 ? [[-40, -18], [40, -18], [0, 50]] : n === 4 ? [[-38, -22], [38, -22], [-38, 50], [38, 50]] : [[-46, -26], [46, -26], [0, 14], [-46, 54], [46, 54]];
     const o = offs[Math.max(0, i)] || [0, 0];
     return { x: c.x + o[0], y: c.y + o[1] };
   },
   layoutPieces(st) {
-    for (let t = 0; t < 4; t++) {
+    for (let t = 0; t < MAXT; t++) {
       const el = $('#pc' + t);
       const on = st && t < st.nTeams && st.phase !== 'setup';
       el.hidden = !on;
+      el.classList.toggle('frozen', !!(on && st.stop && st.stop[t] > 0));
       if (on) { const p = this.slot(st, t); this.pieceAt(t, p.x, p.y, p.sc || 1); }
     }
   },
@@ -1144,14 +1458,177 @@ const Screen = {
     el.classList.remove('moving');
     const first = mv.segs[0];
     if (first && first.type === 'walk') {
-      const land = next.pos[t], k = squareKind(land), last = mv.segs[mv.segs.length - 1];
+      const last = mv.segs[mv.segs.length - 1], land = last.to != null ? last.to : last.path[last.path.length - 1], k = squareKind(land);
       if (next.phase === 'won') { /* หน้าชนะจะขึ้นเอง */ }
-      else if (last.type === 'walk' && k === 'question') this.toast(`ช่องคำถาม ${next.names[t]} ตอบเอง`, '', 1300);
-      else if (last.type === 'walk' && k === 'shoot') this.toast(`ช่องยิง ${next.names[t]} ได้ยิง`, '', 1300);
+      else if (k === 'question') { this.toast(`ช่องคำถาม ${next.names[t]} ตอบเอง`, '', 1300); Sound.card(); }
+      else if (k === 'shoot') { this.toast(`ช่องยิง ${next.names[t]} เลือกทีมที่จะยิง`, '', 1300); Sound.alarm(); }
+      else if (k === 'swap') { this.toast(`ช่องสลับที่ ${next.names[t]} เลือกทีมที่จะสลับ`, '', 1300); Sound.alarm(); }
+      else if (k === 'bite') { this.toast(`ช่องส่งงูกัด ${next.names[t]} เลือกเหยื่อ`, 'bad', 1300); Sound.hiss(); }
+      else if (k === 'bomb') { this.toast(`ระเบิด! ทีมอื่นถอย ${BOARD.bombBack}`, 'bad', 1300); Sound.fuse(); }
       else if (last.type === 'walk') this.toast(`${next.names[t]} ถึงช่อง ${land}`, '', 1100);
       await sleep(ANIM.land * T);
     }
     await sleep(ANIM.pause * T);
+  },
+  /* ---------- เอฟเฟกต์แกล้งกัน วงล้อ และการโดนถอยหลัง ---------- */
+  ctrOf(st, t) { const p = this.slot(st, t); return { x: p.x, y: p.y }; },
+  pieceEl(t) { return $('#pc' + t); },
+  flashScreen(kind = 'red') { const f = this.el.flash; f.className = 'flash ' + kind; void f.offsetWidth; f.classList.add('on'); },
+  quake() { ['#board-svg', '#pieces'].forEach((q) => { const e = $(q); e.classList.remove('quake'); void e.offsetWidth; e.classList.add('quake'); }); },
+  floatText(x, y, text, cls = '') {
+    const d = document.createElement('div'); d.className = 'floattxt ' + cls; d.textContent = text;
+    d.style.left = x + 'px'; d.style.top = y + 'px'; this.el.fx.appendChild(d);
+    setTimeout(() => d.remove(), 1600);
+  },
+  async hurtBack(t, path, work, opts = {}) {
+    const el = this.pieceEl(t); if (!el || !path || !path.length) return;
+    el.hidden = false; el.classList.add('moving');
+    let cur = this.ctrOf(work, t);
+    if (!opts.quiet) { Sound.hurt(); this.flashScreen('red'); }
+    el.classList.add('hurt');
+    this.floatText(cur.x, cur.y - 110, '-' + path.length, 'bad');
+    await sleep(ANIM.hurt * T);
+    el.classList.add('reverse');
+    for (const n of path) {
+      const c = sqXY(n), to = { x: c.x, y: c.y + 6 };
+      await this.hopTo(el, cur, to); cur = to;
+      if (!opts.quiet) Sound.stepBack();
+    }
+    work.pos[t] = path[path.length - 1];
+    this.piecePos[t] = cur;
+    el.classList.remove('hurt', 'reverse', 'moving');
+  },
+  async swapPieces(a, b, work) {
+    const ea = this.pieceEl(a), eb = this.pieceEl(b);
+    const fa = this.ctrOf(work, a), fb = this.ctrOf(work, b);
+    const pa = work.pos[a]; work.pos[a] = work.pos[b]; work.pos[b] = pa;
+    const ta = this.ctrOf(work, a), tb = this.ctrOf(work, b);
+    Sound.swap();
+    const arc = (el, f, t, up) => el.animate([
+      { transform: `translate(${f.x}px, ${f.y}px)` },
+      { transform: `translate(${(f.x + t.x) / 2 + (up ? -40 : 40)}px, ${Math.min(f.y, t.y) - (up ? 160 : 60)}px) scale(1.25)` },
+      { transform: `translate(${t.x}px, ${t.y}px)` },
+    ], { duration: ANIM.swap * T, easing: 'steps(14, end)' }).finished.catch(() => {});
+    [ea, eb].forEach((e) => { e.classList.add('moving', 'glow'); });
+    await Promise.all([arc(ea, fa, ta, true), arc(eb, fb, tb, false)]);
+    ea.style.transform = `translate(${ta.x}px, ${ta.y}px)`; eb.style.transform = `translate(${tb.x}px, ${tb.y}px)`;
+    this.piecePos[a] = ta; this.piecePos[b] = tb;
+    [ea, eb].forEach((e) => { e.classList.remove('moving', 'glow'); });
+    await sleep(300 * T);
+  },
+  async playFx(f, work, next) {
+    const nm = (t) => next.names[t];
+    if (f.k === 'skipped') {
+      const c = this.ctrOf(work, f.team);
+      this.toast(`${nm(f.team)} โดนหยุด ข้ามตานี้`, 'bad', 1100); Sound.snore();
+      this.floatText(c.x, c.y - 100, 'Zzz', 'ice');
+      await sleep(ANIM.note * T);
+    } else if (f.k === 'fizzle') {
+      this.toast('ไม่มีทีมให้แกล้ง รอดไป', '', 1100);
+      await sleep(ANIM.note * T);
+    } else if (f.k === 'swap') {
+      this.toast(`${nm(f.a)} สลับที่กับ ${nm(f.b)}`, '', 1500);
+      await this.swapPieces(f.a, f.b, work);
+    } else if (f.k === 'bite') {
+      const c = this.ctrOf(work, f.team);
+      this.toast(`${nm(f.by)} ส่งงูกัด ${nm(f.team)}`, 'bad', 1400);
+      const sn = document.createElement('div'); sn.className = 'bitesnake';
+      sn.style.left = c.x + 'px'; sn.style.top = c.y + 'px';
+      sn.innerHTML = `<svg width="140" height="140" viewBox="-70 -70 140 140" shape-rendering="crispEdges">${snakeHead(0, 0, 1.6)}</svg>`;
+      this.el.fx.appendChild(sn);
+      Sound.hiss();
+      await sleep(550 * T);
+      Sound.chomp(); this.flashScreen('green');
+      await sleep((ANIM.bite - 550) * T);
+      sn.remove();
+      await this.hurtBack(f.team, f.path, work);
+    } else if (f.k === 'bomb') {
+      const c = sqXY(f.at);
+      this.toast(`${nm(f.team)} จุดระเบิด!`, 'bad', 1400);
+      const b = document.createElement('div'); b.className = 'boom';
+      b.style.left = c.x + 'px'; b.style.top = c.y + 'px';
+      b.innerHTML = Array.from({ length: 16 }, (_, i) => `<i style="--a:${i * 22.5}deg;--d:${120 + (i % 3) * 60}px"></i>`).join('');
+      Sound.fuse(); await sleep(500 * T);
+      this.el.fx.appendChild(b); Sound.boom(); this.flashScreen('white'); this.quake();
+      await sleep((ANIM.bomb - 500) * T);
+      b.remove();
+      if (f.hits.length) {
+        Sound.hurt(); this.flashScreen('red');
+        await Promise.all(f.hits.map((h, i) => this.hurtBack(h.team, h.path, work, { quiet: i > 0 })));
+      } else this.toast('ไม่มีใครโดน', '', 900);
+    } else if (f.k === 'wheel') {
+      await this.spinWheel(f, next);
+      if (f.out === 'back' && f.path && f.path.length) await this.hurtBack(f.team, f.path, work);
+      else if (f.out === 'swapLast' && f.with != null) { this.toast(`${nm(f.team)} สลับกับทีมโหล่ ${nm(f.with)}`, 'bad', 1500); await this.swapPieces(f.team, f.with, work); }
+      else if (f.out === 'stop') {
+        const el = this.pieceEl(f.team), c = this.ctrOf(work, f.team);
+        el.classList.add('frozen'); Sound.freeze(); this.flashScreen('ice');
+        this.floatText(c.x, c.y - 110, 'หยุด 1 ตา', 'ice');
+        await sleep(ANIM.note * T);
+      }
+    }
+  },
+  wheelSVG(kind) {
+    const segs = WHEEL[kind], R = 290, C = 310;
+    const col = (o, i) => o.t === 'stop' ? ['#5DB8F0', '#0A0A0A'] : o.t === 'safe' ? ['#6D912E', '#F6F5F1'] : o.t === 'swapLast' ? ['#F5D96B', '#0A0A0A'] : (i % 2 ? ['#853F1A', '#F6F5F1'] : ['#CC7021', '#0A0A0A']);
+    let g = '';
+    segs.forEach((o, i) => {
+      const a0 = (i * 45 - 90) * Math.PI / 180, a1 = ((i + 1) * 45 - 90) * Math.PI / 180, mid = i * 45 + 22.5;
+      const [bg, ink] = col(o, i);
+      g += `<path id="wseg${i}" d="M${C},${C} L${C + R * Math.cos(a0)},${C + R * Math.sin(a0)} A${R},${R} 0 0 1 ${C + R * Math.cos(a1)},${C + R * Math.sin(a1)} Z" fill="${bg}" stroke="#0A0A0A" stroke-width="6"/>`;
+      const short = o.t === 'swapLast' ? 'สลับโหล่' : o.t === 'stop' ? 'หยุดตา' : wheelLabel(o);
+      g += `<text transform="rotate(${mid} ${C} ${C}) translate(${C} ${C - R * 0.68})" text-anchor="middle" dominant-baseline="middle" font-size="36" font-weight="700" fill="${ink}" style="font-family:var(--f-th)">${short}</text>`;
+    });
+    // ไฟรอบวงล้อแบบพิกเซล
+    let bulbs = '';
+    for (let i = 0; i < 24; i++) { const a = (i / 24) * Math.PI * 2; bulbs += `<rect class="bulb ${i % 2 ? 'b2' : ''}" x="${Math.round(C + Math.cos(a) * (R + 14) - 7)}" y="${Math.round(C + Math.sin(a) * (R + 14) - 7)}" width="14" height="14"/>`; }
+    return `<svg width="620" height="620" viewBox="0 0 620 620" class="wheel-svg">
+      <circle cx="${C}" cy="${C}" r="${R + 22}" fill="#0A0A0A"/><circle cx="${C}" cy="${C}" r="${R + 8}" fill="#EA8B25"/>
+      ${bulbs}<g id="wheel-rot">${g}</g>
+      <rect x="${C - 46}" y="${C - 46}" width="92" height="92" fill="#0A0A0A"/><rect x="${C - 38}" y="${C - 38}" width="76" height="76" fill="#F5D96B"/>
+      <text x="${C}" y="${C + 4}" text-anchor="middle" dominant-baseline="middle" font-size="44" fill="#0A0A0A" style="font-family:var(--f-px)">?</text>
+      <g transform="translate(${C} 4)"><rect x="-30" y="0" width="60" height="16" fill="#0A0A0A"/><rect x="-22" y="16" width="44" height="16" fill="#0A0A0A"/><rect x="-14" y="32" width="28" height="16" fill="#0A0A0A"/><rect x="-6" y="48" width="12" height="12" fill="#0A0A0A"/>
+        <rect x="-22" y="4" width="44" height="10" fill="#F6F5F1"/><rect x="-14" y="18" width="28" height="12" fill="#F6F5F1"/><rect x="-6" y="34" width="12" height="12" fill="#F6F5F1"/></g>
+    </svg>`;
+  },
+  async spinWheel(f, next) {
+    const ov = this.el.wheel;
+    const who = next.names[f.team];
+    ov.innerHTML = `<div class="wheel-box"><div class="wheel-title"><span class="av">${sprite(COLORS[f.team], 5)}</span><span>วงล้อลงโทษ · ${esc(who)}</span></div>${this.wheelSVG(f.kind)}<div class="wheel-res" id="wheel-res"></div></div>`;
+    ov.classList.add('on');
+    Music.duck(0.35);
+    await sleep(600 * T);
+    const rot = $('#wheel-rot');
+    const target = 360 * 6 - (f.idx * 45 + 22.5) + (f.jitter || 0);
+    const dur = ANIM.spin * T;
+    let lastSeg = 0;
+    await new Promise((res) => {
+      const t0 = performance.now();
+      const frame = (now) => {
+        const u = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - u, 4);
+        const ang = target * e;
+        rot.setAttribute('transform', `rotate(${ang} 310 310)`);
+        const sg = Math.floor((ang + 22.5) / 45);
+        if (sg !== lastSeg) { lastSeg = sg; Sound.tick(); }
+        if (u < 1) requestAnimationFrame(frame); else res();
+      };
+      requestAnimationFrame(frame);
+    });
+    const seg = $('#wseg' + f.idx); if (seg) seg.classList.add('win');
+    const bad = f.out !== 'safe' && !f.note;
+    $('#wheel-res').className = 'wheel-res ' + (bad ? 'bad' : 'good');
+    $('#wheel-res').innerHTML = `${esc(f.label)}${f.note ? `<small>${esc(f.note)}</small>` : ''}`;
+    bad ? Sound.sting() : Sound.safe();
+    await sleep(ANIM.verdict * T);
+    ov.classList.remove('on');
+    Music.duck(1);
+    await sleep(250 * T);
+  },
+  syncMusic(st) {
+    st = st || this.shown;
+    if (!Music.on || !Sound.on) { Music.stop(); return; }
+    Music.start();
+    Music.duck(!st ? 1 : st.phase === 'won' ? 0.2 : (st.phase === 'card' || st.phase === 'judged') ? 0.3 : 1);
   },
   renderPanel(st, turnTeam) {
     if (!st) { this.el.teams.innerHTML = ''; return; }
@@ -1161,7 +1638,8 @@ const Screen = {
     const list = st.order && st.order.length ? st.order : [...Array(st.nTeams).keys()];
     for (const t of list) {
       const cls = t === cur ? 'turn' : (st.phase === 'won' && st.winner !== t ? 'dim' : '');
-      h += `<div class="tcard ${cls}"><div class="avatar">${sprite(COLORS[t], 7)}</div><div class="nm">${nameOf(st, t)}</div><div class="sq">${st.pos[t] > 0 ? `<small>ช่อง</small>${st.pos[t]}` : '<small>รอเริ่ม</small>'}</div></div>`;
+      const stop = st.stop && st.stop[t] > 0 ? `<span class="stopbadge">หยุด ${st.stop[t]} ตา</span>` : '';
+      h += `<div class="tcard ${cls}"><div class="avatar">${sprite(COLORS[t], 6)}</div><div class="nm">${nameOf(st, t)}</div><div class="sq">${st.pos[t] > 0 ? `<small>ช่อง</small>${st.pos[t]}` : '<small>รอเริ่ม</small>'}${stop}</div></div>`;
     }
     this.el.teams.innerHTML = h;
   },
@@ -1171,11 +1649,12 @@ const Screen = {
     const tn = (t) => `<span class="tn">${nameOf(st, t)}</span>`;
     switch (st.phase) {
       case 'setup': return ['รอเริ่มเกม', 'สตาฟกำลังตั้งชื่อทีม'];
-      case 'order': return st.order.length ? ['ได้ลำดับแล้ว', 'พร้อมเริ่มเล่น'] : ['ทอยเรียงลำดับ', st.orderPending.length ? `${nameOf(st, st.orderPending[0])} ทอยเต๋ายักษ์` : ''];
+      case 'order': return ['ลำดับการเล่น', 'พร้อมเริ่มเล่น'];
       case 'ready': return [`ตา ${tn(cur)}`, 'ตัวแทนทีมทอยเต๋ายักษ์'];
       case 'cardPending': return st.pendingCard === 'shoot' ? [`${tn(cur)} ยิง ${tn(st.target)}`, 'รอเปิดการ์ดยิง'] : [`${tn(cur)} ตกช่องคำถาม`, 'รอเปิดการ์ด'];
-      case 'pickTarget': return [`${tn(cur)} ตกช่องยิง`, 'เลือกทีมที่จะยิง ผิดถอย 3 ช่อง'];
-      case 'card': case 'judged': return [`${tn(st.card.answerer)} ตอบ`, 'ภายใน 20 วินาที'];
+      case 'pickTarget': return st.prank === 'swap' ? [`${tn(cur)} ได้สลับที่`, 'เลือกทีมที่จะสลับตำแหน่ง'] : st.prank === 'bite' ? [`${tn(cur)} ได้ส่งงู`, `เลือกเหยื่อ ถอย ${BOARD.biteBack} ช่อง`] : [`${tn(cur)} ตกช่องยิง`, 'เลือกทีมที่จะยิง ผิดหมุนวงล้อ'];
+      case 'card': return [`${tn(st.card.answerer)} ตอบ`, `ภายใน ${BOARD.timerSec} วินาที`];
+      case 'judged': return st.card.result === 'wrong' ? [`${tn(st.card.answerer)} ตอบผิด`, 'รอหมุนวงล้อลงโทษ'] : [`${tn(st.card.answerer)} ตอบถูก`, 'อยู่ที่เดิม'];
       case 'won': return [`${tn(st.winner)} ชนะ`, st.endedEarly ? 'นำอยู่ตอนจบเกม' : 'ถึงเส้นชัยก่อน'];
     }
     return ['', ''];
@@ -1187,15 +1666,8 @@ const Screen = {
   renderOrder(st) {
     const ov = this.el.order;
     if (!st || st.phase !== 'order') { ov.classList.remove('on'); return; }
-    const ts = [...Array(st.nTeams).keys()];
-    const done = st.order.length > 0;
-    const rows = (done ? st.order : ts).map((t, i) => {
-      const rolls = st.orderKeys[t].map((r) => `<i>${r}</i>`).join('') || '<i>-</i>';
-      const next = !done && st.orderPending[0] === t;
-      return `<div class="order-row ${next ? 'next' : ''}"><div class="rank">${done ? '#' + (i + 1) : ''}</div><div class="nm">${nameOf(st, t)}</div><div class="rolls">${rolls}</div></div>`;
-    }).join('');
-    const tie = !done && st.orderPending.length && ts.every((t) => st.orderKeys[t].length) ;
-    ov.innerHTML = `<div class="order-box"><h3>${done ? 'ลำดับการเล่น' : 'ทอยเรียงลำดับ'}</h3><div class="sub">${done ? 'แต้มมากได้เล่นก่อน' : tie ? 'แต้มเสมอ ทีมที่เสมอทอยใหม่' : 'แต้มมากได้เล่นก่อน'}</div><div class="order-list">${rows}</div></div>`;
+    const rows = st.order.map((t, i) => `<div class="order-row"><div class="rank">#${i + 1}</div><div class="nm">${nameOf(st, t)}</div><div class="av">${sprite(COLORS[t], 4)}</div></div>`).join('');
+    ov.innerHTML = `<div class="order-box"><h3>ลำดับการเล่น</h3><div class="sub">ตัวแทนทีมเตรียมทอยเต๋ายักษ์ตามลำดับ</div><div class="order-list">${rows}</div></div>`;
     ov.classList.add('on');
   },
   renderSplash(st) {
@@ -1215,8 +1687,8 @@ const Screen = {
       const who = `<span class="av">${sprite(COLORS[c.answerer], 5)}</span><span>${shoot ? `<small>${nameOf(st, c.shooter)} ยิง</small>` : ''}${nameOf(st, c.answerer)} ตอบ</span>`;
       ov.innerHTML = `<div class="card ${shoot ? 'shoot' : ''}" id="card">
         <div class="card-head"><div class="kind"><span>${shoot ? 'SHOOT CARD' : 'QUESTION CARD'}</span><b>${shoot ? 'การ์ดยิง' : 'การ์ดคำถาม'} ข้อ ${c.no}</b></div><div class="who">${who}</div></div>
-        <div class="card-body"><div><p class="card-q">${esc(q.q)}</p><div class="card-rule">${shoot ? 'ตอบผิด ทีมที่ถูกยิงถอย 3 ช่อง' : 'ตอบผิด ถอย 1 ช่อง'}</div></div>
-          <div class="timer" id="timer"><svg viewBox="0 0 190 190" shape-rendering="crispEdges" id="timer-ring"></svg><div class="num" id="timer-num">20</div></div></div>
+        <div class="card-body"><div><p class="card-q">${esc(q.q)}</p><div class="card-rule">ตอบผิด ${shoot ? 'ทีมที่ถูกยิง' : ''}หมุนวงล้อลงโทษ</div></div>
+          <div class="timer" id="timer"><svg viewBox="0 0 190 190" shape-rendering="crispEdges" id="timer-ring"></svg><div class="num" id="timer-num">${BOARD.timerSec}</div></div></div>
         <div class="opts">${q.o.map((o, i) => `<div class="opt ${i === q.a ? 'ok' : ''}"><div class="l">${'ABCD'[i]}</div><div class="t">${esc(o)}</div></div>`).join('')}</div>
         <div class="verdict" id="verdict"></div>
       </div>`;
@@ -1230,7 +1702,7 @@ const Screen = {
         const v = $('#verdict');
         const ok = c.result === 'right';
         v.className = 'verdict ' + (ok ? 'right' : 'wrong');
-        v.innerHTML = `<b>${ok ? 'ตอบถูก อยู่ที่เดิม' : `ตอบผิด ${nameOf(st, c.answerer)} ถอย ${c.back} ช่อง`}</b><p>${esc(q.w)}</p>`;
+        v.innerHTML = `<b>${ok ? 'ตอบถูก อยู่ที่เดิม' : `ตอบผิด ${nameOf(st, c.answerer)} ต้องหมุนวงล้อลงโทษ`}</b><p>${esc(q.w)}</p>`;
         card.classList.add('revealed');
         ok ? Sound.right() : Sound.wrong();
       }
@@ -1242,13 +1714,14 @@ const Screen = {
     const rem = timerNow(st, this.clk);
     const tm = st.timer;
     const sec = Math.ceil(rem - 0.001);
-    const lit = tm.state === 'idle' ? 20 : Math.max(0, Math.min(20, Math.ceil(rem - 0.001)));
+    const N = BOARD.timerSec;
+    const lit = tm.state === 'idle' ? N : Math.max(0, Math.min(N, Math.ceil(rem - 0.001)));
     const ring = $('#timer-ring');
     if (ring && ring.dataset.lit !== String(lit)) {
       ring.dataset.lit = lit;
       let s = '';
-      for (let i = 0; i < 20; i++) {
-        const a = (i / 20) * Math.PI * 2 - Math.PI / 2;
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * Math.PI * 2 - Math.PI / 2;
         const x = 95 + Math.cos(a) * 78, y = 95 + Math.sin(a) * 78;
         const on = i < lit;
         s += `<rect x="${Math.round(x - 9)}" y="${Math.round(y - 9)}" width="18" height="18" fill="${on ? (lit <= 5 ? '#C1331D' : '#F5D96B') : '#2a2017'}"/>`;
@@ -1262,7 +1735,7 @@ const Screen = {
     if (cardEl) cardEl.classList.toggle('timeout', out);
     if (out && this._outNonce !== tm.nonce) { this._outNonce = tm.nonce; Sound.buzz(); }
     box.classList.toggle('warn', !out && tm.state === 'running' && sec <= 5);
-    num.innerHTML = out ? 'หมด<br>เวลา' : (tm.state === 'idle' ? '20' : String(sec));
+    num.innerHTML = out ? 'หมด<br>เวลา' : (tm.state === 'idle' ? String(N) : String(sec));
     if (tm.state === 'running' && sec !== this.lastSec) {
       if (this.lastSec !== null && sec <= 5 && sec >= 0) Sound.last();
       this.lastSec = sec;
@@ -1276,6 +1749,7 @@ const Screen = {
     this._winKey = st.winner + ':' + st.round;
     const t = st.winner;
     this.el.winBox.innerHTML = `<div class="eyebrow">MISSION COMPLETE · IMPACT 100%</div><h1>ชนะเลิศ!</h1><div class="big-avatar">${sprite(COLORS[t], 18)}</div><div class="nm">${nameOf(st, t)}</div><p>${st.endedEarly ? 'นำอยู่ตอนจบเกม' : 'ถึงช่อง 30 ก่อน'}</p>`;
+    Music.duck(0.15);
     ov.classList.add('on');
     Sound.win();
     this.confetti();
@@ -1303,6 +1777,8 @@ const Screen = {
     this.renderCard(st);
     this.renderWin(st);
     this.paintNet();
+    if (this.paintSound) this.paintSound();
+    this.syncMusic(st);
   },
   tick() {
     if (this.shown && (this.shown.phase === 'card') && !this.busy) this.paintTimer(this.shown);
@@ -1313,7 +1789,7 @@ const Screen = {
 /* ================= จอควบคุม ================= */
 const Control = {
   hideAns: store.get('bandai-hide-ans') === '1',
-  doc: null, pending: false, lockUntil: 0, err: '', renderedKey: null, setupN: null, armed: {}, clk: makeClock(), lastWrite: 0,
+  doc: null, pending: false, lockUntil: 0, err: '', renderedKey: null, setupN: null, setupNames: null, setupOrder: [], armed: {}, clk: makeClock(), lastWrite: 0,
   mount() {
     this.mountedAt = Date.now();
     document.getElementById('app').innerHTML = `<div class="ctl" id="ctl">
@@ -1324,6 +1800,7 @@ const Control = {
       <div class="help" id="help"></div>
     </div>`;
     document.addEventListener('click', (e) => this.onClick(e));
+    document.addEventListener('input', (e) => { const m = /^team-name-(\d)$/.exec(e.target.id || ''); if (m) { if (!this.setupNames) this.setupNames = this.st ? this.st.names.slice() : BOARD.defaultNames.slice(); this.setupNames[+m[1]] = e.target.value; this.paintOrderPick(); } });
     document.addEventListener('keydown', (e) => this.onKey(e));
     Sync.onChange(() => { this.paintTop(); this.paintMainBtn(); this.renderErr(); });
     this.render();
@@ -1338,6 +1815,15 @@ const Control = {
     }
     if (!doc.state) return;
     const incoming = JSON.parse(JSON.stringify(doc));
+    // ข้อมูลจากเกมเวอร์ชันเก่า (4 ทีม ทอยหาลำดับ) ใช้ต่อไม่ได้ เริ่มหน้าเตรียมเกมใหม่ เก็บชื่อทีมไว้
+    if (!isCurrentState(incoming.state)) {
+      if (this.pending) return;
+      const fresh = initialState();
+      fresh.v = (incoming.state.v || 0) + 1;
+      (incoming.state.names || []).forEach((n, i) => { if (i < MAXT && n) fresh.names[i] = n; });
+      this.commit({ state: fresh, hist: [] }, true);
+      return;
+    }
     if (!incoming.hist) incoming.hist = this.doc ? this.doc.hist : [];
     if (this.doc && incoming.state.v < this.doc.state.v && !this.pending) {
       // ข้อมูลเก่ากว่า ไม่ต้องใช้ เว้นแต่ห่างกันมากผิดปกติ
@@ -1383,18 +1869,18 @@ const Control = {
     const cur = s.order && s.order.length ? s.order[s.turn] : null;
     switch (s.phase) {
       case 'setup': return { label: 'เริ่มเกม', act: 'start' };
-      case 'order': return s.order.length ? { label: 'เริ่มเล่น', act: 'startPlay' } : { label: 'กดแต้มที่ทอยได้ด้านบน', act: null };
+      case 'order': return { label: 'เริ่มเล่น', act: 'startPlay' };
       case 'ready': return { label: 'กดแต้มที่ทอยได้ด้านบน', act: null };
       case 'cardPending': return { label: s.pendingCard === 'shoot' ? 'เปิดการ์ดยิง' : 'เปิดการ์ดคำถาม', act: 'openCard' };
-      case 'pickTarget': return { label: 'เลือกทีมที่จะยิงด้านล่าง', act: null };
+      case 'pickTarget': return { label: s.prank === 'swap' ? 'เลือกทีมที่จะสลับด้านบน' : s.prank === 'bite' ? 'เลือกเหยื่อด้านบน' : 'เลือกทีมที่จะยิงด้านบน', act: null };
       case 'card': {
         const rem = timerNow(s, this.clk);
-        if (s.timer.state === 'idle') return { label: 'เริ่มจับเวลา 20 วินาที', act: 'timerStart' };
+        if (s.timer.state === 'idle') return { label: `เริ่มจับเวลา ${BOARD.timerSec} วินาที`, act: 'timerStart' };
         if (s.timer.state === 'running' && rem > 0) return { label: 'หยุดเวลา', act: 'timerPause' };
         if (s.timer.state === 'paused') return { label: 'เดินเวลาต่อ', act: 'timerResume' };
         return { label: 'หมดเวลา กดเพื่อจับเวลาใหม่', act: 'timerStart' };
       }
-      case 'judged': return { label: 'ปิดการ์ด ไปตาถัดไป', act: 'closeCard' };
+      case 'judged': return s.card.result === 'wrong' ? { label: 'หมุนวงล้อลงโทษ', act: 'spin' } : { label: 'ปิดการ์ด ไปตาถัดไป', act: 'closeCard' };
       case 'won': return { label: 'เล่นรอบใหม่ ชื่อทีมเดิม', act: 'newRound' };
     }
     return { label: '', act: null };
@@ -1404,8 +1890,9 @@ const Control = {
     if (!m.act) return;
     if (m.act === 'start') {
       const n = this.setupN || this.st.nTeams;
-      const names = [0, 1, 2, 3].map((i) => { const el = document.getElementById('team-name-' + i); return el ? el.value : ''; });
-      this.dispatch({ type: 'setup', nTeams: n, names }, { main: true });
+      const names = [...Array(MAXT).keys()].map((i) => { const el = document.getElementById('team-name-' + i); return el ? el.value : ''; });
+      this.dispatch({ type: 'setup', nTeams: n, names, order: this.setupOrder.filter((t) => t < n) }, { main: true });
+      this.setupNames = null;
     } else this.dispatch({ type: m.act }, { main: true });
   },
   onClick(e) {
@@ -1413,7 +1900,9 @@ const Control = {
     const act = b.dataset.act, s = this.st;
     switch (act) {
       case 'main': this.runMain(); break;
-      case 'n': this.setupN = +b.dataset.n; this.renderedKey = null; this.render(); break;
+      case 'n': this.setupN = +b.dataset.n; this.setupOrder = this.setupOrder.filter((t) => t < this.setupN); this.renderedKey = null; this.render(); break;
+      case 'ord': { const t = +b.dataset.t; const i = this.setupOrder.indexOf(t); if (i >= 0) this.setupOrder.splice(i, 1); else this.setupOrder.push(t); this.paintOrderPick(); break; }
+      case 'ordClear': this.setupOrder = []; this.paintOrderPick(); break;
       case 'die': this.enterDie(+b.dataset.v); break;
       case 'target': this.dispatch({ type: 'pickTarget', team: +b.dataset.t }, { main: true }); break;
       case 'right': this.dispatch({ type: 'judge', correct: true }); break;
@@ -1438,8 +1927,17 @@ const Control = {
   },
   enterDie(v) {
     const s = this.st; if (!s) return;
-    if (s.phase === 'order' && !s.order.length) this.dispatch({ type: 'rollOrder', value: v }, { main: true });
-    else if (s.phase === 'ready') this.dispatch({ type: 'roll', value: v }, { main: true });
+    if (s.phase === 'ready') this.dispatch({ type: 'roll', value: v }, { main: true });
+  },
+  // ปุ่มเรียงลำดับทีมในหน้าเตรียมเกม กดตามลำดับที่จะเล่น กดซ้ำเพื่อเอาออก
+  paintOrderPick() {
+    const box = $('#ordpick'); if (!box) return;
+    const s = this.st; const n = this.setupN || (s ? s.nTeams : 5);
+    const nm = (i) => { const v = this.setupNames ? this.setupNames[i] : (s && s.names[i] !== BOARD.defaultNames[i] ? s.names[i] : ''); return esc((v || '').trim() || BOARD.defaultNames[i]); };
+    const order = this.setupOrder.filter((t) => t < n);
+    const rest = [...Array(n).keys()].filter((t) => !order.includes(t));
+    box.innerHTML = `<div class="ordbtns">${[...Array(n).keys()].map((t) => { const k = order.indexOf(t); return `<button type="button" class="ordbtn ${k >= 0 ? 'on' : ''}" data-act="ord" data-t="${t}"><span class="sw" style="background:${COLORS[t]}"></span>${nm(t)}${k >= 0 ? `<b>${k + 1}</b>` : ''}</button>`; }).join('')}</div>
+      <p class="hint">ลำดับที่จะเล่น: ${order.concat(rest).map((t, i) => `${i + 1}. ${nm(t)}`).join(' · ')}${order.length ? ' <button class="sbtn" type="button" data-act="ordClear">ล้างลำดับ</button>' : ''}</p>`;
   },
   diePad() {
     const locked = Date.now() < this.lockUntil || this.pending;
@@ -1451,12 +1949,12 @@ const Control = {
     if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
     const s = this.st; if (!s) return;
     if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) this.runMain(); }
-    else if (/^(Digit|Numpad)[1-6]$/.test(e.code) && (s.phase === 'ready' || (s.phase === 'order' && !s.order.length))) {
+    else if (/^(Digit|Numpad)[1-6]$/.test(e.code) && s.phase === 'ready') {
       if (!e.repeat) this.enterDie(+e.code.slice(-1));
     }
     else if (s.phase === 'card' && e.code === 'KeyY') this.dispatch({ type: 'judge', correct: true });
     else if (s.phase === 'card' && e.code === 'KeyN') this.dispatch({ type: 'judge', correct: false });
-    else if (s.phase === 'pickTarget' && /^Digit[1-4]$/.test(e.code)) this.dispatch({ type: 'pickTarget', team: +e.code.slice(5) - 1 }, { main: true });
+    else if (s.phase === 'pickTarget' && /^Digit[1-5]$/.test(e.code)) this.dispatch({ type: 'pickTarget', team: +e.code.slice(5) - 1 }, { main: true });
   },
   paintTop() {
     const pn = $('#pill-net'), ps = $('#pill-screen'); if (!pn) return;
@@ -1471,6 +1969,7 @@ const Control = {
   paintMainBtn() {
     const lockedNow = Date.now() < this.lockUntil || this.pending || !Sync.netOk();
     document.querySelectorAll('.die').forEach((d) => { if (d.disabled !== lockedNow) d.disabled = lockedNow; });
+    document.querySelectorAll('.targets .btn').forEach((d) => { const v = lockedNow || d.dataset.ok !== '1'; if (d.disabled !== v) d.disabled = v; });
     const btn = $('#mainbtn'); if (!btn) return;
     const m = this.mainAction();
     const locked = Date.now() < this.lockUntil;
@@ -1488,7 +1987,7 @@ const Control = {
     const el = $('#ctl-timer'); const s = this.st; if (!el || !s || s.phase !== 'card') return;
     const rem = timerNow(s, this.clk);
     const out = s.timer.state === 'running' && rem <= 0;
-    const txt = s.timer.state === 'idle' ? '20' : out ? '0' : String(Math.ceil(rem - 0.001));
+    const txt = s.timer.state === 'idle' ? String(BOARD.timerSec) : out ? '0' : String(Math.ceil(rem - 0.001));
     if (el.textContent !== txt) el.textContent = txt;
     el.classList.toggle('warn', out || (s.timer.state === 'running' && rem <= 5));
   },
@@ -1513,7 +2012,7 @@ const Control = {
     const playing = ['ready', 'cardPending', 'pickTarget', 'card', 'judged'].includes(s.phase);
     const cur = playing ? s.order[s.turn] : null;
     const list = s.order && s.order.length ? s.order : [...Array(s.nTeams).keys()];
-    box.innerHTML = s.phase === 'setup' ? '' : list.map((t) => `<div class="chip ${t === cur ? 'turn' : ''}"><span class="sw" style="background:${COLORS[t]}"></span><span class="nm">${nameOf(s, t)}</span><span class="sq">${s.pos[t] > 0 ? s.pos[t] : '-'}</span></div>`).join('');
+    box.innerHTML = s.phase === 'setup' ? '' : list.map((t) => `<div class="chip ${t === cur ? 'turn' : ''}"><span class="sw" style="background:${COLORS[t]}"></span><span class="nm">${nameOf(s, t)}${s.stop && s.stop[t] > 0 ? ' <span class="stopbadge">หยุด</span>' : ''}</span><span class="sq">${s.pos[t] > 0 ? s.pos[t] : '-'}</span></div>`).join('');
   },
   render() {
     this.paintTop(); this.renderChips(); this.renderErr(); this.renderHelp();
@@ -1530,31 +2029,33 @@ const Control = {
     switch (s.phase) {
       case 'setup': {
         const n = this.setupN || s.nTeams;
-        h = `<div class="phase-label">ขั้นที่ 1 · เตรียมเกม</div><p class="headline">ตั้งชื่อทีม แล้วกดเริ่มเกม</p>
-          <div class="form"><div><label>จำนวนทีมรอบนี้</label><div class="seg">${[2, 3, 4].map((k) => `<button type="button" data-act="n" data-n="${k}" class="${k === n ? 'on' : ''}">${k} ทีม</button>`).join('')}</div></div>
-          <div class="names">${[0, 1, 2, 3].slice(0, n).map((i) => `<label for="team-name-${i}">ชื่อทีม ${i + 1} <span style="color:${COLORS[i]}">■</span><input id="team-name-${i}" maxlength="24" value="${esc(s.names[i] !== BOARD.defaultNames[i] ? s.names[i] : '')}" placeholder="${BOARD.defaultNames[i]}"></label>`).join('')}</div>
-          <p class="hint">เว้นว่างไว้ได้ ระบบจะใช้ชื่อ ทีม 1 ถึง ทีม ${n}</p></div>${btn}`;
+        const nmv = (i) => this.setupNames ? this.setupNames[i] : (s.names[i] !== BOARD.defaultNames[i] ? s.names[i] : '');
+        h = `<div class="phase-label">ขั้นที่ 1 · เตรียมเกม</div><p class="headline">ตั้งชื่อทีม เรียงลำดับ แล้วกดเริ่มเกม</p>
+          <div class="form"><div><label>จำนวนทีมรอบนี้</label><div class="seg">${[2, 3, 4, 5].map((k) => `<button type="button" data-act="n" data-n="${k}" class="${k === n ? 'on' : ''}">${k} ทีม</button>`).join('')}</div></div>
+          <div class="names">${[...Array(MAXT).keys()].slice(0, n).map((i) => `<label for="team-name-${i}"><span>ชื่อทีม ${i + 1} <span style="color:${COLORS[i]}">■</span></span><input id="team-name-${i}" maxlength="24" value="${esc(nmv(i))}" placeholder="${BOARD.defaultNames[i]}"></label>`).join('')}</div>
+          <p class="hint">เว้นว่างไว้ได้ ระบบจะใช้ชื่อ ทีม 1 ถึง ทีม ${n}</p>
+          <div><label>ลำดับการเล่น กดชื่อทีมตามลำดับที่จะเล่น ถ้าไม่กด ระบบเรียงตามเลขทีม</label><div id="ordpick"></div></div></div>${btn}`;
         break;
       }
       case 'order': {
-        const done = s.order.length > 0;
-        const rows = (done ? s.order : [...Array(s.nTeams).keys()]).map((t, i) => `<li>${done ? (i + 1) + '. ' : ''}${nameOf(s, t)} <span style="color:var(--gold)">${s.orderKeys[t].join(' · ') || '-'}</span></li>`).join('');
-        const tie = !done && s.orderPending.length && [...Array(s.nTeams).keys()].every((t) => s.orderKeys[t].length);
-        h = `<div class="phase-label">ขั้นที่ 2 · ทอยเรียงลำดับ</div><p class="headline">${done ? 'ได้ลำดับแล้ว' : tie ? 'แต้มเสมอ ทอยใหม่เฉพาะทีมที่เสมอ' : 'ทอยให้ทีละทีม แต้มมากได้เล่นก่อน'}</p>
-          <div class="prev-card"><ol>${rows}</ol></div>${done ? btn : `<p class="headline">ตา ${tn(s.orderPending[0])} ทอยเรียงลำดับ</p>${this.diePad()}`}`;
+        const rows = s.order.map((t, i) => `<li>${i + 1}. ${nameOf(s, t)}</li>`).join('');
+        h = `<div class="phase-label">ขั้นที่ 2 · ลำดับการเล่น</div><p class="headline">จอโชว์ขึ้นลำดับแล้ว กดเริ่มเล่นได้เลย</p>
+          <div class="prev-card"><ol>${rows}</ol></div>${btn}`;
         break;
       }
       case 'ready':
-        h = `<div class="phase-label">ตาเล่น</div><p class="headline">ตา ${tn(cur)} · ${sqLabel(s.pos[cur])}</p>${this.diePad()}`;
+        h = `<div class="phase-label">ตาเล่น</div>${this.lastNote(s)}<p class="headline">ตา ${tn(cur)} · ${sqLabel(s.pos[cur])}</p>${this.diePad()}`;
         break;
       case 'cardPending':
         h = `<div class="phase-label">${s.pendingCard === 'shoot' ? 'ช่องยิง' : 'ช่องคำถาม'}</div><p class="headline">${s.pendingCard === 'shoot' ? `${tn(cur)} ยิง ${tn(s.target)}` : `${tn(cur)} ตกช่องคำถาม ช่อง ${s.pos[cur]}`}</p>
           <p class="hint">การ์ดใบถัดไปคือ ${s.pendingCard === 'shoot' ? 'การ์ดยิง' : 'การ์ดคำถาม'} ข้อ ${(s.next[s.pendingCard] % CARDS[s.pendingCard].length) + 1}</p>${btn}`;
         break;
       case 'pickTarget': {
+        const valid = validTargets(s, s.prank, cur);
         const others = [...Array(s.nTeams).keys()].filter((t) => t !== cur);
-        h = `<div class="phase-label">ช่องยิง</div><p class="headline">${tn(cur)} ตกช่องยิง จะยิงทีมไหน</p><p class="hint">ทีมที่ถูกยิงตอบผิด ถอย 3 ช่อง · กดแป้นเลขทีมได้</p>
-          <div class="targets">${others.map((t) => `<button class="btn" type="button" data-act="target" data-t="${t}">${nameOf(s, t)}<small>${sqLabel(s.pos[t])} · แป้น ${t + 1}</small></button>`).join('')}</div>`;
+        const info = { shoot: ['ช่องยิง', 'จะยิงคำถามใส่ทีมไหน', 'ทีมที่โดนยิงต้องตอบ ถ้าผิดหมุนวงล้อลงโทษ'], swap: ['ช่องสลับที่', 'จะสลับตำแหน่งกับทีมไหน', 'สลับช่องกันทันที เลือกทีมที่ยังไม่ออกจากจุดเริ่มไม่ได้'], bite: ['ช่องส่งงูกัด', 'จะส่งงูไปกัดทีมไหน', `ทีมที่โดนกัดถอย ${BOARD.biteBack} ช่องทันที`] }[s.prank];
+        h = `<div class="phase-label">${info[0]}</div><p class="headline">${tn(cur)} ${info[1]}</p><p class="hint">${info[2]} · กดแป้นเลขทีมได้</p>
+          <div class="targets">${others.map((t) => `<button class="btn" type="button" data-act="target" data-t="${t}" data-ok="${valid.includes(t) ? 1 : 0}" ${valid.includes(t) ? '' : 'disabled'}>${nameOf(s, t)}<small>${sqLabel(s.pos[t])} · แป้น ${t + 1}</small></button>`).join('')}</div>${btn}`;
         break;
       }
       case 'card': case 'judged': {
@@ -1563,8 +2064,8 @@ const Control = {
         h = `<div class="phase-label">${c.kind === 'shoot' ? 'การ์ดยิง' : 'การ์ดคำถาม'} ข้อ ${c.no}</div>
           <p class="headline">${c.kind === 'shoot' ? `${tn(c.shooter)} ยิง · ` : ''}${tn(c.answerer)} ตอบ</p>
           <div class="prev-card ${this.hideAns && !judged ? 'hide-ans' : ''}"><p class="q">${esc(q.q)}</p><ol>${q.o.map((o, i) => `<li class="${i === q.a ? 'ok' : ''}">${'ABCD'[i]}. ${esc(o)}</li>`).join('')}</ol><p class="why">เฉลย: ${esc(q.w)}</p></div>
-          ${judged ? `<p class="headline">${c.result === 'right' ? '<span class="ok-note">ตอบถูก อยู่ที่เดิม</span>' : `ตอบผิด ${nameOf(s, c.answerer)} ถอย ${c.back} ช่อง ตอนปิดการ์ด`}</p>` :
-            `<div class="tbox"><span class="tnum" id="ctl-timer">20</span><span class="hint">วินาที</span><button class="sbtn" type="button" data-act="timerReset">ตั้งเวลาใหม่</button><button class="sbtn" type="button" data-act="toggleAns">${this.hideAns ? 'แสดงเฉลย' : 'ซ่อนเฉลย'}</button></div>
+          ${judged ? `<p class="headline">${c.result === 'right' ? '<span class="ok-note">ตอบถูก อยู่ที่เดิม</span>' : `ตอบผิด กดหมุนวงล้อลงโทษ ${nameOf(s, c.answerer)}`}</p>` :
+            `<div class="tbox"><span class="tnum" id="ctl-timer">${BOARD.timerSec}</span><span class="hint">วินาที</span><button class="sbtn" type="button" data-act="timerReset">ตั้งเวลาใหม่</button><button class="sbtn" type="button" data-act="toggleAns">${this.hideAns ? 'แสดงเฉลย' : 'ซ่อนเฉลย'}</button></div>
              <div class="row2"><button class="btn good" type="button" data-act="right">ตอบถูก<small>แป้น Y</small></button><button class="btn bad" type="button" data-act="wrong">ตอบผิด<small>แป้น N</small></button></div>`}
           ${btn}`;
         break;
@@ -1575,8 +2076,24 @@ const Control = {
         break;
     }
     main.innerHTML = h;
+    this.paintOrderPick();
     this.paintMainBtn();
     this.paintTimer();
+  },
+  // สรุปสิ่งที่เพิ่งเกิด ให้สตาฟรู้ว่าจอโชว์กำลังเล่นอะไร
+  lastNote(s) {
+    if (!s.fx || !s.fx.list || s.fx.nonce !== s.v) return '';
+    const nm = (t) => nameOf(s, t);
+    const txt = s.fx.list.map((f) => {
+      if (f.k === 'wheel') return `วงล้อ ${nm(f.team)}: ${esc(f.label)}${f.note ? ' (' + esc(f.note) + ')' : ''}`;
+      if (f.k === 'swap') return `${nm(f.a)} สลับที่กับ ${nm(f.b)}`;
+      if (f.k === 'bite') return `${nm(f.by)} ส่งงูกัด ${nm(f.team)} ถอย ${f.path.length}`;
+      if (f.k === 'bomb') return `${nm(f.team)} ระเบิด ${f.hits.length ? f.hits.map((h) => nm(h.team)).join(', ') + ` ถอย ${BOARD.bombBack}` : 'ไม่มีใครโดน'}`;
+      if (f.k === 'skipped') return `${nm(f.team)} โดนหยุด ข้ามตา`;
+      if (f.k === 'fizzle') return 'ไม่มีทีมให้แกล้ง';
+      return '';
+    }).filter(Boolean).join(' · ');
+    return txt ? `<p class="hint lastnote">เมื่อกี้: ${txt}</p>` : '';
   },
   renderHelp() {
     const s = this.st, box = $('#help'); if (!box) return;
