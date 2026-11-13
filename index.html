@@ -220,7 +220,9 @@ button { font-family: inherit; }
 .unlock { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 70; background: var(--gold); color: var(--void); font-size: 20px; font-weight: 700; padding: 12px 22px; border: 3px solid var(--void); cursor: pointer; animation: blink2 1.2s steps(2) infinite; }
 
 /* ---------- จอควบคุม ---------- */
-.ctl { max-width: 1080px; margin: 0 auto; padding-block: 18px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 18px; }
+.ctl { max-width: 1080px; margin: 0 auto; padding-block: 18px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 18px; overflow-wrap: anywhere; }
+.ctl > *, .help > * { min-width: 0; }
+.help select { max-width: 100%; }
 .ctl-top { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
 .ctl-top h1 { margin: 0; font-size: 22px; font-weight: 700; margin-right: auto; }
 .ctl-top h1 span { color: var(--ember); }
