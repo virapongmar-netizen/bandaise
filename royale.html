@@ -2754,7 +2754,7 @@ function startPlayer() {
       app.innerHTML = `<div class="pl"><div class="center-msg card">
         <div class="px" style="color:var(--gold);font-size:12px">SE QUEST</div>
         <h2>ใส่ชื่อเล่นเพื่อเข้าเกม</h2>
-        <p>${inGame ? 'เกมเริ่มไปแล้ว เข้าได้เลย รีบตอบตามให้ทัน!' : 'รอ MC กดเริ่มเกมพร้อมกันทั้งห้อง'}</p>
+        <p>${inGame ? 'เกมเริ่มไปแล้ว เข้าได้เลย รีบตอบตามให้ทัน!' : 'รอเริ่มเกมพร้อมกันทั้งห้อง'}</p>
         <form id="jf" style="display:grid;gap:12px"><input id="jn" type="text" maxlength="16" placeholder="ชื่อเล่น" value="${esc(myName)}" autocomplete="off" enterkeyhint="go"><button class="btn" type="submit">เข้าเกม</button></form>
       </div></div>`;
       const f = document.getElementById('jf');
@@ -2762,7 +2762,7 @@ function startPlayer() {
       return;
     }
     if (!game || game.phase === 'lobby') {
-      app.innerHTML = `<div class="pl">${topBar()}<div class="center-msg card"><h2>เข้าเกมแล้ว!</h2><p>มองขึ้นจอใหญ่ รอ MC กดเริ่ม<br>ตอบถูกได้ ${RULES.correct} แต้ม ถูกครบ ${RULES.every} ข้อได้เปิดกล่องสุ่ม<br>ในกล่องมีทั้งแต้มเพิ่ม แต้มหาย แกล้งเพื่อน และสวอปแต้ม</p></div></div>`;
+      app.innerHTML = `<div class="pl">${topBar()}<div class="center-msg card"><h2>เข้าเกมแล้ว!</h2><p>มองขึ้นจอใหญ่ รอเริ่มเกม<br>ตอบถูกได้ ${RULES.correct} แต้ม ถูกครบ ${RULES.every} ข้อได้เปิดกล่องสุ่ม<br>ในกล่องมีทั้งแต้มเพิ่ม แต้มหาย แกล้งเพื่อน และสวอปแต้ม</p></div></div>`;
       return;
     }
     if (game.phase === 'end' || DB.now() > game.endAt) {
@@ -2883,7 +2883,7 @@ function startScreen() {
       const url = playerURL();
       content.innerHTML = head(`<div class="s-stat"><b>${n}</b>คนเข้าเกมแล้ว</div>`) + `<div class="s-body">
         <div class="panel"><div class="lobby-join"><div class="qr">${qrSVG(url)}</div>
-        <div class="join-steps"><div>1. สแกน QR ด้วยมือถือ</div><div>2. ใส่ชื่อเล่น</div><div>3. รอ MC กดเริ่ม</div><div class="url">${esc(url)}</div></div></div>
+        <div class="join-steps"><div>1. สแกน QR ด้วยมือถือ</div><div>2. ใส่ชื่อเล่น</div><div>3. รอเริ่มเกมพร้อมกัน</div><div class="url">${esc(url)}</div></div></div>
         <div style="font-size:26px;color:var(--cream);line-height:1.6">ตอบถูกได้ ${RULES.correct} แต้ม · ถูกครบ ${RULES.every} ข้อ ได้เปิดกล่องสุ่ม 💰 💸 🎯 🔄 · หมดเวลา 5 อันดับแรกชนะ</div></div>
         <div class="panel"><h2>ผู้เล่น <small>${n} คน</small></h2><div class="chips">${chips || '<span class="empty">ยังไม่มีใครเข้า สแกนเลย!</span>'}</div></div></div>`;
       return;
@@ -2944,7 +2944,7 @@ function startMC() {
   function confirmBtn(k) { if (armed[k] && Date.now() - armed[k] < 4000) { armed[k] = 0; return true; } armed[k] = Date.now(); render(); setTimeout(render, 4100); return false; }
   const lbl = (k, a, b) => (armed[k] && Date.now() - armed[k] < 4000 ? b : a);
 
-  // หมดเวลาแล้ว MC เป็นคนปิดเกมให้ จอทุกจอจะเปลี่ยนเป็นหน้าอันดับ
+  // หมดเวลาแล้วจอควบคุมเป็นคนปิดเกมให้ จอทุกจอจะเปลี่ยนเป็นหน้าอันดับ
   setInterval(() => {
     if (game && game.phase === 'play' && DB.now() > game.endAt + 300) DB.tx('game', (g) => { if (g && g.phase === 'play' && DB.now() > g.endAt) g.phase = 'end'; return g; });
     const el = document.getElementById('mclock');
@@ -2959,7 +2959,7 @@ function startMC() {
     const active = document.activeElement && document.activeElement.id === 'mins';
     if (active) return;
     app.innerHTML = `<div class="mc">
-      <h1>จอ MC · SE Quest</h1>
+      <h1>จอควบคุม · SE Quest</h1>
       <div class="stat"><div>สถานะ<b>${phase === 'play' ? 'กำลังเล่น' : phase === 'end' ? 'จบแล้ว' : 'รอเริ่ม'}</b></div><div>ผู้เล่น<b>${list.length}</b></div><div>เวลาเหลือ<b id="mclock">${phase === 'play' ? fmtClock(game.endAt - DB.now()) : '-'}</b></div></div>
       ${phase !== 'play' ? `<label>ความยาวเกม (นาที)<input id="mins" type="number" min="1" max="30" value="${mins}" inputmode="numeric"></label>
         <div class="row"><button class="btn ok" id="go" ${list.length ? '' : 'disabled'}>เริ่มเกม (รีเซ็ตแต้มทุกคนเป็น 0)</button></div>` : ''}
@@ -2986,9 +2986,9 @@ function chooser() {
     <div class="px" style="color:var(--gold);font-size:12px">SE QUEST · ห้อง ${esc(ROOM)}</div>
     <h1>เกมตอบคำถาม<span>ธุรกิจเพื่อสังคม</span></h1>
     <div class="roles">
-      <button class="role" data-r="screen"><b>จอโชว์</b><small>เปิดบนคอมที่ต่อโปรเจกเตอร์ โชว์ QR อันดับสด และ 5 อันดับตอนจบ</small></button>
-      <button class="role" data-r="mc"><b>จอ MC</b><small>เริ่มเกม ต่อเวลา จบเกม ล้างห้อง</small></button>
-      <button class="role" data-r="player"><b>ผู้เล่น</b><small>สำหรับมือถือ ปกติให้สแกน QR บนจอแทน</small></button>
+      <button class="role" data-r="control"><span class="px" style="font-size:11px;color:var(--gold)">CONTROL</span><b>จอควบคุม</b><small>เครื่องของสตาฟ เริ่มเกม ต่อเวลา จบเกม ล้างห้อง</small></button>
+      <button class="role" data-r="screen"><span class="px" style="font-size:11px;color:var(--gold)">SCREEN</span><b>จอโชว์</b><small>เครื่องที่ต่อโปรเจกเตอร์ โชว์ QR อันดับสด และ 5 อันดับตอนจบ ไม่ต้องกดอะไร</small></button>
+      <button class="role" data-r="player"><span class="px" style="font-size:11px;color:var(--gold)">PLAYER</span><b>ผู้เล่น</b><small>สำหรับมือถือ ปกติให้สแกน QR บนจอโชว์แทน</small></button>
     </div></div></div>`;
   app.querySelectorAll('[data-r]').forEach((b) => { b.onclick = () => go(b.dataset.r); });
 }
@@ -2997,7 +2997,7 @@ function chooser() {
   showConn();
   const role = qs.get('role');
   if (role === 'screen') startScreen();
-  else if (role === 'mc') startMC();
+  else if (role === 'control' || role === 'mc') startMC();
   else if (role === 'player') startPlayer();
   else chooser();
 })();
