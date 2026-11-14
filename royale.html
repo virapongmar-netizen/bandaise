@@ -3086,9 +3086,12 @@ function startScreen() {
     }
     feedReady = true; render();
   });
-  function queueBlast(v) { blasts.push(v); runBlast(); }
+  const live = () => game && game.phase === 'play' && DB.now() < game.endAt;
+  function clearBlasts() { blasts.length = 0; stage.querySelectorAll('.blast').forEach((e) => e.remove()); blasting = false; }
+  function queueBlast(v) { if (!live()) return; blasts.push(v); runBlast(); }
   function runBlast() {
     if (blasting || !blasts.length) return;
+    if (!live()) { clearBlasts(); return; }   // หมดเวลาแล้วไม่โชว์ป้ายเด้ง จะได้ไม่บังประกาศผล
     blasting = true;
     const v = blasts.shift();
     const el = document.createElement('div');
@@ -3138,7 +3141,7 @@ function startScreen() {
       return;
     }
     const list = rankOf(players, sc);
-    if (phase === 'end') { renderResults(list, n); return; }
+    if (phase === 'end') { clearBlasts(); renderResults(list, n); return; }
     if (revealTimer) { clearTimeout(revealTimer); revealTimer = null; }
     const left = game.endAt - now;
     const g = isGolden(game, now);
@@ -3218,6 +3221,7 @@ function startScreen() {
     const left = game.endAt - now;
     const g = isGolden(game, now);
     if (g !== wasGolden) { wasGolden = g; if (g) SFX.gold(); render(); }
+    if (left <= 0) clearBlasts();
     if (left < -800) { DB.tx('game', (gg) => { if (gg && gg.phase === 'play' && DB.now() > gg.endAt) gg.phase = 'end'; return gg; }); return; }
     const sec = Math.ceil(left / 1000);
     if (sec <= 10 && sec >= 1) {
