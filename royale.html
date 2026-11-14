@@ -102,9 +102,9 @@ input[type=text], input[type=number] { font: inherit; font-size: 20px; padding: 
 .rank-row .s { font-family: var(--f-px); font-size: 12px; }
 
 /* ---------- screen (projector) ---------- */
-.stage-wrap { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; background: var(--void); }
+.stage-wrap { position: fixed; inset: 0; overflow: hidden; background: var(--void); }
 .stage-in { position: absolute; inset: 0; padding: 48px 56px; display: grid; grid-template-rows: auto 1fr; gap: 28px; }
-.stage { width: 1920px; height: 1080px; position: relative; flex: none; transform-origin: center;
+.stage { width: 1920px; height: 1080px; position: absolute; left: 50%; top: 50%; transform-origin: center;
   background-image: linear-gradient(#ffffff06 2px, transparent 2px), linear-gradient(90deg, #ffffff06 2px, transparent 2px); background-size: 48px 48px; }
 .s-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .s-title { display: grid; gap: 10px; }
@@ -2831,7 +2831,7 @@ function startScreen() {
   app.innerHTML = `<div class="stage-wrap"><div class="stage" id="stage"><div class="stage-in" id="stage-in"></div></div></div>`;
   const stage = document.getElementById('stage');
   const content = document.getElementById('stage-in');
-  const fit = () => { const k = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'scale(' + k + ')'; };
+  const fit = () => { const k = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')'; };
   addEventListener('resize', fit); fit();
   let game = null, players = {}, sc = {}, feed = [];
   const seen = new Set(); let feedReady = false; let lastTop = {};
