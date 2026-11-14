@@ -120,6 +120,9 @@ input[type=text], input[type=number] { font: 600 20px var(--f-th); padding: 12px
 .shake:nth-child(2) { animation-delay: .15s; } .shake:nth-child(3) { animation-delay: .3s; }
 @keyframes shake { 0%,100% { transform: translate(0,0); } 25% { transform: translate(-3px,1px) rotate(-3deg); } 75% { transform: translate(3px,-1px) rotate(3deg); } }
 .targets { display: grid; gap: 10px; }
+.pickbar { position: relative; height: 30px; background: #fff; border: 3px solid var(--brown); overflow: hidden; }
+.pickbar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--red); transition: width .2s linear; }
+.pickbar span { position: relative; font: 700 15px/24px var(--f-head); color: var(--brown); text-shadow: 0 0 3px #fff; }
 .tg { display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; align-items: center; text-align: left; padding: 8px 12px; font: 600 17px var(--f-th); background: #FFFAF1; border: 4px solid var(--brown); box-shadow: 4px 4px 0 var(--brown); }
 .tg img { width: 30px; height: 46px; }
 .tg span { min-width: 0; overflow-wrap: anywhere; }
@@ -2591,11 +2594,14 @@ const RULES = {
   starChance: 0.12, // โอกาสเจอข้อดาวทอง (แต้มคูณ 2)
   goldenMs: 60000,  // นาทีทองช่วงท้าย (แต้มคูณ 2)
   wrongPauseMs: 2600,
+  pickMs: 10000,     // เวลาเลือกคนแกล้ง/สวอป หลังเปิดกล่อง
+  lockLastMs: 30000, // ช่วงท้ายเกมที่ปิดแกล้งและสวอป
   countdownMs: 3600,
   defaultMinutes: 8,
 };
 // น้ำหนักสุ่มกล่อง (กล่องทองหายาก)
 const BOX_WEIGHTS = { gain: 28, lose: 17, prank: 22, swap: 15, shield: 14, gold: 4 };
+const SAFE_WEIGHTS = { gain: 40, lose: 22, shield: 30, gold: 8 };
 const BOX_INFO = {
   gain:   { ico: '💰', lbl: '+' + RULES.gain + ' แต้ม' },
   lose:   { ico: '💸', lbl: '-' + RULES.lose + ' แต้ม' },
@@ -2747,6 +2753,7 @@ function rankOf(players, sc) {
   list.sort((a, b) => b.s - a.s || a.j - b.j);
   return list;
 }
+const isLocked = (g, now) => g && g.phase === 'play' && g.endAt - now <= RULES.lockLastMs;
 const isGolden = (g, now) => g && g.phase === 'play' && g.mins >= 2 && g.endAt - now <= RULES.goldenMs && g.endAt - now > 0;
 function feedText(f) {
   const a = '<b>' + esc(f.fn) + '</b>', b = '<b>' + esc(f.tn) + '</b>';
@@ -2857,7 +2864,7 @@ function startPlayer() {
     if (ok) await DB.tx('sc/' + pid, (v) => (v || 0) + pts);
     const earnBox = ok && myStat.c % RULES.every === 0;
     nextQ();
-    if (earnBox) { boxData = { kinds: [0, 1, 2].map(() => pickWeighted(BOX_WEIGHTS)), picked: null, done: false }; saveDeck(); }
+    if (earnBox) { const w = isLocked(game, DB.now()) ? SAFE_WEIGHTS : BOX_WEIGHTS; boxData = { kinds: [0, 1, 2].map(() => pickWeighted(w)), picked: null, done: false }; saveDeck(); }
     busy = false;
     const wait = fbData.until - Date.now();
     setTimeout(() => { if (view === 'feedback') { view = boxData && !boxData.done ? 'boxes' : 'question'; render(); } }, Math.max(0, wait));
@@ -2866,6 +2873,8 @@ function startPlayer() {
   async function pickBox(i) {
     if (!boxData || boxData.picked != null || busy) return;
     busy = true;
+    // ช่วงท้ายเกม กล่องที่ยังไม่เปิดจะไม่มีแกล้ง/สวอป
+    if (isLocked(game, DB.now())) boxData.kinds = boxData.kinds.map((k) => (k === 'prank' || k === 'swap' ? pickWeighted(SAFE_WEIGHTS) : k));
     boxData.picked = i; saveDeck();
     const kind = boxData.kinds[i];
     kind === 'gold' ? SFX.gold() : SFX.box();
@@ -2881,8 +2890,14 @@ function startPlayer() {
       DB.push('feed', { k: 'shield', f: pid, fn: myName, fa: myAv, at: DB.stamp() });
       finishBox(1900);
     } else {
+      boxData.tgUntil = Date.now() + RULES.pickMs; saveDeck();
       busy = false; tgKind = kind; tgFilter = ''; view = 'target'; render();
     }
+  }
+  function expireTarget(msg) {
+    if (view !== 'target' || busy) return;
+    boxData = null; saveDeck(); tgKind = null; view = 'question';
+    toast(msg, 'info'); render();
   }
   function finishBox(ms) {
     boxData.done = true; saveDeck(); busy = false; render();
@@ -2891,6 +2906,8 @@ function startPlayer() {
 
   async function pickTarget(tid) {
     if (busy || !boxData || !game || game.phase !== 'play') return;
+    if (isLocked(game, DB.now())) return expireTarget('🔒 30 วินาทีสุดท้าย ปิดแกล้งและสวอปแล้ว');
+    if (boxData.tgUntil && Date.now() > boxData.tgUntil) return expireTarget('⌛ หมดเวลาเลือก กล่องหายไปแล้ว');
     busy = true;
     const tp = players[tid] || {};
     const tn = tp.n || '???', ta = tp.av || 0;
@@ -2964,7 +2981,8 @@ function startPlayer() {
         <div>✅ ตอบถูก +${RULES.correct} · ถูกติดกัน ${RULES.comboAt} ข้อขึ้นไฟลุก 🔥 ได้โบนัส</div>
         <div>🎁 ถูกครบ ${RULES.every} ข้อ ได้เปิดกล่องสุ่ม 1 ใน 3</div>
         <div>💰 แต้มเพิ่ม · 💸 แต้มหาย · 🎯 แกล้งเพื่อน · 🔄 สวอป · 🛡️ โล่ · 👑 กล่องทอง</div>
-        <div>⭐ ข้อดาวทอง และ ✨ นาทีสุดท้าย แต้มคูณ 2</div></div></div></div>`;
+        <div>⭐ ข้อดาวทอง และ ✨ นาทีสุดท้าย แต้มคูณ 2</div>
+        <div>⏱ ได้กล่องแกล้ง/สวอป ต้องเลือกคนใน ${RULES.pickMs / 1000} วินาที · 🔒 30 วินาทีสุดท้ายปิดแกล้งและสวอป</div></div></div></div>`;
       return;
     }
     if (game.phase === 'end' || now > game.endAt) {
@@ -3007,7 +3025,8 @@ function startPlayer() {
       const shown = others.filter((r) => !f || r.n.toLowerCase().includes(f));
       const title = tgKind === 'prank' ? '🎯 เลือกคนที่จะแกล้ง' : '🔄 เลือกคนที่จะสวอปแต้มด้วย';
       const sub = tgKind === 'prank' ? 'แต้มของเขาจะลด ' + RULES.prank + ' (ไม่ต่ำกว่า 0) · คนมี 🛡️ จะกันได้' : 'แต้มของคุณ ' + (sc[pid] || 0) + ' จะสลับกับของเขาทั้งก้อน · คนมี 🛡️ จะกันได้';
-      app.innerHTML = `<div class="pl">${topBar()}<div class="pp center-msg" style="padding:16px"><h2 style="font-size:22px">${title}</h2><p>${sub}</p></div>
+      const tl = Math.max(0, Math.ceil(((boxData && boxData.tgUntil) || Date.now()) - Date.now()) / 1000);
+      app.innerHTML = `<div class="pl">${topBar()}<div class="pp center-msg" style="padding:16px"><h2 style="font-size:22px">${title}</h2><p>${sub}</p><div class="pickbar"><i id="pickfill" style="width:${Math.min(100, tl / (RULES.pickMs / 1000) * 100)}%"></i><span id="picktxt">เลือกภายใน ${Math.ceil(tl)} วินาที</span></div></div>
         ${others.length > 8 ? `<input id="tf" type="text" placeholder="ค้นหาชื่อ" value="${esc(tgFilter)}" autocomplete="off">` : ''}
         <div class="targets">${shown.map((r) => `<button class="tg" data-t="${esc(r.id)}">${avImg(r.av)}<span>${sh[r.id] ? '🛡️ ' : ''}${esc(r.n)}</span><b>${r.s}</b></button>`).join('')}</div>
         ${others.length ? '' : '<div class="pp center-msg"><p>ยังไม่มีผู้เล่นคนอื่น</p><button class="btn cream" id="skipt">ข้ามไปก่อน</button></div>'}</div>`;
@@ -3026,7 +3045,7 @@ function startPlayer() {
   }
 
   // นาฬิกา นับถอยหลังก่อนเริ่ม และเสียงติ๊ก 10 วินาทีสุดท้าย
-  let ov = null, wasGolden = false, wasPre = false;
+  let ov = null, wasGolden = false, wasPre = false, wasLocked = false;
   setInterval(() => {
     if (!game || game.phase !== 'play' || !joined) { if (ov) { ov.remove(); ov = null; } return; }
     const now = DB.now();
@@ -3041,6 +3060,13 @@ function startPlayer() {
     const left = game.endAt - now;
     const g = isGolden(game, now);
     if (g !== wasGolden) { wasGolden = g; if (g) { toast('✨ นาทีทอง! แต้มคูณ 2', 'good'); SFX.gold(); } if (view === 'question') render(); }
+    const lk = isLocked(game, now);
+    if (lk !== wasLocked) { wasLocked = lk; if (lk && left > 0) { toast('🔒 30 วินาทีสุดท้าย ปิดแกล้งและสวอป', 'info'); if (view === 'target') expireTarget('🔒 30 วินาทีสุดท้าย ปิดแกล้งและสวอปแล้ว'); } }
+    if (view === 'target' && boxData && boxData.tgUntil) {
+      const ms = boxData.tgUntil - Date.now();
+      if (ms <= 0) expireTarget('⌛ หมดเวลาเลือก กล่องหายไปแล้ว');
+      else { const f = document.getElementById('pickfill'), tx = document.getElementById('picktxt'); if (f) f.style.width = Math.min(100, ms / RULES.pickMs * 100) + '%'; if (tx) tx.textContent = 'เลือกภายใน ' + Math.ceil(ms / 1000) + ' วินาที'; }
+    }
     if (left <= 0) { render(); return; }
     const sec = Math.ceil(left / 1000);
     if (sec <= 10 && sec !== lastTick) { lastTick = sec; SFX.tick(); }
@@ -3136,7 +3162,7 @@ function startScreen() {
       content.innerHTML = head(`<div class="pp s-count"><b>${n}</b><span>คนเข้าเกมแล้ว</span></div>`) + `<div class="s-body">
         <div class="pp panel"><div class="lobby-join"><div class="qrbox"><div class="qr">${qrSVG(url)}</div><span class="tag">SCAN ME!</span></div>
         <div class="join-steps"><div class="step"><i>1</i>สแกน QR ด้วยมือถือ</div><div class="step"><i>2</i>ใส่ชื่อ เลือกตัวละคร</div><div class="step"><i>3</i>รอเริ่มเกมพร้อมกัน</div><div class="url">${esc(url)}</div></div></div>
-        <div class="rules" style="margin-top:20px"><span>✅ ถูก +${RULES.correct}</span><span>🔥 คอมโบ +${RULES.comboBonus}</span><span>🎁 ถูก ${RULES.every} ข้อ เปิดกล่อง</span><span>⭐ ข้อดาว ×2</span><span>✨ นาทีทอง ×2</span><span>🏆 5 อันดับแรกชนะ</span></div></div>
+        <div class="rules" style="margin-top:20px"><span>✅ ถูก +${RULES.correct}</span><span>🔥 คอมโบ +${RULES.comboBonus}</span><span>🎁 ถูก ${RULES.every} ข้อ เปิดกล่อง</span><span>⭐ ข้อดาว ×2</span><span>✨ นาทีทอง ×2</span><span>🔒 30 วิสุดท้ายห้ามแกล้ง/สวอป</span><span>🏆 5 อันดับแรกชนะ</span></div></div>
         <div class="pp panel"><h2>ผู้เล่น <small>${n} คน</small></h2><div class="chips">${chips || '<span class="empty">ยังไม่มีใครเข้า สแกนเลย!</span>'}</div></div></div>` + foot();
       return;
     }
