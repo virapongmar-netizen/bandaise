@@ -2679,17 +2679,18 @@ function makeFirebaseDB() {
   const connCbs = [];
   db.ref('.info/serverTimeOffset').on('value', (s) => { offset = s.val() || 0; });
   db.ref('.info/connected').on('value', (s) => { connected = !!s.val(); connCbs.forEach((f) => f(connected)); });
+  const at = (p) => (p ? root.child(p) : root);   // child('') ใช้ไม่ได้ใน Firebase
   return {
     now: () => Date.now() + offset,
     onConn: (f) => { connCbs.push(f); f(connected); },
-    on: (path, cb) => { const r = root.child(path); const h = (s) => cb(s.val()); r.on('value', h); return () => r.off('value', h); },
-    onLast: (path, n, cb) => { const r = root.child(path).limitToLast(n); const h = (s) => cb(s.val()); r.on('value', h); return () => r.off('value', h); },
-    get: (path) => root.child(path).once('value').then((s) => s.val()),
-    set: (path, v) => root.child(path).set(v),
-    update: (path, v) => root.child(path).update(v),
-    remove: (path) => root.child(path).remove(),
-    push: (path, v) => root.child(path).push(v),
-    tx: (path, fn) => root.child(path).transaction(fn).then((r) => ({ committed: r.committed, value: r.snapshot.val() })),
+    on: (path, cb) => { const r = at(path); const h = (s) => cb(s.val()); r.on('value', h); return () => r.off('value', h); },
+    onLast: (path, n, cb) => { const r = at(path).limitToLast(n); const h = (s) => cb(s.val()); r.on('value', h); return () => r.off('value', h); },
+    get: (path) => at(path).once('value').then((s) => s.val()),
+    set: (path, v) => at(path).set(v),
+    update: (path, v) => at(path).update(v),
+    remove: (path) => at(path).remove(),
+    push: (path, v) => at(path).push(v),
+    tx: (path, fn) => at(path).transaction(fn).then((r) => ({ committed: r.committed, value: r.snapshot.val() })),
     stamp: () => firebase.database.ServerValue.TIMESTAMP,
   };
 }
@@ -2824,8 +2825,10 @@ function startPlayer() {
     if (!name) return;
     SFX.unlock(); SFX.pop();
     myName = name; pstore.set('seq-name-' + ROOM, name); pstore.set('seq-av-' + ROOM, String(myAv));
-    await DB.update('', { ['players/' + pid]: { n: name, av: myAv, j: DB.stamp() } });
-    await DB.tx('sc/' + pid, (v) => (v == null ? 0 : v));
+    try {
+      await DB.set('players/' + pid, { n: name, av: myAv, j: DB.stamp() });
+      await DB.tx('sc/' + pid, (v) => (v == null ? 0 : v));
+    } catch (e) { console.error(e); toast('เข้าเกมไม่สำเร็จ: ' + (e && e.message || e)); }
   }
 
   const playing = () => game && game.phase === 'play' && DB.now() >= game.startAt && DB.now() < game.endAt;
