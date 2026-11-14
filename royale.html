@@ -2674,7 +2674,8 @@ function makeFirebaseDB() {
   const fc = window.FIREBASE_CONFIG;
   if (!firebase.apps.length) firebase.initializeApp(fc);
   const db = firebase.database();
-  const root = db.ref('rooms/' + ROOM);
+  // กฎ Firebase ของโปรเจกต์อนุญาตเฉพาะห้อง SEOPH26 เลยเก็บเกมนี้ในกิ่งแยก quest/ ที่เกมบันไดไม่ได้อ่าน
+  const root = db.ref('rooms/SEOPH26/quest/' + ROOM);
   let offset = 0, connected = false;
   const connCbs = [];
   db.ref('.info/serverTimeOffset').on('value', (s) => { offset = s.val() || 0; });
