@@ -250,6 +250,11 @@ body.golden .pl-top { background: #FFF7D1; border-color: var(--gold2); }
 .blast.freeze { border-color: #5BC0EB; background: #E8F8FF; } .blast.freeze .kind { background: #3C8DD9; }
 .blast.bomb { border-color: var(--red); background: #FFE9E4; } .blast.bomb .kind { background: #222; }
 .blast.fire { border-color: var(--orange); background: #FFF1E2; } .blast.fire .kind { background: linear-gradient(90deg, var(--red), var(--orange), var(--gold2)); }
+.lateqr { position: absolute; left: 36px; bottom: 12px; z-index: 22; display: flex; align-items: center; gap: 16px; padding: 8px 22px 8px 8px; }
+.lateqr .lq { width: 124px; height: 124px; background: #fff; padding: 6px; border: 3px solid var(--brown); }
+.lateqr .lq svg { width: 100%; height: 100%; display: block; }
+.lateqr b { display: block; font: 700 34px var(--f-head); color: var(--orange2); }
+.lateqr span { font: 600 24px var(--f-th); }
 .joinpops { position: absolute; left: 40px; bottom: 170px; z-index: 28; display: grid; gap: 10px; pointer-events: none; }
 .joinpop { display: flex; align-items: center; gap: 12px; padding: 8px 18px 8px 10px; font: 700 28px var(--f-head); animation: slidein .35s ease-out; }
 .joinpop img { width: 40px; height: 60px; }
@@ -3414,7 +3419,7 @@ function startScreen() {
   function head(right) {
     return `<div class="s-head"><div class="s-brand"><span class="tag">OPEN HOUSE 2026 · SOCIAL ENTERPRISE</span><h1 class="outline">SE QUEST</h1><span class="sub ytitle">ตอบให้ไว แกล้งให้มัน</span></div><div class="s-right">${right || ''}</div></div>`;
   }
-  const foot = () => `<div class="s-foot">${Object.values(players).slice(0, 14).map((p, i) => `<img class="px" alt="" src="${avSrc(p.av || 0)}" style="left:${30 + i * 130}px;animation-delay:${i * 0.11}s">`).join('')}</div>`;
+  const foot = (x0 = 30) => `<div class="s-foot">${Object.values(players).slice(0, x0 > 30 ? 11 : 14).map((p, i) => `<img class="px" alt="" src="${avSrc(p.av || 0)}" style="left:${x0 + i * 130}px;animation-delay:${i * 0.11}s">`).join('')}</div>`;
 
   function render() {
     const n = Object.keys(players).length;
@@ -3454,7 +3459,8 @@ function startScreen() {
     const fd = feed.slice(0, 7).map((f) => { const nw = !feedSeenUI.has(f._k); feedSeenUI.add(f._k); return `<div class="fd ${esc(f.k)} ${nw ? 'new' : ''}">${feedText(f)}</div>`; }).join('');
     content.innerHTML = head(`<div class="pp s-count"><b>${n}</b><span>คนกำลังเล่น</span></div><div class="pp s-clock ${left < 10000 ? 'low' : ''} ${g ? 'gold' : ''}"><div class="t" id="sclock">${fmtClock(Math.min(left, game.endAt - game.startAt))}</div><div class="l">${g ? '✨ นาทีทอง ×2' : 'เวลาที่เหลือ'}</div></div>`) + `<div class="s-body">
       <div class="pp panel"><h2>🏆 อันดับสด <small>5 อันดับแรกตอนหมดเวลาชนะ</small></h2><div class="board">${rows || '<span class="empty">รอผู้เล่นตอบข้อแรก</span>'}</div></div>
-      <div class="pp panel"><h2>📣 เกิดอะไรขึ้นบ้าง</h2><div class="feed">${fd || '<span class="empty">ยังไม่มีใครเปิดกล่อง</span>'}</div></div></div>` + foot() +
+      <div class="pp panel"><h2>📣 เกิดอะไรขึ้นบ้าง</h2><div class="feed">${fd || '<span class="empty">ยังไม่มีใครเปิดกล่อง</span>'}</div></div></div>` + foot(470) +
+      `<div class="pp lateqr"><div class="lq">${qrSVG(playerURL())}</div><div><b>มาสาย?</b><span>สแกนเข้าเกมได้เลย</span></div></div>` +
       (g ? `<div class="marquee"><div>✨ นาทีทอง! ตอบถูกได้แต้มคูณ 2 ✨ ใครตามอยู่ รีบแซงเลย! ✨ นาทีทอง! ตอบถูกได้แต้มคูณ 2 ✨</div></div>` : '');
   }
 
