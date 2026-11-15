@@ -212,6 +212,7 @@ body.golden .pl-top { background: #FFF7D1; border-color: var(--gold2); }
 .feed { display: grid; gap: 12px; align-content: start; }
 .fd { font: 500 23px/1.4 var(--f-th); padding: 10px 14px; background: #FFFAF1; border: 3px solid var(--brown); border-left: 12px solid var(--muted); }
 .fd.prank { border-left-color: var(--red); } .fd.swap { border-left-color: var(--blue); } .fd.gain { border-left-color: var(--green); }
+.fd.steal { border-left-color: var(--purple); } .fd.freeze { border-left-color: #3C8DD9; } .fd.bomb { border-left-color: #222; }
 .fd.lose { border-left-color: var(--orange); } .fd.gold { border-left-color: var(--gold2); background: #FFF7D1; } .fd.block, .fd.shield { border-left-color: var(--purple); }
 .fd b { font-weight: 700; }
 .fd.new { animation: slidein .4s ease-out; }
@@ -231,6 +232,19 @@ body.golden .pl-top { background: #FFF7D1; border-color: var(--gold2); }
 .blast.gold { border-color: var(--gold2); background: #FFF7D1; } .blast.gold .kind { background: var(--gold2); }
 .blast.block { border-color: var(--purple); } .blast.block .kind { background: var(--purple); }
 .blast.lead { border-color: var(--green); } .blast.lead .kind { background: var(--green); }
+.blast.steal { border-color: var(--purple); } .blast.steal .kind { background: var(--purple); }
+.blast.freeze { border-color: #5BC0EB; background: #E8F8FF; } .blast.freeze .kind { background: #3C8DD9; }
+.blast.bomb { border-color: var(--red); background: #FFE9E4; } .blast.bomb .kind { background: #222; }
+.blast.fire { border-color: var(--orange); background: #FFF1E2; } .blast.fire .kind { background: linear-gradient(90deg, var(--red), var(--orange), var(--gold2)); }
+.joinpops { position: absolute; left: 40px; bottom: 170px; z-index: 28; display: grid; gap: 10px; pointer-events: none; }
+.joinpop { display: flex; align-items: center; gap: 12px; padding: 8px 18px 8px 10px; font: 700 28px var(--f-head); animation: slidein .35s ease-out; }
+.joinpop img { width: 40px; height: 60px; }
+.joinpop.out { opacity: 0; transition: opacity .4s; }
+.ice { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; background: rgba(150, 215, 255, .78); backdrop-filter: blur(3px); }
+.ice > div { display: grid; justify-items: center; gap: 6px; font: 700 26px var(--f-head); color: #0B3A5C; text-align: center; }
+.ice .sn { font-size: 84px; line-height: 1; animation: wob .5s infinite alternate; }
+.ice b { font: 700 72px var(--f-px); color: #fff; text-shadow: 4px 4px 0 #0B3A5C; }
+.helpchip { font: 700 14px var(--f-head); background: var(--green); color: #fff; border: 3px solid var(--brown); padding: 4px 10px; }
 @keyframes blast { from { transform: translate(-50%, -50%) scale(.3) rotate(-6deg); opacity: 0; } }
 .sound-btn { position: absolute; right: 56px; bottom: 30px; z-index: 40; font-size: 24px; padding: 10px 18px; }
 .overlay { position: absolute; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(90,46,20,.5); }
@@ -2598,9 +2612,17 @@ const RULES = {
   lockLastMs: 30000, // ช่วงท้ายเกมที่ปิดแกล้งและสวอป
   countdownMs: 3600,
   defaultMinutes: 8,
+  steal: 15,         // กล่องขโมยแต้ม
+  freezeMs: 5000,    // กล่องแช่แข็ง เพื่อนตอบไม่ได้กี่มิลลิวินาที
+  bomb: 15,          // กล่องระเบิด อันดับ 1-3 โดนคนละเท่านี้
+  underdog: 5,       // ครึ่งล่างของตาราง ตอบถูกได้เพิ่ม
+  fireAt: 5,         // ถูกติดกันทุกๆ กี่ข้อ จอใหญ่ขึ้น ON FIRE
 };
 // น้ำหนักสุ่มกล่อง (กล่องทองหายาก)
-const BOX_WEIGHTS = { gain: 28, lose: 17, prank: 22, swap: 15, shield: 14, gold: 4 };
+const BOX_WEIGHTS = { gain: 22, lose: 13, prank: 14, swap: 11, steal: 12, freeze: 10, bomb: 5, shield: 13, gold: 4 };
+// กล่องที่ไปเล่นงานคนอื่น ปิดในช่วงท้ายเกม
+const ATTACKS = ['prank', 'swap', 'steal', 'freeze', 'bomb'];
+const TARGETED = ['prank', 'swap', 'steal', 'freeze'];
 const SAFE_WEIGHTS = { gain: 40, lose: 22, shield: 30, gold: 8 };
 const BOX_INFO = {
   gain:   { ico: '💰', lbl: '+' + RULES.gain + ' แต้ม' },
@@ -2609,6 +2631,9 @@ const BOX_INFO = {
   swap:   { ico: '🔄', lbl: 'สวอปแต้ม' },
   shield: { ico: '🛡️', lbl: 'โล่กันแกล้ง' },
   gold:   { ico: '👑', lbl: 'กล่องทอง +' + RULES.gold },
+  steal:  { ico: '🧲', lbl: 'ขโมยแต้ม ' + RULES.steal },
+  freeze: { ico: '❄️', lbl: 'แช่แข็งเพื่อน ' + RULES.freezeMs / 1000 + ' วิ' },
+  bomb:   { ico: '💣', lbl: 'ระเบิดหัวตาราง -' + RULES.bomb },
 };
 const QUESTIONS = [...CARDS.q, ...CARDS.shoot];
 const AVS = ASSETS.avs;
@@ -2764,6 +2789,9 @@ function feedText(f) {
   if (f.k === 'lose') return '💸 ' + a + ' เปิดกล่องเจอ -' + RULES.lose;
   if (f.k === 'shield') return '🛡️ ' + a + ' ได้โล่กันแกล้ง';
   if (f.k === 'gold') return '👑 ' + a + ' เปิดได้กล่องทอง +' + RULES.gold + '!';
+  if (f.k === 'steal') return '🧲 ' + a + ' ขโมย ' + esc(f.d) + ' แต้มจาก ' + b;
+  if (f.k === 'freeze') return '❄️ ' + a + ' แช่แข็ง ' + b + ' ' + RULES.freezeMs / 1000 + ' วิ';
+  if (f.k === 'bomb') return '💣 ' + a + ' ปาระเบิดใส่ ' + (f.d ? '<b>' + esc(f.d) + '</b> -' + RULES.bomb : 'หัวตาราง') + (f.bl ? ' (' + esc(f.bl) + ' มีโล่)' : '');
   return '';
 }
 function walkers(n, cls) {
@@ -2785,7 +2813,8 @@ function startPlayer() {
   let view = 'question';   // question | feedback | boxes | target
   let fbData = null, boxData = null, tgKind = null, tgFilter = '';
   let myStat = { c: 0, a: 0, k: 0 };
-  let busy = false;
+  let busy = false, frozenUntil = 0;
+  const isFrozen = () => Date.now() < frozenUntil;
   const seenFeed = new Set(); let feedReady = false;
   let lastCount = null, lastTick = null;
 
@@ -2811,7 +2840,11 @@ function startPlayer() {
     for (const [k, v] of items) {
       if (seenFeed.has(k)) continue;
       seenFeed.add(k);
-      if (!feedReady || !v || v.t !== pid) continue;
+      const bombed = v && v.k === 'bomb' && Object.values(v.ts || {}).includes(pid);
+      if (!feedReady || !v || (v.t !== pid && !bombed)) continue;
+      if (v.k === 'steal') { toast('🧲 ' + v.fn + ' ขโมยแต้มคุณไป ' + v.d + '!'); SFX.hit(); }
+      if (v.k === 'freeze') { frozenUntil = Date.now() + RULES.freezeMs; toast('❄️ ' + v.fn + ' แช่แข็งคุณ ' + RULES.freezeMs / 1000 + ' วินาที!', 'info'); SFX.hit(); render(); }
+      if (bombed) { toast('💣 ' + v.fn + ' ปาระเบิดใส่หัวตาราง คุณโดน -' + RULES.bomb + '!'); SFX.hit(); }
       if (v.k === 'prank') { toast('🎯 ' + v.fn + ' แกล้งคุณ ลบ ' + RULES.prank + ' แต้ม!'); SFX.hit(); }
       if (v.k === 'swap') { toast('🔄 ' + v.fn + ' สวอปแต้มกับคุณ! (' + v.d + ')', v.up ? 'good' : ''); SFX.swap(); }
       if (v.k === 'block') { toast('🛡️ โล่ของคุณกัน ' + v.fn + ' ไว้ได้!', 'info'); SFX.shield(); }
@@ -2833,16 +2866,23 @@ function startPlayer() {
     if (!name) return;
     SFX.unlock(); SFX.pop();
     myName = name; pstore.set('seq-name-' + ROOM, name); pstore.set('seq-av-' + ROOM, String(myAv));
+    const btn = document.getElementById('jbtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'กำลังเข้า...'; }
     try {
       await DB.set('players/' + pid, { n: name, av: myAv, j: DB.stamp() });
       await DB.tx('sc/' + pid, (v) => (v == null ? 0 : v));
-    } catch (e) { console.error(e); toast('เข้าเกมไม่สำเร็จ: ' + (e && e.message || e)); }
+    } catch (e) { console.error(e); toast('เข้าเกมไม่สำเร็จ: ' + (e && e.message || e)); if (btn) { btn.disabled = false; btn.textContent = 'เข้าเกม!'; } }
   }
 
   const playing = () => game && game.phase === 'play' && DB.now() >= game.startAt && DB.now() < game.endAt;
+  // ครึ่งล่างของตาราง (ผู้เล่น 4 คนขึ้นไป และแต้มยังน้อยกว่าที่ 1)
+  function isUnderdog() {
+    const r = rankOf(players, sc); const i = r.findIndex((x) => x.id === pid);
+    return r.length >= 4 && i >= Math.ceil(r.length / 2) && (sc[pid] || 0) < r[0].s;
+  }
 
   async function answer(i) {
-    if (busy || view !== 'question' || !playing()) return;
+    if (busy || view !== 'question' || !playing() || isFrozen()) return;
     busy = true;
     const q = QUESTIONS[cur];
     const ok = i === q.a;
@@ -2854,6 +2894,7 @@ function startPlayer() {
       if (k >= RULES.comboAt) { pts += RULES.comboBonus; br.push('🔥 คอมโบ +' + RULES.comboBonus); }
       if (curStar) { pts *= 2; br.push('⭐ ข้อดาว ×2'); }
       if (golden) { pts *= 2; br.push('✨ นาทีทอง ×2'); }
+      if (isUnderdog()) { pts += RULES.underdog; br.push('🆘 ตัวช่วยคนท้าย +' + RULES.underdog); }
     }
     fbData = { pick: i, ok, q: cur, pts, br, k, until: Date.now() + (ok ? 1100 : RULES.wrongPauseMs) };
     view = 'feedback';
@@ -2874,7 +2915,7 @@ function startPlayer() {
     if (!boxData || boxData.picked != null || busy) return;
     busy = true;
     // ช่วงท้ายเกม กล่องที่ยังไม่เปิดจะไม่มีแกล้ง/สวอป
-    if (isLocked(game, DB.now())) boxData.kinds = boxData.kinds.map((k) => (k === 'prank' || k === 'swap' ? pickWeighted(SAFE_WEIGHTS) : k));
+    if (isLocked(game, DB.now())) boxData.kinds = boxData.kinds.map((k) => (ATTACKS.includes(k) ? pickWeighted(SAFE_WEIGHTS) : k));
     boxData.picked = i; saveDeck();
     const kind = boxData.kinds[i];
     kind === 'gold' ? SFX.gold() : SFX.box();
@@ -2888,6 +2929,19 @@ function startPlayer() {
     } else if (kind === 'shield') {
       await DB.set('sh/' + pid, true);
       DB.push('feed', { k: 'shield', f: pid, fn: myName, fa: myAv, at: DB.stamp() });
+      finishBox(1900);
+    } else if (kind === 'bomb') {
+      // อันดับ 1-3 (ไม่นับตัวเอง) โดนคนละ RULES.bomb คนมีโล่กันได้
+      const tops = rankOf(players, sc).filter((r) => r.id !== pid).slice(0, 3);
+      const hit = [], hitN = [], blN = [];
+      for (const t of tops) {
+        const shot = await DB.tx('sh/' + t.id, (v) => (v ? null : undefined));
+        if (shot.committed) { blN.push(t.n); continue; }
+        await DB.tx('sc/' + t.id, (v) => Math.max(0, (v || 0) - RULES.bomb));
+        hit.push(t.id); hitN.push(t.n);
+      }
+      if (tops.length) { SFX.hit(); DB.push('feed', { k: 'bomb', f: pid, fn: myName, fa: myAv, ts: hit, d: hitN.join(', '), bl: blN.join(', '), at: DB.stamp() }); }
+      else toast('ยังไม่มีผู้เล่นคนอื่นให้ระเบิด', 'info');
       finishBox(1900);
     } else {
       boxData.tgUntil = Date.now() + RULES.pickMs; saveDeck();
@@ -2906,7 +2960,7 @@ function startPlayer() {
 
   async function pickTarget(tid) {
     if (busy || !boxData || !game || game.phase !== 'play') return;
-    if (isLocked(game, DB.now())) return expireTarget('🔒 30 วินาทีสุดท้าย ปิดแกล้งและสวอปแล้ว');
+    if (isLocked(game, DB.now())) return expireTarget('🔒 30 วินาทีสุดท้าย ปิดกล่องเล่นงานเพื่อนแล้ว');
     if (boxData.tgUntil && Date.now() > boxData.tgUntil) return expireTarget('⌛ หมดเวลาเลือก กล่องหายไปแล้ว');
     busy = true;
     const tp = players[tid] || {};
@@ -2921,6 +2975,18 @@ function startPlayer() {
       if (tgKind === 'prank') {
         await DB.tx('sc/' + tid, (v) => Math.max(0, (v || 0) - RULES.prank));
         SFX.hit();
+      } else if (tgKind === 'freeze') {
+        SFX.hit();
+      } else if (tgKind === 'steal') {
+        const r = await DB.tx('sc', (all) => {
+          all = all || {};
+          const b = all[tid] || 0, take = Math.min(RULES.steal, b);
+          detail = String(take);
+          all[tid] = b - take; all[pid] = (all[pid] || 0) + take;
+          return all;
+        });
+        if (!r.committed) { busy = false; toast('ขโมยไม่สำเร็จ ลองอีกครั้ง'); return; }
+        SFX.swap();
       } else {
         const r = await DB.tx('sc', (all) => {
           all = all || {};
@@ -2943,7 +3009,7 @@ function startPlayer() {
   function topBar() {
     const now = DB.now();
     const left = game && game.phase === 'play' ? game.endAt - now : null;
-    return `<div class="pp pl-top">${avImg(myAv, 'av')}
+    return `<div class="pp pl-top" id="ptop">${avImg(myAv, 'av')}
       <div class="me"><b>${esc(myName)}</b><span>${joined ? 'อันดับ ' + (myRank().i + 1) + ' / ' + Object.keys(players).length : ''}</span></div>
       ${left != null ? `<div class="pl-clock ${left < 10000 ? 'low' : ''}" id="pclock">${fmtClock(Math.min(left, game.endAt - game.startAt))}</div>` : '<span></span>'}
       <div class="pl-score"><div class="v">${(sc[pid] || 0)}</div><div class="l">แต้ม</div></div>
@@ -2953,8 +3019,8 @@ function startPlayer() {
     const n = (myStat.c || 0) % RULES.every;
     let s = ''; for (let i = 0; i < RULES.every; i++) s += `<i class="${i < n ? 'on' : ''}"></i>`;
     const k = myStat.k || 0;
-    return `<div class="status"><div class="meter">${s}<span>อีก ${RULES.every - n} ข้อ เปิดกล่อง</span></div>
-      ${k >= RULES.comboAt ? `<div class="combo">🔥 คอมโบ ${k}</div>` : ''}${sh[pid] ? '<div class="shieldchip">🛡️ มีโล่</div>' : ''}</div>`;
+    return `<div class="status" id="pstat"><div class="meter">${s}<span>อีก ${RULES.every - n} ข้อ เปิดกล่อง</span></div>
+      ${k >= RULES.comboAt ? `<div class="combo">🔥 คอมโบ ${k}</div>` : ''}${sh[pid] ? '<div class="shieldchip">🛡️ มีโล่</div>' : ''}${isUnderdog() ? `<div class="helpchip">🆘 ตอบถูก +${RULES.underdog}</div>` : ''}</div>`;
   }
 
   function render() {
@@ -2962,41 +3028,59 @@ function startPlayer() {
     document.body.classList.toggle('golden', isGolden(game, now));
     if (!joined) {
       const inGame = game && game.phase === 'play';
+      const jmsg = inGame ? 'เกมเริ่มไปแล้ว เข้าได้เลย รีบตอบตามให้ทัน!' : 'รอเริ่มเกมพร้อมกันทั้งห้อง';
+      if (document.getElementById('jf')) { const pm = document.getElementById('jmsg'); if (pm) pm.textContent = jmsg; return; }
+      app.dataset.key = '';
       app.innerHTML = `<div class="pl"><div class="pp center-msg">
         <div><span class="tag" style="font-size:13px">OPEN HOUSE 2026</span></div>
         <h1 class="logo-title outline" style="margin:4px 0"><span class="l1" style="font-size:54px">SE QUEST</span></h1>
         <h2>ใส่ชื่อเล่น แล้วเลือกตัวละคร</h2>
-        <p>${inGame ? 'เกมเริ่มไปแล้ว เข้าได้เลย รีบตอบตามให้ทัน!' : 'รอเริ่มเกมพร้อมกันทั้งห้อง'}</p>
+        <p id="jmsg">${jmsg}</p>
         <form id="jf" style="display:grid;gap:14px"><input id="jn" type="text" maxlength="16" placeholder="ชื่อเล่น" value="${esc(myName)}" autocomplete="off" enterkeyhint="go">
         <div class="avpick">${AVS.map((_, i) => `<button type="button" class="avbtn ${i === myAv ? 'on' : ''}" data-av="${i}">${avImg(i)}</button>`).join('')}</div>
-        <button class="btn green" type="submit">เข้าเกม!</button></form>
+        <button class="btn green" type="submit" id="jbtn">เข้าเกม!</button></form>
       </div></div>`;
       document.getElementById('jf').onsubmit = (e) => { e.preventDefault(); join(document.getElementById('jn').value); };
-      app.querySelectorAll('[data-av]').forEach((b) => { b.onclick = () => { myName = document.getElementById('jn').value; myAv = +b.dataset.av; SFX.unlock(); SFX.pop(); render(); }; });
+      const jn = document.getElementById('jn');
+      jn.oninput = () => { myName = jn.value; };
+      app.querySelectorAll('[data-av]').forEach((b) => { b.onclick = () => { myAv = +b.dataset.av; SFX.unlock(); SFX.pop(); app.querySelectorAll('[data-av]').forEach((x) => x.classList.toggle('on', x === b)); }; });
       return;
     }
+    // หน้าที่มีปุ่มให้กด ถ้าเนื้อหาเดิม อัปเดตแค่แต้ม/อันดับ ไม่วาดปุ่มใหม่ (กันกดแล้วไม่ติดตอนคนเล่นเยอะ)
+    const same = (key) => {
+      if (app.dataset.key !== key) { app.dataset.key = key; return false; }
+      const t = document.getElementById('ptop'); if (t) t.outerHTML = topBar();
+      const st2 = document.getElementById('pstat'); if (st2) st2.outerHTML = statusRow();
+      return true;
+    };
+    const keyless = () => { app.dataset.key = ''; };
     if (!game || game.phase === 'lobby') {
+      keyless();
       app.innerHTML = `<div class="pl">${topBar()}<div class="pp center-msg"><h2>เข้าเกมแล้ว!</h2><p>มองขึ้นจอใหญ่ รอเริ่มเกม</p>
         <div style="text-align:left;display:grid;gap:8px;font-size:16px;line-height:1.5">
         <div>✅ ตอบถูก +${RULES.correct} · ถูกติดกัน ${RULES.comboAt} ข้อขึ้นไฟลุก 🔥 ได้โบนัส</div>
         <div>🎁 ถูกครบ ${RULES.every} ข้อ ได้เปิดกล่องสุ่ม 1 ใน 3</div>
-        <div>💰 แต้มเพิ่ม · 💸 แต้มหาย · 🎯 แกล้งเพื่อน · 🔄 สวอป · 🛡️ โล่ · 👑 กล่องทอง</div>
+        <div>💰 แต้มเพิ่ม · 💸 แต้มหาย · 🎯 แกล้งเพื่อน · 🔄 สวอป · 🧲 ขโมยแต้ม · ❄️ แช่แข็งเพื่อน · 💣 ระเบิดหัวตาราง · 🛡️ โล่ · 👑 กล่องทอง</div>
         <div>⭐ ข้อดาวทอง และ ✨ นาทีสุดท้าย แต้มคูณ 2</div>
-        <div>⏱ ได้กล่องแกล้ง/สวอป ต้องเลือกคนใน ${RULES.pickMs / 1000} วินาที · 🔒 30 วินาทีสุดท้ายปิดแกล้งและสวอป</div></div></div></div>`;
+        <div>🆘 อยู่ครึ่งล่างของตาราง ตอบถูกได้เพิ่ม +${RULES.underdog}</div>
+        <div>⏱ ได้กล่องเล่นงานเพื่อน ต้องเลือกคนใน ${RULES.pickMs / 1000} วินาที · 🔒 30 วินาทีสุดท้ายปิดกล่องเล่นงานเพื่อน</div></div></div></div>`;
       return;
     }
     if (game.phase === 'end' || now > game.endAt) {
+      keyless();
       const { list, i } = myRank();
       const rows = list.slice(0, 5).map((r, k) => `<div class="rank-row ${r.id === pid ? 'me' : ''}"><span class="n">#${k + 1}</span>${avImg(r.av)}<span class="nm">${esc(r.n)}</span><span class="s">${r.s}</span></div>`).join('');
       app.innerHTML = `<div class="pl">${topBar()}<div class="pp center-msg"><h2>หมดเวลา!</h2><p>คุณได้อันดับ <b style="color:var(--orange2);font-size:22px">${i + 1}</b> ด้วย ${sc[pid] || 0} แต้ม<br>ดูประกาศผลบนจอใหญ่</p></div><div class="pp" style="padding:14px"><div class="rank-list">${rows}</div></div></div>`;
       return;
     }
     if (now < game.startAt) {
+      keyless();
       app.innerHTML = `<div class="pl">${topBar()}<div class="pp center-msg"><h2>เตรียมตัว!</h2><p>เกมกำลังจะเริ่ม</p></div></div>`;
       return;
     }
     const goldBanner = isGolden(game, now) ? '<div class="gold-banner">✨ นาทีทอง! ตอบถูกได้แต้มคูณ 2 ✨</div>' : '';
     if (view === 'feedback' && fbData) {
+      if (same('f|' + fbData.until)) return;
       const q = QUESTIONS[fbData.q];
       if (fbData.ok) {
         app.innerHTML = `<div class="pl">${topBar()}${goldBanner}<div class="pp fb"><div class="big" style="color:var(--green2)">ถูกต้อง!</div><div class="pts">+${fbData.pts}</div><div class="break">${fbData.br.map((b) => `<span>${esc(b)}</span>`).join('')}</div>${fbData.k >= RULES.comboAt ? `<div class="combo" style="justify-self:center">🔥 ถูกติดกัน ${fbData.k} ข้อ</div>` : ''}</div></div>`;
@@ -3008,6 +3092,7 @@ function startPlayer() {
     }
     if (view === 'boxes' && boxData) {
       const done = boxData.picked != null;
+      if (same('b|' + boxData.kinds.join() + '|' + boxData.picked + '|' + !!boxData.done)) return;
       const bx = boxData.kinds.map((k, i) => {
         const info = BOX_INFO[k];
         if (!done) return `<button class="box shake" data-b="${i}"><span class="q">?</span></button>`;
@@ -3021,10 +3106,20 @@ function startPlayer() {
     }
     if (view === 'target') {
       const others = rankOf(players, sc).filter((r) => r.id !== pid);
+      if (same('t|' + tgKind + '|' + tgFilter + '|' + others.length)) {
+        // อัปเดตแต้มในปุ่มเดิม ไม่สลับลำดับระหว่างกำลังเลือก
+        app.querySelectorAll('[data-t]').forEach((b) => { const r = others.find((x) => x.id === b.dataset.t); if (r) { const sb = b.querySelector('b'); if (sb) sb.textContent = r.s; const nm = b.querySelector('span'); if (nm) nm.textContent = (sh[r.id] ? '🛡️ ' : '') + r.n; } });
+        return;
+      }
       const f = tgFilter.trim().toLowerCase();
       const shown = others.filter((r) => !f || r.n.toLowerCase().includes(f));
-      const title = tgKind === 'prank' ? '🎯 เลือกคนที่จะแกล้ง' : '🔄 เลือกคนที่จะสวอปแต้มด้วย';
-      const sub = tgKind === 'prank' ? 'แต้มของเขาจะลด ' + RULES.prank + ' (ไม่ต่ำกว่า 0) · คนมี 🛡️ จะกันได้' : 'แต้มของคุณ ' + (sc[pid] || 0) + ' จะสลับกับของเขาทั้งก้อน · คนมี 🛡️ จะกันได้';
+      const title = { prank: '🎯 เลือกคนที่จะแกล้ง', swap: '🔄 เลือกคนที่จะสวอปแต้มด้วย', steal: '🧲 เลือกคนที่จะขโมยแต้ม', freeze: '❄️ เลือกคนที่จะแช่แข็ง' }[tgKind];
+      const sub = {
+        prank: 'แต้มของเขาจะลด ' + RULES.prank + ' (ไม่ต่ำกว่า 0)',
+        swap: 'แต้มของคุณ ' + (sc[pid] || 0) + ' จะสลับกับของเขาทั้งก้อน',
+        steal: 'ดูดแต้มเขามา ' + RULES.steal + ' แต้ม (ถ้าเขามีน้อยกว่านั้น ได้เท่าที่มี)',
+        freeze: 'มือถือเขาจะกดตอบไม่ได้ ' + RULES.freezeMs / 1000 + ' วินาที',
+      }[tgKind] + ' · คนมี 🛡️ จะกันได้';
       const tl = Math.max(0, Math.ceil(((boxData && boxData.tgUntil) || Date.now()) - Date.now()) / 1000);
       app.innerHTML = `<div class="pl">${topBar()}<div class="pp center-msg" style="padding:16px"><h2 style="font-size:22px">${title}</h2><p>${sub}</p><div class="pickbar"><i id="pickfill" style="width:${Math.min(100, tl / (RULES.pickMs / 1000) * 100)}%"></i><span id="picktxt">เลือกภายใน ${Math.ceil(tl)} วินาที</span></div></div>
         ${others.length > 8 ? `<input id="tf" type="text" placeholder="ค้นหาชื่อ" value="${esc(tgFilter)}" autocomplete="off">` : ''}
@@ -3039,7 +3134,10 @@ function startPlayer() {
     }
     const q = QUESTIONS[cur];
     if (!q) { nextQ(); return render(); }
-    app.innerHTML = `<div class="pl">${topBar()}${goldBanner}${statusRow()}<div class="pp qcard ${curStar ? 'starq' : ''}"><div class="qhead"><span class="qno">ข้อที่ ${(myStat.a || 0) + 1}</span>${curStar ? '<span class="star">⭐ ข้อดาว ×2</span>' : ''}</div><p class="qtext">${esc(q.q)}</p></div>
+    const fz = isFrozen();
+    if (same('q|' + deckGid + '|' + cur + '|' + (myStat.a || 0) + '|' + !!goldBanner + '|' + fz)) return;
+    const ice = fz ? `<div class="ice"><div><span class="sn">❄️</span><b id="icet">${Math.ceil((frozenUntil - Date.now()) / 1000)}</b>โดนแช่แข็ง!<small style="font-size:18px">รอแป๊บ เดี๋ยวกดตอบได้</small></div></div>` : '';
+    app.innerHTML = ice + `<div class="pl">${topBar()}${goldBanner}${statusRow()}<div class="pp qcard ${curStar ? 'starq' : ''}"><div class="qhead"><span class="qno">ข้อที่ ${(myStat.a || 0) + 1}</span>${curStar ? '<span class="star">⭐ ข้อดาว ×2</span>' : ''}</div><p class="qtext">${esc(q.q)}</p></div>
       <div class="opts">${q.o.map((o, k) => `<button class="opt" data-o="${k}"><span class="k">${'ABCD'[k]}</span><span>${esc(o)}</span></button>`).join('')}</div></div>`;
     app.querySelectorAll('[data-o]').forEach((b) => { b.onclick = () => answer(+b.dataset.o); });
   }
@@ -3061,7 +3159,11 @@ function startPlayer() {
     const g = isGolden(game, now);
     if (g !== wasGolden) { wasGolden = g; if (g) { toast('✨ นาทีทอง! แต้มคูณ 2', 'good'); SFX.gold(); } if (view === 'question') render(); }
     const lk = isLocked(game, now);
-    if (lk !== wasLocked) { wasLocked = lk; if (lk && left > 0) { toast('🔒 30 วินาทีสุดท้าย ปิดแกล้งและสวอป', 'info'); if (view === 'target') expireTarget('🔒 30 วินาทีสุดท้าย ปิดแกล้งและสวอปแล้ว'); } }
+    if (lk !== wasLocked) { wasLocked = lk; if (lk && left > 0) { toast('🔒 30 วินาทีสุดท้าย ปิดกล่องเล่นงานเพื่อน', 'info'); if (view === 'target') expireTarget('🔒 30 วินาทีสุดท้าย ปิดกล่องเล่นงานเพื่อนแล้ว'); } }
+    if (frozenUntil) {
+      if (Date.now() >= frozenUntil) { frozenUntil = 0; render(); }
+      else { const it = document.getElementById('icet'); if (it) it.textContent = Math.ceil((frozenUntil - Date.now()) / 1000); }
+    }
     if (view === 'target' && boxData && boxData.tgUntil) {
       const ms = boxData.tgUntil - Date.now();
       if (ms <= 0) expireTarget('⌛ หมดเวลาเลือก กล่องหายไปแล้ว');
@@ -3099,20 +3201,60 @@ function startScreen() {
   const chipSeen = new Set(); const feedSeenUI = new Set();
 
   DB.on('game', (g) => { game = g; render(); });
-  DB.on('players', (p) => { players = p || {}; render(); });
+  let plReady = false, stReady = false;
+  DB.on('players', (p) => {
+    p = p || {};
+    // คนเข้ากลางเกม ขึ้นป้ายเล็กมุมจอ
+    if (plReady && live()) for (const [id, v] of Object.entries(p)) if (!players[id] && v) joinPop(v);
+    players = p; plReady = true; render();
+  });
   DB.on('sc', (s) => { sc = s || {}; render(); });
-  DB.on('st', (s) => { st = s || {}; render(); });
+  DB.on('st', (s) => {
+    s = s || {};
+    // ถูกติดกันครบทุก 5 ข้อ ขึ้น ON FIRE
+    if (stReady && live()) for (const [id, v] of Object.entries(s)) {
+      const k = (v && v.k) || 0, pk = (st[id] && st[id].k) || 0;
+      if (k !== pk && k >= RULES.fireAt && k % RULES.fireAt === 0 && players[id]) queueBlast({ k: 'fire', fn: players[id].n, fa: players[id].av || 0, d: k });
+    }
+    st = s; stReady = true; render();
+  });
   DB.on('sh', (s) => { sh = s || {}; render(); });
   DB.onLast('feed', 7, (f) => {
     const items = Object.entries(f || {}).sort((a, b) => (a[0] < b[0] ? -1 : 1));
     feed = items.map(([k, v]) => Object.assign({ _k: k }, v)).filter((v) => v.k).reverse();
     for (const [k, v] of items) {
       if (seen.has(k)) continue; seen.add(k);
-      if (feedReady && v && game && game.phase === 'play' && ['prank', 'swap', 'gold', 'block'].includes(v.k)) queueBlast(v);
+      if (feedReady && v && game && game.phase === 'play' && ['prank', 'swap', 'gold', 'block', 'steal', 'freeze', 'bomb'].includes(v.k)) queueBlast(v);
     }
     feedReady = true; render();
   });
   const live = () => game && game.phase === 'play' && DB.now() < game.endAt;
+  const pops = document.createElement('div'); pops.className = 'joinpops'; stage.appendChild(pops);
+  function joinPop(p) {
+    const el = document.createElement('div'); el.className = 'pp joinpop';
+    el.innerHTML = avImg(p.av) + '<span>' + esc(p.n) + ' เข้าร่วมแล้ว!</span>';
+    pops.appendChild(el); SFX.pop();
+    while (pops.children.length > 4) pops.firstChild.remove();
+    setTimeout(() => el.classList.add('out'), 2600); setTimeout(() => el.remove(), 3100);
+  }
+  function coinRain() {
+    const cv = document.createElement('canvas'); cv.className = 'fw'; cv.width = 1920; cv.height = 1080; stage.appendChild(cv);
+    const g = cv.getContext('2d'); const cs = [];
+    for (let i = 0; i < 90; i++) cs.push({ x: Math.random() * 1920, y: -40 - Math.random() * 900, v: 7 + Math.random() * 8, s: 22 + Math.random() * 16, p: Math.random() * 6 });
+    let t = 0;
+    const loop = () => {
+      t++; g.clearRect(0, 0, 1920, 1080);
+      for (const c of cs) {
+        c.y += c.v; c.p += 0.15;
+        const w = Math.max(4, Math.abs(Math.cos(c.p)) * c.s), x = Math.round(c.x / 4) * 4, y = Math.round(c.y / 4) * 4;
+        g.fillStyle = '#7A4A12'; g.fillRect(x - w / 2 - 3, y - c.s / 2 - 3, w + 6, c.s + 6);
+        g.fillStyle = '#FFD45C'; g.fillRect(x - w / 2, y - c.s / 2, w, c.s);
+        g.fillStyle = '#FFF3DC'; g.fillRect(x - w / 4, y - c.s / 3, Math.max(2, w / 4), c.s / 3);
+      }
+      if (t < 170) requestAnimationFrame(loop); else cv.remove();
+    };
+    loop();
+  }
   function clearBlasts() { blasts.length = 0; stage.querySelectorAll('.blast').forEach((e) => e.remove()); blasting = false; }
   function queueBlast(v) { if (!live()) return; blasts.push(v); runBlast(); }
   function runBlast() {
@@ -3129,11 +3271,16 @@ function startScreen() {
       gold: [`JACKPOT!`, `${esc(v.fn)} เปิดได้กล่องทอง`, `+${RULES.gold} แต้ม 👑`],
       block: [`BLOCK!`, `${esc(v.tn)} ใช้โล่กัน ${esc(v.fn)}`, `แกล้งไม่เข้า 🛡️`],
       lead: [`NEW #1!`, `${esc(v.fn)} แซงขึ้นที่ 1`, `${v.d} แต้ม 👑`],
+      steal: [`STEAL!`, `${esc(v.fn)} ขโมยแต้ม ${esc(v.tn)}`, `ดูดไป ${esc(v.d)} แต้ม 🧲`],
+      freeze: [`FREEZE!`, `${esc(v.fn)} แช่แข็ง ${esc(v.tn)}`, `กดตอบไม่ได้ ${RULES.freezeMs / 1000} วินาที ❄️`],
+      bomb: [`BOOM!`, `${esc(v.fn)} ปาระเบิดใส่หัวตาราง`, v.d ? `${esc(v.d)} โดน -${RULES.bomb} 💣` + (v.bl ? ` · ${esc(v.bl)} มีโล่` : '') : `${esc(v.bl)} มีโล่กันได้หมด 🛡️`],
+      fire: [`ON FIRE!`, `${esc(v.fn)} ตอบถูกติดกัน ${v.d} ข้อ`, `ไฟลุกแล้ว ใครจะหยุดได้ 🔥`],
     }[v.k];
     el.innerHTML = `${avImg(who)}<div><span class="kind">${msg[0]}</span><div class="msg">${msg[1]}<small>${msg[2]}</small></div></div>`;
     stage.appendChild(el);
-    if (v.k === 'prank') { SFX.hit(); stage.classList.remove('quake'); void stage.offsetWidth; stage.classList.add('quake'); }
-    else if (v.k === 'swap') SFX.swap(); else if (v.k === 'gold' || v.k === 'lead') SFX.gold(); else SFX.shield();
+    if (v.k === 'prank' || v.k === 'bomb') { SFX.hit(); stage.classList.remove('quake'); void stage.offsetWidth; stage.classList.add('quake'); }
+    else if (v.k === 'swap' || v.k === 'steal') SFX.swap(); else if (v.k === 'gold' || v.k === 'lead') SFX.gold(); else if (v.k === 'fire') SFX.combo(); else if (v.k === 'freeze') SFX.shield(); else SFX.shield();
+    if (v.k === 'gold') coinRain();
     setTimeout(() => { el.remove(); blasting = false; runBlast(); }, blasts.length > 2 ? 1300 : 2400);
   }
 
@@ -3162,7 +3309,7 @@ function startScreen() {
       content.innerHTML = head(`<div class="pp s-count"><b>${n}</b><span>คนเข้าเกมแล้ว</span></div>`) + `<div class="s-body">
         <div class="pp panel"><div class="lobby-join"><div class="qrbox"><div class="qr">${qrSVG(url)}</div><span class="tag">SCAN ME!</span></div>
         <div class="join-steps"><div class="step"><i>1</i>สแกน QR ด้วยมือถือ</div><div class="step"><i>2</i>ใส่ชื่อ เลือกตัวละคร</div><div class="step"><i>3</i>รอเริ่มเกมพร้อมกัน</div><div class="url">${esc(url)}</div></div></div>
-        <div class="rules" style="margin-top:20px"><span>✅ ถูก +${RULES.correct}</span><span>🔥 คอมโบ +${RULES.comboBonus}</span><span>🎁 ถูก ${RULES.every} ข้อ เปิดกล่อง</span><span>⭐ ข้อดาว ×2</span><span>✨ นาทีทอง ×2</span><span>🔒 30 วิสุดท้ายห้ามแกล้ง/สวอป</span><span>🏆 5 อันดับแรกชนะ</span></div></div>
+        <div class="rules" style="margin-top:20px"><span>✅ ถูก +${RULES.correct}</span><span>🔥 คอมโบ +${RULES.comboBonus}</span><span>🎁 ถูก ${RULES.every} ข้อ เปิดกล่อง</span><span>⭐ ข้อดาว ×2</span><span>✨ นาทีทอง ×2</span><span>🧲 ขโมย ❄️ แช่แข็ง 💣 ระเบิด</span><span>🆘 ครึ่งล่างตอบถูก +${RULES.underdog}</span><span>🔒 30 วิสุดท้ายห้ามเล่นงานเพื่อน</span><span>🏆 5 อันดับแรกชนะ</span></div></div>
         <div class="pp panel"><h2>ผู้เล่น <small>${n} คน</small></h2><div class="chips">${chips || '<span class="empty">ยังไม่มีใครเข้า สแกนเลย!</span>'}</div></div></div>` + foot();
       return;
     }
