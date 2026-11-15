@@ -236,11 +236,12 @@ body.golden .pl-top { background: #FFF7D1; border-color: var(--gold2); }
 .marquee { position: absolute; left: 0; right: 0; bottom: 34px; z-index: 6; background: var(--gold); border-top: 5px solid var(--brown); border-bottom: 5px solid var(--brown); overflow: hidden; height: 64px; }
 .marquee div { white-space: nowrap; font: 700 34px/54px var(--f-head); animation: marq 9s linear infinite; padding-left: 100%; display: inline-block; }
 @keyframes marq { to { transform: translateX(-100%); } }
-.blast { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); z-index: 30; width: 1240px; display: grid; grid-template-columns: 220px 1fr; gap: 34px; align-items: center; padding: 40px 50px; animation: blast .4s cubic-bezier(.2,1.6,.4,1); }
-.blast img { width: 200px; height: 300px; }
-.blast .kind { font: 700 46px var(--f-px); color: #fff; padding: 4px 18px; border: 4px solid var(--brown); display: inline-block; margin-bottom: 14px; }
-.blast .msg { font: 700 54px/1.25 var(--f-head); }
-.blast .msg small { display: block; font: 600 36px var(--f-th); color: var(--brown2); margin-top: 8px; }
+/* ป้ายเด้งอยู่ในช่องว่างด้านบน ระหว่างชื่อเกมกับนาฬิกา ไม่บังตาราง */
+.blast { position: absolute; left: 920px; top: 36px; transform: translateX(-50%); z-index: 30; width: 660px; max-height: 232px; overflow: hidden; display: grid; grid-template-columns: 74px 1fr; gap: 18px; align-items: center; padding: 14px 22px; animation: blast .35s cubic-bezier(.2,1.6,.4,1); }
+.blast img { width: 72px; height: 108px; }
+.blast .kind { font: 700 26px var(--f-px); color: #fff; padding: 2px 12px; border: 3px solid var(--brown); display: inline-block; margin-bottom: 6px; }
+.blast .msg { font: 700 32px/1.2 var(--f-head); }
+.blast .msg small { display: block; font: 600 22px var(--f-th); color: var(--brown2); margin-top: 4px; }
 .blast.prank { border-color: var(--red); } .blast.prank .kind { background: var(--red); }
 .blast.swap { border-color: var(--blue); } .blast.swap .kind { background: var(--blue); }
 .blast.gold { border-color: var(--gold2); background: #FFF7D1; } .blast.gold .kind { background: var(--gold2); }
@@ -264,7 +265,7 @@ body.golden .pl-top { background: #FFF7D1; border-color: var(--gold2); }
 .ice .sn { font-size: 84px; line-height: 1; animation: wob .5s infinite alternate; }
 .ice b { font: 700 72px var(--f-px); color: #fff; text-shadow: 4px 4px 0 #0B3A5C; }
 .helpchip { font: 700 14px var(--f-head); background: var(--green); color: #fff; border: 3px solid var(--brown); padding: 4px 10px; }
-@keyframes blast { from { transform: translate(-50%, -50%) scale(.3) rotate(-6deg); opacity: 0; } }
+@keyframes blast { from { transform: translateX(-50%) translateY(-40px) scale(.5) rotate(-4deg); opacity: 0; } }
 .sound-btn { position: absolute; right: 56px; bottom: 30px; z-index: 40; font-size: 24px; padding: 10px 18px; }
 .overlay { position: absolute; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(90,46,20,.5); }
 .overlay .n { font: 700 520px/1 var(--f-px); animation: zoom .95s ease-out both; }
