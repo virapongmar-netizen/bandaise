@@ -131,6 +131,19 @@ input[type=text], input[type=number] { font: 600 20px var(--f-th); padding: 12px
 .avbtn { background: #FFFAF1; border: 4px solid var(--brown); box-shadow: 4px 4px 0 var(--brown); padding: 8px 0 4px; display: grid; justify-items: center; }
 .avbtn img { width: 48px; height: 72px; }
 .avbtn.on { background: var(--gold); outline: 4px solid var(--orange2); outline-offset: 2px; }
+.dress { display: grid; gap: 12px; padding: 14px; }
+.dress-top { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+.dress-top img { width: 96px; height: 144px; background: #FFFAF1; border: 4px solid var(--brown); padding: 4px; }
+.dress-top h2 { margin: 0 0 6px; font: 700 22px var(--f-head); }
+.dress-top p { margin: 0 0 8px; font-size: 14px; color: var(--brown2); }
+.drow { display: grid; gap: 6px; }
+.drow > span { font: 700 15px var(--f-head); }
+.dopts { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; }
+.dopt { flex: none; min-width: 64px; padding: 6px 8px; background: #FFFAF1; border: 3px solid var(--brown); box-shadow: 3px 3px 0 var(--brown); font: 600 14px var(--f-th); display: grid; justify-items: center; gap: 2px; }
+.dopt img { width: 32px; height: 48px; }
+.dopt.on { background: var(--gold); outline: 3px solid var(--orange2); outline-offset: 1px; }
+.dopt.sw { min-width: 44px; width: 44px; height: 44px; padding: 0; }
+.dopt.sw.on { outline-width: 4px; }
 .toast { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); width: min(520px, calc(100% - 24px)); z-index: 80; background: var(--red); color: #fff; border: 4px solid var(--brown); box-shadow: 6px 6px 0 var(--brown); padding: 14px 16px; font: 700 18px var(--f-head); text-align: center; animation: drop .25s ease-out; }
 .toast.good { background: var(--green); } .toast.info { background: var(--blue); }
 @keyframes drop { from { transform: translate(-50%, -40px); opacity: 0; } }
@@ -188,10 +201,11 @@ body.golden .pl-top { background: #FFF7D1; border-color: var(--gold2); }
 .step i { font-style: normal; flex: none; width: 60px; height: 60px; display: grid; place-items: center; font: 700 30px var(--f-px); color: #fff; background: var(--orange); border: 4px solid var(--brown); box-shadow: 4px 4px 0 var(--brown); }
 .join-steps .url { font: 600 20px monospace; color: var(--brown2); overflow-wrap: anywhere; }
 .rules { display: flex; flex-wrap: wrap; gap: 12px; }
-.rules span { font: 600 22px var(--f-th); background: #FFFAF1; border: 3px solid var(--brown); padding: 6px 14px; }
+.rules span { font: 600 20px var(--f-th); background: #FFFAF1; border: 3px solid var(--brown); padding: 5px 11px; }
 .chips { display: flex; flex-wrap: wrap; gap: 12px; align-content: flex-start; overflow: hidden; }
 .chip { display: flex; align-items: center; gap: 8px; font: 600 22px var(--f-th); padding: 4px 14px 4px 6px; background: #FFFAF1; border: 3px solid var(--brown); max-width: 290px; white-space: nowrap; }
 .chip img { width: 26px; height: 40px; flex: none; }
+.chips.big .chip img { width: 40px; height: 60px; }
 .chip span { overflow: hidden; text-overflow: ellipsis; }
 .chip.new { animation: pop .35s ease-out; }
 @keyframes pop { from { transform: scale(.4) translateY(10px); opacity: 0; } }
@@ -2637,7 +2651,66 @@ const BOX_INFO = {
 };
 const QUESTIONS = [...CARDS.q, ...CARDS.shoot];
 const AVS = ASSETS.avs;
-const avImg = (i, cls) => `<img class="px ${cls || ''}" alt="" src="${AVS[((i | 0) % AVS.length + AVS.length) % AVS.length]}">`;
+/* ---------- แต่งตัว: เก็บชุดไว้ในเลข av ตัวเดียว (ตัวละคร + 6 × รหัสชุด) จะได้ไม่ต้องเพิ่มช่องข้อมูลใหม่ใน Firebase ---------- */
+const OUTFIT = {
+  hats: [['ไม่ใส่', ''], ['🧢 แก๊ป', 'cap'], ['👑 มงกุฎ', 'crown'], ['🎓 รับปริญญา', 'grad'], ['🐱 หูแมว', 'ears'], ['🧶 ไหมพรม', 'beanie']],
+  glasses: [['ไม่ใส่', ''], ['🕶️ กันแดด', 'sun'], ['👓 แว่นกลม', 'round'], ['💗 หัวใจ', 'heart']],
+  shirts: [null, '#F07A2A', '#E2463A', '#6DA544', '#3C8DD9', '#8E5BD6', '#2E2A35', '#F49AC1'],
+  pets: [['ไม่มี', ''], ['🐱 แมว', 'cat'], ['🐶 หมา', 'dog'], ['🦖 ไดโน', 'dino'], ['🐥 เจี๊ยบ', 'chick']],
+};
+const PAL = { A: '#5A2E14', K: '#2A2530', O: '#F07A2A', D: '#9C4F25', Y: '#FFD45C', R: '#E2463A', W: '#FFFFFF', P: '#F49AC1', G: '#6DA544', B: '#C98B4F', S: '#8A8A99', N: '#3E6B23' };
+// ภาพบนตาราง 12×18 ของตัวละคร (เริ่มแถวบนสุด)
+const SPR = {
+  cap: ['...AAAAAA...', '..AOOOOOOA..', '.AOOOWOOOOA.', 'ADDDDDDDDDDA'],
+  crown: ['..Y..YY..Y..', '.AYAAYYAAYA.', '.AYYYRRYYYA.'],
+  grad: ['AKKKKKKKKKKA', '.AAKKKKKKAAY', '..AKKKKKKA.Y', '...........Y'],
+  ears: ['AA........AA', 'APA......APA', 'AKKA....AKKA'],
+  beanie: ['...AAAAAA...', '..ARRRRRRA..', '.ARRRWRRRRA.', '.AWWWWWWWWA.'],
+  sun: ['', '', '', '', '.KKKKKKKKKK.', '..KKK..KKK..'],
+  round: ['', '', '', '..AAA..AAA..', '..A.AAAA.A..', '..AAA..AAA..'],
+  heart: ['', '', '', '.PP.PP.PP.PP', '.PPPPP.PPPPP', '..PPP...PPP.', '...P.....P..'],
+};
+// สัตว์เลี้ยง 8×8 วาดละเอียดกว่าครึ่งหนึ่ง นั่งข้างเท้าขวา
+const PET = {
+  cat: ['A.....A.', 'ASA.ASA.', 'ASSSSSA.', 'ASKSKSA.', 'ASSPSSAA', '.ASSSSSA', '.ASSSSSA', '.AA.A.AA'],
+  dog: ['.AA..AA.', 'ADDAADDA', 'ADBBBBDA', 'ABKBBKBA', 'ABBKKBBA', '.ABBBBA.', 'ABBBBBBA', 'AA.AA.AA'],
+  dino: ['....AAA.', '...AGGGA', '...AGKGA', 'A..AGGGA', 'AAAGGGA.', 'AGGGGGA.', '.AGGGGA.', '..A.A.A.'],
+  chick: ['..AAA...', '.AYYYA..', '.AYKYOA.', '.AYYYA..', 'AYYYYYA.', 'AYYYYYA.', '.AYYYA..', '..O.O...'],
+};
+const avParts = (v) => { v = Math.max(0, v | 0); const c = Math.floor(v / AVS.length); return { b: v % AVS.length, h: c & 7, g: (c >> 3) & 7, s: (c >> 6) & 7, p: (c >> 9) & 7 }; };
+const avPack = (o) => o.b + AVS.length * ((o.h & 7) | ((o.g & 7) << 3) | ((o.s & 7) << 6) | ((o.p & 7) << 9));
+const AV_IMGS = AVS.map((src) => { const im = new Image(); im.src = src; return im; });
+const avCache = {};
+function avSrc(v) {
+  const o = avParts(v);
+  if (o.h === 0 && o.g === 0 && o.s === 0 && o.p === 0) return AVS[o.b];
+  const key = avPack(o);
+  if (avCache[key]) return avCache[key];
+  const im = AV_IMGS[o.b];
+  if (!im.complete || !im.naturalWidth) return AVS[o.b];
+  try {
+    const t = document.createElement('canvas'); t.width = 12; t.height = 18;
+    const tg = t.getContext('2d'); tg.drawImage(im, 0, 0);
+    const shirt = OUTFIT.shirts[o.s];
+    if (shirt) {
+      const d = tg.getImageData(0, 0, 12, 18), px = d.data, at = (x, y) => (y * 12 + x) * 4;
+      const i0 = at(5, 9), r0 = px[i0], g0 = px[i0 + 1], b0 = px[i0 + 2];
+      const nr = parseInt(shirt.slice(1, 3), 16), ng = parseInt(shirt.slice(3, 5), 16), nb = parseInt(shirt.slice(5, 7), 16);
+      for (let y = 8; y <= 12; y++) for (let x = 0; x < 12; x++) { const i = at(x, y); if (px[i + 3] && px[i] === r0 && px[i + 1] === g0 && px[i + 2] === b0) { px[i] = nr; px[i + 1] = ng; px[i + 2] = nb; } }
+      tg.putImageData(d, 0, 0);
+    }
+    const c = document.createElement('canvas'); c.width = 24; c.height = 36;
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(t, 0, 0, 24, 36);
+    const paint = (rows, ox, oy, sz) => rows.forEach((row, y) => [...row].forEach((ch, x) => { if (PAL[ch]) { g.fillStyle = PAL[ch]; g.fillRect(ox + x * sz, oy + y * sz, sz, sz); } }));
+    const hat = OUTFIT.hats[o.h] && OUTFIT.hats[o.h][1], gl = OUTFIT.glasses[o.g] && OUTFIT.glasses[o.g][1], pet = OUTFIT.pets[o.p] && OUTFIT.pets[o.p][1];
+    if (gl) paint(SPR[gl], 0, 0, 2);
+    if (hat) paint(SPR[hat], 0, 0, 2);
+    if (pet) paint(PET[pet], 16, 28, 1);
+    avCache[key] = c.toDataURL();
+  } catch (e) { avCache[key] = AVS[o.b]; }
+  return avCache[key];
+}
+const avImg = (i, cls) => `<img class="px ${cls || ''}" alt="" src="${avSrc(i)}">`;
 
 const qs = new URLSearchParams(location.search);
 const cleanRoom = (r) => String(r || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16);
@@ -2813,7 +2886,7 @@ function startPlayer() {
   let view = 'question';   // question | feedback | boxes | target
   let fbData = null, boxData = null, tgKind = null, tgFilter = '';
   let myStat = { c: 0, a: 0, k: 0 };
-  let busy = false, frozenUntil = 0;
+  let busy = false, frozenUntil = 0, dressT = null;
   const isFrozen = () => Date.now() < frozenUntil;
   const seenFeed = new Set(); let feedReady = false;
   let lastCount = null, lastTick = null;
@@ -3037,13 +3110,13 @@ function startPlayer() {
         <h2>ใส่ชื่อเล่น แล้วเลือกตัวละคร</h2>
         <p id="jmsg">${jmsg}</p>
         <form id="jf" style="display:grid;gap:14px"><input id="jn" type="text" maxlength="16" placeholder="ชื่อเล่น" value="${esc(myName)}" autocomplete="off" enterkeyhint="go">
-        <div class="avpick">${AVS.map((_, i) => `<button type="button" class="avbtn ${i === myAv ? 'on' : ''}" data-av="${i}">${avImg(i)}</button>`).join('')}</div>
+        <div class="avpick">${AVS.map((_, i) => `<button type="button" class="avbtn ${i === avParts(myAv).b ? 'on' : ''}" data-av="${i}">${avImg(i)}</button>`).join('')}</div>
         <button class="btn green" type="submit" id="jbtn">เข้าเกม!</button></form>
       </div></div>`;
       document.getElementById('jf').onsubmit = (e) => { e.preventDefault(); join(document.getElementById('jn').value); };
       const jn = document.getElementById('jn');
       jn.oninput = () => { myName = jn.value; };
-      app.querySelectorAll('[data-av]').forEach((b) => { b.onclick = () => { myAv = +b.dataset.av; SFX.unlock(); SFX.pop(); app.querySelectorAll('[data-av]').forEach((x) => x.classList.toggle('on', x === b)); }; });
+      app.querySelectorAll('[data-av]').forEach((b) => { b.onclick = () => { myAv = avPack(Object.assign(avParts(myAv), { b: +b.dataset.av })); SFX.unlock(); SFX.pop(); app.querySelectorAll('[data-av]').forEach((x) => x.classList.toggle('on', x === b)); }; });
       return;
     }
     // หน้าที่มีปุ่มให้กด ถ้าเนื้อหาเดิม อัปเดตแค่แต้ม/อันดับ ไม่วาดปุ่มใหม่ (กันกดแล้วไม่ติดตอนคนเล่นเยอะ)
@@ -3055,8 +3128,18 @@ function startPlayer() {
     };
     const keyless = () => { app.dataset.key = ''; };
     if (!game || game.phase === 'lobby') {
-      keyless();
-      app.innerHTML = `<div class="pl">${topBar()}<div class="pp center-msg"><h2>เข้าเกมแล้ว!</h2><p>มองขึ้นจอใหญ่ รอเริ่มเกม</p>
+      if (same('l|' + myAv)) return;
+      const o = avParts(myAv);
+      const opt = (k, i, inner, extra) => `<button type="button" class="dopt ${extra || ''} ${o[k] === i ? 'on' : ''}" data-d="${k}:${i}"${extra === 'sw' ? ` style="background:${OUTFIT.shirts[i] || 'repeating-linear-gradient(45deg,#FFFAF1 0 6px,#F3D9B8 6px 12px)'}"` : ''}>${inner}</button>`;
+      const prev = (k, i) => avImg(avPack(Object.assign({}, o, { [k]: i })));
+      app.innerHTML = `<div class="pl">${topBar()}<div class="pp dress">
+        <div class="dress-top">${avImg(myAv)}<div><h2>เข้าเกมแล้ว! แต่งตัวรอเลย</h2><p>ชุดที่แต่งจะขึ้นบนจอใหญ่ทันที</p><button type="button" class="btn cream" id="drand" style="padding:8px 12px;font-size:15px">🎲 สุ่มชุด</button></div></div>
+        <div class="drow"><span>ตัวละคร</span><div class="dopts">${AVS.map((_, i) => opt('b', i, prev('b', i))).join('')}</div></div>
+        <div class="drow"><span>หมวก</span><div class="dopts">${OUTFIT.hats.map((h, i) => opt('h', i, prev('h', i) + h[0])).join('')}</div></div>
+        <div class="drow"><span>แว่น</span><div class="dopts">${OUTFIT.glasses.map((h, i) => opt('g', i, prev('g', i) + h[0])).join('')}</div></div>
+        <div class="drow"><span>สีเสื้อ</span><div class="dopts">${OUTFIT.shirts.map((c, i) => opt('s', i, '', 'sw')).join('')}</div></div>
+        <div class="drow"><span>สัตว์เลี้ยง</span><div class="dopts">${OUTFIT.pets.map((h, i) => opt('p', i, prev('p', i) + h[0])).join('')}</div></div>
+      </div><div class="pp center-msg"><p>มองขึ้นจอใหญ่ รอเริ่มเกม</p>
         <div style="text-align:left;display:grid;gap:8px;font-size:16px;line-height:1.5">
         <div>✅ ตอบถูก +${RULES.correct} · ถูกติดกัน ${RULES.comboAt} ข้อขึ้นไฟลุก 🔥 ได้โบนัส</div>
         <div>🎁 ถูกครบ ${RULES.every} ข้อ ได้เปิดกล่องสุ่ม 1 ใน 3</div>
@@ -3064,6 +3147,13 @@ function startPlayer() {
         <div>⭐ ข้อดาวทอง และ ✨ นาทีสุดท้าย แต้มคูณ 2</div>
         <div>🆘 อยู่ครึ่งล่างของตาราง ตอบถูกได้เพิ่ม +${RULES.underdog}</div>
         <div>⏱ ได้กล่องเล่นงานเพื่อน ต้องเลือกคนใน ${RULES.pickMs / 1000} วินาที · 🔒 30 วินาทีสุดท้ายปิดกล่องเล่นงานเพื่อน</div></div></div></div>`;
+      const setAv = (v) => {
+        myAv = v; pstore.set('seq-av-' + ROOM, String(v)); SFX.unlock(); SFX.pop(); render();
+        clearTimeout(dressT); dressT = setTimeout(() => { DB.update('players/' + pid, { av: myAv }).catch((e) => console.error(e)); }, 250);
+      };
+      app.querySelectorAll('[data-d]').forEach((b) => { b.onclick = () => { const [k, i] = b.dataset.d.split(':'); setAv(avPack(Object.assign(avParts(myAv), { [k]: +i }))); }; });
+      const rb = document.getElementById('drand');
+      if (rb) rb.onclick = () => { const r = (n) => Math.floor(Math.random() * n); setAv(avPack({ b: r(AVS.length), h: r(OUTFIT.hats.length), g: r(OUTFIT.glasses.length), s: r(OUTFIT.shirts.length), p: r(OUTFIT.pets.length) })); };
       return;
     }
     if (game.phase === 'end' || now > game.endAt) {
@@ -3296,7 +3386,7 @@ function startScreen() {
   function head(right) {
     return `<div class="s-head"><div class="s-brand"><span class="tag">OPEN HOUSE 2026 · SOCIAL ENTERPRISE</span><h1 class="outline">SE QUEST</h1><span class="sub ytitle">ตอบให้ไว แกล้งให้มัน</span></div><div class="s-right">${right || ''}</div></div>`;
   }
-  const foot = () => `<div class="s-foot">${Object.values(players).slice(0, 14).map((p, i) => `<img class="px" alt="" src="${AVS[(p.av || 0) % AVS.length]}" style="left:${30 + i * 130}px;animation-delay:${i * 0.11}s">`).join('')}</div>`;
+  const foot = () => `<div class="s-foot">${Object.values(players).slice(0, 14).map((p, i) => `<img class="px" alt="" src="${avSrc(p.av || 0)}" style="left:${30 + i * 130}px;animation-delay:${i * 0.11}s">`).join('')}</div>`;
 
   function render() {
     const n = Object.keys(players).length;
@@ -3309,8 +3399,8 @@ function startScreen() {
       content.innerHTML = head(`<div class="pp s-count"><b>${n}</b><span>คนเข้าเกมแล้ว</span></div>`) + `<div class="s-body">
         <div class="pp panel"><div class="lobby-join"><div class="qrbox"><div class="qr">${qrSVG(url)}</div><span class="tag">SCAN ME!</span></div>
         <div class="join-steps"><div class="step"><i>1</i>สแกน QR ด้วยมือถือ</div><div class="step"><i>2</i>ใส่ชื่อ เลือกตัวละคร</div><div class="step"><i>3</i>รอเริ่มเกมพร้อมกัน</div><div class="url">${esc(url)}</div></div></div>
-        <div class="rules" style="margin-top:20px"><span>✅ ถูก +${RULES.correct}</span><span>🔥 คอมโบ +${RULES.comboBonus}</span><span>🎁 ถูก ${RULES.every} ข้อ เปิดกล่อง</span><span>⭐ ข้อดาว ×2</span><span>✨ นาทีทอง ×2</span><span>🧲 ขโมย ❄️ แช่แข็ง 💣 ระเบิด</span><span>🆘 ครึ่งล่างตอบถูก +${RULES.underdog}</span><span>🔒 30 วิสุดท้ายห้ามเล่นงานเพื่อน</span><span>🏆 5 อันดับแรกชนะ</span></div></div>
-        <div class="pp panel"><h2>ผู้เล่น <small>${n} คน</small></h2><div class="chips">${chips || '<span class="empty">ยังไม่มีใครเข้า สแกนเลย!</span>'}</div></div></div>` + foot();
+        <div class="rules" style="margin-top:20px"><span>✅ ถูก +${RULES.correct}</span><span>🔥 คอมโบ +${RULES.comboBonus}</span><span>🎁 ถูก ${RULES.every} ข้อ เปิดกล่อง</span><span>⭐ ข้อดาว ✨ นาทีทอง ×2</span><span>🧲 ขโมย ❄️ แช่แข็ง 💣 ระเบิด</span><span>🆘 ครึ่งล่าง +${RULES.underdog}</span><span>🔒 30 วิท้ายห้ามแกล้ง</span><span>🏆 5 อันดับแรกชนะ</span></div></div>
+        <div class="pp panel"><h2>ผู้เล่น <small>${n} คน · แต่งตัวรอได้บนมือถือ</small></h2><div class="chips ${n <= 30 ? 'big' : ''}">${chips || '<span class="empty">ยังไม่มีใครเข้า สแกนเลย!</span>'}</div></div></div>` + foot();
       return;
     }
     const list = rankOf(players, sc);
@@ -3488,14 +3578,14 @@ function chooser() {
   app.querySelectorAll('[data-r]').forEach((b) => { b.onclick = () => go(b.dataset.r); });
 }
 
-(function boot() {
+Promise.all(AV_IMGS.map((im) => (im.decode ? im.decode().catch(() => {}) : null))).then(function boot() {
   showConn();
   const role = qs.get('role');
   if (role === 'screen') startScreen();
   else if (role === 'control' || role === 'mc') startMC();
   else if (role === 'player') startPlayer();
   else chooser();
-})();
+});
 </script>
 </body>
 </html>
